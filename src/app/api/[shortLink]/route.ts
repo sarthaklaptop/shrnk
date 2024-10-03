@@ -1,0 +1,32 @@
+import prisma from "@/utils/prisma";
+import { NextRequest, NextResponse } from "next/server";
+
+
+export async function GET(request: NextRequest, { params }: { params: { shortLink: string } }) {
+    try {
+        const {shortLink} = params;
+
+        const linkRecord = await prisma.link.findUnique({
+            where: {shortLink}
+        });
+
+        console.log(linkRecord);
+        if (linkRecord) {
+            console.log("before db call");
+
+            const currentCount = linkRecord.count ?? 0;
+
+            await prisma.link.update({
+                where: { shortLink },
+                data: { count: currentCount + 1 } 
+            });
+            console.log("after db call");
+            return NextResponse.redirect(linkRecord.longLink);
+        }   
+        else {
+            return NextResponse.json({error: "Short URL not found"}, {status: 404});
+        }
+    } catch (error:any) {
+        return NextResponse.json({error: "Internal Server Error", details: error.message }, {status: 500});
+    }
+}
