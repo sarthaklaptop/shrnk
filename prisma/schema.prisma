@@ -59,7 +59,7 @@ model Link {
     shortLink String   @unique
     createdAt DateTime @default(now())
     count     Int      @default(0)
-    expiresAt DateTime @default(dbgenerated("(now() + interval '24 hours')"))
+    expiresAt DateTime @default(dbgenerated("(now() + interval '30 minutes')"))
 }
 
 model VerificationToken {

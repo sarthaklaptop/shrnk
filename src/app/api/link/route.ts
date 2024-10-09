@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
             data: {
                 longLink,
                 shortLink,
+                count: 0,
             },
         });
 

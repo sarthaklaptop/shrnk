@@ -20,7 +20,7 @@ export async function GET(request: NextRequest, { params }: { params: { shortLin
                 where: { shortLink },
                 data: { count: currentCount + 1 } 
             });
-            console.log("after db call");
+            
             return NextResponse.redirect(linkRecord.longLink);
         }   
         else {
