@@ -8,6 +8,7 @@ import { FiLoader } from "react-icons/fi";
 import { Button } from './ui/button'
 import { DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
 import { DropdownMenu, DropdownMenuContent } from './ui/dropdown-menu'
+import { NavigationMenuDemo } from './NavigationMenu'
 
 export default function  Header() {
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
@@ -22,10 +23,13 @@ export default function  Header() {
 
 
   return (
-    <div className='w-full fixed top-0 h-[60px] bg-black border-b border-white/60 p-3 flex justify-between items-center'>
+    <div className='w-full fixed top-0 h-[60px] text-white p-3 flex justify-between items-center bg-black'>
         <Link href="/">
         <h2 className='font-bold text-xl text-white'>StableGen</h2>
         </Link>
+
+        {/* <NavigationMenuDemo/> */}
+
         {initialLoading && status === "loading" ? <FiLoader className='animate-spin'/> : (
           !session ? (
             <div className='__menu'>
@@ -38,7 +42,7 @@ export default function  Header() {
               <DropdownMenuTrigger asChild>
                 <Avatar>
                   <AvatarImage src={session.user?.image || ""} />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56">

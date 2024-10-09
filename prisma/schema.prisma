@@ -1,4 +1,7 @@
-generator client {
+
+
+
+    generator client {
     provider = "prisma-client-js"
 }
 
@@ -7,6 +10,7 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+// NeonDB 
 model Account {
     id                String  @id @default(cuid())
     userId            String  @map("user_id")
