@@ -11,4 +11,10 @@ export const authOptions = {
       }),
     ],
     adapter: PrismaAdapter(prisma),
+    callbacks: {
+      async redirect() {
+        return '/x'; 
+      },  
+    },
+    secret: process.env.NEXTAUTH_SECRET,
 }

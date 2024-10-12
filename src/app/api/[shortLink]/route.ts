@@ -14,6 +14,12 @@ export async function GET(request: NextRequest, { params }: { params: { shortLin
         if (linkRecord) {
             console.log("before db call");
 
+            const now = Date.now();
+
+            if(linkRecord.expiresAt && now > linkRecord.expiresAt.getTime()){
+                return NextResponse.json({error: "Link has expired"}, {status: 404});
+            } 
+
             const currentCount = linkRecord.count ?? 0;
 
             await prisma.link.update({

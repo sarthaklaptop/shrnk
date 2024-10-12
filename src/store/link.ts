@@ -1,14 +1,18 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+interface User {
+  image: string | null;
+  email: string | null;
+}
 
-export const linkStore = create(persist( (set) => ({
-    links: [ {
-      shortLink: "8d1cl4",
-      longLink: "https://www.youtube.com/watch?v=V7LfrS3T5fs&t=51s",
-    } ],
-    setLinks: (links: any) => set({ links }),
+export const userStorage = create(persist( (set) => ({
+    user: {
+      image: null,
+      email: null,
+    },
+    setUser: ({image, email}:User) => set({ user: { image, email } }),
   }), {
-    name: "link-storage", 
+    name: "shrnk-storage", 
     storage: createJSONStorage(() => localStorage),
   }));

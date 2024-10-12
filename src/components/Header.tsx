@@ -9,10 +9,12 @@ import { Button } from './ui/button'
 import { DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
 import { DropdownMenu, DropdownMenuContent } from './ui/dropdown-menu'
 import { NavigationMenuDemo } from './NavigationMenu'
+import { userStorage } from '@/store/link'
 
 export default function  Header() {
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
   const {data: session, status} = useSession();
+  const setUser = userStorage((state:any) => state.setUser);
 
   useEffect(() => {
     if(status !== "loading") {
@@ -21,6 +23,13 @@ export default function  Header() {
 
   }, [status, session]);
 
+  
+  useEffect(() => {
+    if (session && !initialLoading) {
+      // Store user data in Zustand
+      setUser(session.user?.image || null, session.user?.email || null);
+    }
+  }, [session, initialLoading, setUser]);
 
   return (
     <div className='w-full fixed top-0 h-[60px] text-white p-3 flex justify-between items-center bg-black'>
@@ -33,20 +42,20 @@ export default function  Header() {
         {initialLoading && status === "loading" ? <FiLoader className='animate-spin'/> : (
           !session ? (
             <div className='__menu'>
-              <Button onClick={() => signIn("google")}>
+              <Button onClick={() => signIn("google", { callbackUrl: '/x' })}>
                   Login
               </Button>
             </div>
           ) : (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Avatar>
+                <Avatar className='cursor-pointer'>
                   <AvatarImage src={session.user?.image || ""} />
                   <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuContent className="w-56 cursor-pointer">
+                <DropdownMenuLabel><a href="/x">My Account</a></DropdownMenuLabel>
                 <DropdownMenuItem onClick={() => signOut()}>
                   <span>Log out</span>
                 </DropdownMenuItem>

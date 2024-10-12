@@ -57,9 +57,11 @@ model Link {
     id        Int      @id @default(autoincrement())
     longLink  String   @unique
     shortLink String   @unique
+    fullShortLink String @unique @default("")
     createdAt DateTime @default(now())
     count     Int      @default(0)
-    expiresAt DateTime @default(dbgenerated("(now() + interval '30 minutes')"))
+    clickLimit Int     @default(0)
+    expiresAt DateTime 
 }
 
 model VerificationToken {
