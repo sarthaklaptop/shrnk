@@ -1,7 +1,4 @@
-
-
-
-    generator client {
+generator client {
     provider = "prisma-client-js"
 }
 
@@ -49,20 +46,27 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    userLinks     Link[]
 
     @@map("users")
 }
 
+
 model Link {
-    id        Int      @id @default(autoincrement())
-    longLink  String   @unique
-    shortLink String   @unique
-    fullShortLink String @unique @default("")
-    createdAt DateTime @default(now())
-    count     Int      @default(0)
-    clickLimit Int     @default(0)
-    expiresAt DateTime 
+    id            String      @id @default(uuid())
+    longLink      String      @unique
+    shortLink     String      @unique
+    fullShortLink String      @unique @default("")
+    createdAt     DateTime    @default(now())
+    count         Int         @default(0)
+    clickLimit    Int         @default(0)
+    expiresAt     DateTime
+    userId        String      @default("null")    // Foreign key to User, optional (nullable)
+    user          User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("links")
 }
+
 
 model VerificationToken {
     identifier String
@@ -72,3 +76,51 @@ model VerificationToken {
     @@unique([identifier, token])
     @@map("verification_tokens")
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// model Link {
+//     id            String      @id @default(uuid())
+//     longLink      String   @unique
+//     shortLink     String   @unique
+//     fullShortLink String   @unique @default("")
+//     createdAt     DateTime @default(now())
+//     count         Int      @default(0)
+//     clickLimit    Int      @default(0)
+//     expiresAt     DateTime
+//     @@map("links")
+// }
+
+// model UserLink { 
+//     id            String      @id @default(uuid())
+//     longLink      String      @unique
+//     shortLink     String      @unique
+//     fullShortLink String      @unique @default("")
+//     createdAt     DateTime    @default(now())
+//     count         Int         @default(0)
+//     clickLimit    Int         @default(0)
+//     expiresAt     DateTime
+//     userId        String      // Foreign key to User
+//     user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+//     @@map("user_links")
+// }

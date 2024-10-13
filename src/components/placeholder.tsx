@@ -35,8 +35,6 @@ export function PlaceholdersAndVanishInputDemo() {
     "How to share your shortened link on social media?",
   ];
 
-  // zustand store 
-  // const storeLinks = linkStore((state: any) => state.links);
   const [urlInput, setUrlInput] = useState(""); 
   const [response, setResponse] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -64,12 +62,6 @@ export function PlaceholdersAndVanishInputDemo() {
       const result = await axios.post("/api/link", { longLink: urlInput });
       const newLink = { shortLink: result.data.data.shortLink, longLink: urlInput };
       console.log("Short URL created: ", result.data);
-
-      // storeLinks([...storeLinks, newLink]);
-      // linkStore.setState({ links: [...storeLinks, {shortLink: result.data.data.shortLink, longLink: urlInput} ]});
-      // linkStore.setState((state: any) => ({
-      //   links: [...state.links, newLink],
-      // }));
       setIsDialogOpen(true);
       toast("Short URL created");
       console.log("Short URL created: ", result.data.data.shortLink);
@@ -130,43 +122,6 @@ export function PlaceholdersAndVanishInputDemo() {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-
-
-      {/* <ScrollArea className="h-96 w-full m-2">
-        <div className="flex flex-col gap-2">
-        {
-          storeLinks.map(({shortLink, longLink}: {shortLink: string, longLink: string}, index: number) => (
-            <div key={index} className="relative">
-              <div className=" flex flex-col  border-2 rounded-lg p-4 w-full gap-2">
-                <div className=" flex justify-between">
-                  <div className="flex items-center gap-2">
-                    <a href={`api/${shortLink}`} className="font-bold" target="_blank" rel="noopener noreferrer">
-                      {BASEURL}{shortLink}
-                    </a>
-                    <span className="border-2 p-1 rounded-full bg-zinc-100 cursor-pointer" onClick={() => copyClipBoard({shortLink})}>
-                      <MdContentCopy/>
-                    </span>
-                  </div> 
-                  <div>
-                    <HoverCardDemo/>
-                  </div> 
-                </div>
-                <div className="flex items-center text-zinc-500">
-                  <span>
-                    <MdOutlineSubdirectoryArrowRight/>
-                  </span>
-                  <a className="hover:underline" target="_blank" href={longLink}>
-                    {longLink.length > 70 ? longLink.slice(0, 70) + '...' : longLink}
-                  </a>
-                </div>
-                <div className="">
-                </div>
-              </div>
-            </div>
-          ))      
-        }
-        </div>
-      </ScrollArea> */}
     </div>
   );
 }
