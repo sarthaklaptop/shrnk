@@ -61,7 +61,7 @@ model Link {
     count         Int         @default(0)
     clickLimit    Int         @default(0)
     expiresAt     DateTime
-    userId        String      @default("null")    // Foreign key to User, optional (nullable)
+    userId        String?      // @default("null")    // Foreign key to User, optional (nullable)
     user          User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@map("links")
