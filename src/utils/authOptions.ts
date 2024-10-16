@@ -12,6 +12,11 @@ export const authOptions = {
     ],
     adapter: PrismaAdapter(prisma),
     callbacks: {
+      async session({ session, user }: { session: any; user: any }) {
+        // Add the user ID to the session object
+        session.user.id = user.id;
+        return session;
+      },  
       async redirect() {
         return '/x'; 
       },  

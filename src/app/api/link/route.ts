@@ -83,6 +83,8 @@ export async function DELETE(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
+    console.log(chalk.bgBlue("Inside DELETE route"));
+
     if (!session || !session.user || !session.user.email) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
@@ -101,6 +103,9 @@ export async function DELETE(request: NextRequest) {
     if (!link) {
       return NextResponse.json({ error: "Link not found" }, { status: 404 });
     }
+
+    console.log(chalk.bgRed("userId from db:", link.userId));
+    console.log(chalk.bgRed(JSON.stringify(session)));
 
     if (link.userId !== session.user?.id) {
       return NextResponse.json(

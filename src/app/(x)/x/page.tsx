@@ -18,14 +18,15 @@ import { HoverCardDemo } from '@/components/HoverCard';
 import { toast } from 'sonner';
 import { HiCursorClick } from "react-icons/hi";
 import { redirect } from 'next/navigation';
-import { MdQrCodeScanner } from "react-icons/md";
 import { FaDeleteLeft } from "react-icons/fa6";
+import { QRCodeDialog } from '@/components/ui/QRCode';
 
 
 export default function Page() {
 
   const { data: session, status } = useSession();
   const [userLinks, setUserLinks] = useState([]);
+  const [QRUrl, setQRUrl] = useState("");
 
   useEffect(() => {
     if (status === "loading") {
@@ -41,8 +42,8 @@ export default function Page() {
     const fetchUserLinks = async () => {
       try {
         const response = await axios.get('/api/userLinks');
-        console.log("User Links:", response.data.data); // Adjust according to your response structure
-        setUserLinks(response.data.data); // Store user links in state
+        console.log("User Links:", response.data.data); 
+        setUserLinks(response.data.data);
       } catch (error) {
         console.error("Error details: ", error);
         console.error("Error fetching user links:", error);
@@ -60,6 +61,21 @@ export default function Page() {
     toast("Copied to clipboard");
   }
 
+  const deleteLink = ({id}: {id: string}) => {
+    console.log("Inside deleteLink function");
+    axios.delete(`/api/link`, {data: {id}})
+    .then(response => {
+      console.log(response.data);
+      toast("Link deleted successfully");
+      setQRUrl("https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${BASEURL}/${shortLink}");
+      setUserLinks(prevLinks => prevLinks.filter(link => link.id !== id));
+    })
+    .catch(error => {
+      console.error("Error deleting link:", error);
+      toast.error("Error deleting link");
+    });
+  }
+
   if (status === "loading") {
     return <p>Loading...</p>; // You can add a loader here
   }
@@ -69,13 +85,6 @@ export default function Page() {
       <div className='w-4/5 flex  flex-col mx-auto'>
         <h1 className='font-bold text-2xl'>Links</h1>
         <div className='flex w-full gap-2 items-center justify-end'>
-          {/* <button 
-            className="px-4 py-2 rounded-md border border-black bg-white text-black text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
-          >
-            Create
-          </button> */}
-
-          {/* Create link Dialog Button */}
           <DialogCloseButton/>
 
             <DropdownMenu>
@@ -122,10 +131,19 @@ export default function Page() {
                             </button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent className="w-fit cursor-pointer">
-                            <DropdownMenuLabel className=' flex hover:bg-slate-200 rounded-sm items-center justify-between'>
-                              QR Code <MdQrCodeScanner/>
+                            <DropdownMenuLabel 
+                            className=' flex hover:bg-slate-200 rounded-sm items-center justify-between'
+                            // onClick={() => {
+                            //   const link = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${BASEURL}/${shortLink}`;
+                            //   window.open(link, '_blank');
+                            // }}
+                            >
+                              <QRCodeDialog QRUrl={`${BASEURL}/${shortLink}`}/>
                             </DropdownMenuLabel>
-                            <DropdownMenuLabel className=' flex hover:bg-red-500 hover:text-white rounded-sm text-red-400 items-center justify-between'>
+                            <DropdownMenuLabel
+                            className=' flex hover:bg-red-500 hover:text-white rounded-sm text-red-400 items-center justify-between'
+                            onClick={() => deleteLink({id: userLinks[index].id})}
+                            >
                               Delete <FaDeleteLeft/>
                             </DropdownMenuLabel>
                           </DropdownMenuContent>
@@ -144,8 +162,7 @@ export default function Page() {
                     </div>
                   </div>
                 </div>
-              ))      
-            }
+              ))                  }
             </div>
         </ScrollArea>
       </div>

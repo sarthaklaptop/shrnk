@@ -18,8 +18,10 @@ import { useState } from "react";
 import { toast } from "sonner";
 import validUrl from "valid-url";
 import axios from "axios";
+import { MdQrCodeScanner } from "react-icons/md";
+import Image from "next/image";
 
-export function DialogCloseButton() {
+export function QRCodeDialog({QRUrl}: {QRUrl: string}) {
   const [urlInput, setUrlInput] = useState(""); 
   const [response, setResponse] = useState("");
 
@@ -55,45 +57,30 @@ export function DialogCloseButton() {
       toast("Error creating short URL");
     }
   };
+  
+  const link = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${QRUrl}`;
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button 
-          variant="outline"
-          className="px-4 py-2 rounded-md border border-black bg-white text-black text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
-        > 
-          Create
-        </Button>
+          <div className=" flex items-center justify-between w-full gap-2">
+            QR Code <MdQrCodeScanner/>
+          </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex gap-1"> 
-            <FaLink /> New link
+            QR Code Preview <FaRegQuestionCircle />
           </DialogTitle>
-          <DialogDescription className="flex gap-1 items-center">
-            Destination URL <FaRegQuestionCircle />
-          </DialogDescription>
         </DialogHeader>
-        <form onSubmit={onSubmit} className="flex items-center space-x-2">
-          <div className="grid flex-1 gap-2">
-            <Label htmlFor="link" className="sr-only">
-              Link
-            </Label>
-            <Input
-              id="link"
-              value={urlInput}
-              onChange={handleChange}
-              required // Add required attribute for form validation
-            />
-          </div>
-          <DialogClose asChild>
-            <Button type="submit" size="sm" className="px-3">
-              Create Link
-            </Button>
-          </DialogClose>
-        </form>
+        <div className="flex items-center justify-center p-4 bg-gradient-to-r from-blue-200 to-cyan-200 rounded-lg">
+
+            <Image src={link} width={150} height={150} alt="QR Code" />            
+            
+        </div>
       </DialogContent>
     </Dialog>
   );
 }
+
+
