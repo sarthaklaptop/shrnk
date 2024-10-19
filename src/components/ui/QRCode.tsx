@@ -74,9 +74,7 @@ export function QRCodeDialog({QRUrl}: {QRUrl: string}) {
           </DialogTitle>
         </DialogHeader>
         <div className="flex items-center justify-center p-4 bg-gradient-to-r from-blue-200 to-cyan-200 rounded-lg">
-
             <Image src={link} width={150} height={150} alt="QR Code" />            
-            
         </div>
       </DialogContent>
     </Dialog>

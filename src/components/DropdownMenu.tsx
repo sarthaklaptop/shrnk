@@ -42,7 +42,7 @@ import { useSession } from "next-auth/react";
         <DropdownMenuTrigger asChild>
           <Button variant="outline">
             <Avatar>
-                <AvatarImage src={session.user?.image || ""} />
+                <AvatarImage src={session?.user?.image || ""} />
                 <AvatarFallback>CN</AvatarFallback>            
             </Avatar>
           </Button>

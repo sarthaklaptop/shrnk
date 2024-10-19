@@ -18,6 +18,7 @@ import ProfilePage from "@/app/(x)/profile/page";
 import SettingsPage from "@/app/(x)/settings/page";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { Avatar } from "./ui/avatar";
+import Page from "@/app/(x)/x/analytics/[shortLink]/page";
 
 export function SidebarDemo() {
   const links = [
@@ -44,14 +45,6 @@ export function SidebarDemo() {
         <IoMdSettings />
       ),
     },
-    // {
-    //   label: "Logout",
-    //   href: "",
-    //   icon: (
-    //     // <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-    //     <DiHaskell />
-    //   ),
-    // },
   ];
   const [open, setOpen] = useState(false);
 
@@ -147,6 +140,11 @@ const Dashboard = () => {
   if(pathname === '/settings') {
     return <SettingsPage />;
   }
+
+  if(pathname.startsWith('/x/analytics')) {
+    return < Page/>;
+  }
+
   return (
     <div className="flex flex-1 gap-0">
       <TabsDemo/>

@@ -117,7 +117,7 @@ export function PlaceholdersAndVanishInputDemo() {
               className="bg-black text-white w-full p-1 rounded-md text-sm"
               onClick={() => signIn("google")}
           >
-              Create Account! It's 100% free!
+              Create Account! Its 100% free!
           </button>
         </DialogFooter>
       </DialogContent>
