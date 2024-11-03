@@ -22,9 +22,16 @@ export async function GET(request: NextRequest, { params }: { params: { shortLin
 
             const currentCount = linkRecord.count ?? 0;
 
+            const currentClickHistory = (linkRecord.clickHistory as string[]) ?? [];
+
+            const updatedClickHistory = [...currentClickHistory, new Date().toISOString()];
+
             await prisma.link.update({
                 where: { shortLink },
-                data: { count: currentCount + 1 } 
+                data: { 
+                    count: currentCount + 1,
+                    clickHistory: updatedClickHistory,
+                } 
             });
             
             return NextResponse.redirect(linkRecord.longLink);

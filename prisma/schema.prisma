@@ -63,6 +63,7 @@ model Link {
     expiresAt     DateTime
     userId        String?      // @default("null")    // Foreign key to User, optional (nullable)
     user          User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+    clickHistory  Json?
 
     @@map("links")
 }

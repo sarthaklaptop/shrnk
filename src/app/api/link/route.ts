@@ -48,7 +48,9 @@ export async function POST(request: NextRequest) {
           count: 0,
           clickLimit: 0,
           expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-          userId: userId,
+          // userId: userId,
+          user: { connect: { id: userId } }, 
+          clickHistory: [],
         },
       });
     } else {
@@ -61,6 +63,7 @@ export async function POST(request: NextRequest) {
           count: 0,
           clickLimit: 0,
           expiresAt: new Date(Date.now() + 30 * 60 * 1000),
+          clickHistory: [],
         },
       });
     }
