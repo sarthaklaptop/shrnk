@@ -20,12 +20,16 @@ import { redirect } from 'next/navigation';
 import { FaDeleteLeft } from 'react-icons/fa6';
 import { QRCodeDialog } from '@/components/ui/QRCode';
 import { useRouter } from 'next/navigation';
+import { mkConfig, generateCsv, download } from "export-to-csv";
+import { PiFileCsvDuotone } from "react-icons/pi";
+
 
 interface UserLink {
   id: string;
   shortLink: string;
   longLink: string;
   count: number;
+  [key: string]: any;
 }
 
 export default function Page() {
@@ -33,6 +37,8 @@ export default function Page() {
   const [userLinks, setUserLinks] = useState<UserLink[]>([]);
   const [QRUrl, setQRUrl] = useState('');
   const router = useRouter();
+
+  const csvConfig = mkConfig({ useKeysAsHeaders: true });
 
   useEffect(() => {
     if (status === 'loading') {
@@ -79,6 +85,24 @@ export default function Page() {
     }
   };
 
+  const downloadCSV = () => {
+    if (userLinks.length === 0) {
+      toast("No data available for export");
+      return;
+    }
+
+    const csvData = userLinks.map(link => ({
+      id: link.id.toString(),
+      shortLink: BASEURL + link.shortLink.toString(),
+      longLink: link.longLink.toString(),
+      count: link.count.toString(),
+    }));
+
+    const csv = generateCsv(csvConfig)(csvData);
+
+    download(csvConfig)(csv as any);
+  }
+
   if (status === 'loading') {
     return <p>Loading...</p>; // Add a loader if needed
   }
@@ -95,8 +119,17 @@ export default function Page() {
                 <BsThreeDotsVertical className='cursor-pointer' />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className='w-56'>
-              <DropdownMenuLabel>Export as CSV</DropdownMenuLabel>
+            <DropdownMenuContent className='w-56 cursor-pointer '>
+              <DropdownMenuLabel onClick={() => downloadCSV()}>
+
+              <a href="#_" className="relative inline-flex items-center justify-center p-1 px-2 py-2 overflow-hidden font-medium text-red-600 transition duration-300 ease-out border-2 border-red-500 rounded-full shadow-md group">
+                  <span className="absolute inset-0 flex items-center justify-center w-full h-full text-white duration-300 -translate-x-full bg-red-500 group-hover:translate-x-0 ease">
+                      <PiFileCsvDuotone className='w-5 h-5'/>
+                  </span>
+                  <span className="absolute flex items-center justify-center w-full h-full text-red-500 transition-all duration-300 transform group-hover:translate-x-full ease">Download CSV</span>
+                  <span className="relative invisible">Download CSV</span>
+              </a>
+              </DropdownMenuLabel>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
