@@ -106,8 +106,7 @@ export default function Page() {
             {userLinks.map(({ id, shortLink, longLink, count }: UserLink) => (
               <div key={id} className='relative'>
                 <div
-                  className='flex flex-col border-2 rounded-lg cursor-pointer p-4 w-full gap-2'
-                  onClick={() => handleNavigation(shortLink)}
+                  className='flex flex-col border-red-50 border-2 rounded-lg cursor-pointer p-4 w-full gap-2'
                 >
                   <div className='flex justify-between'>
                     <div className='flex items-center gap-2'>
@@ -126,9 +125,12 @@ export default function Page() {
                         <MdContentCopy />
                       </span>
                     </div>
-                    <div className='flex gap-1'>
-                      <span className='justify-center border-2 rounded-sm hover:bg-zinc-200 bg-zinc-100 cursor-pointer'>
-                        <a className='flex items-center gap-1 px-1' href={`api/${shortLink}`}>
+                    <div className='flex gap-1 z-10'>
+                      <span 
+                        className='justify-center border-2 rounded-sm hover:bg-zinc-200 bg-zinc-100 cursor-pointer'
+                        onClick={() => handleNavigation(shortLink)}
+                      >
+                        <a className='flex items-center gap-1 px-1' >
                           <HiCursorClick /> {count} clicks
                         </a>
                       </span>
@@ -139,11 +141,11 @@ export default function Page() {
                           </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className='w-fit'>
-                          <DropdownMenuLabel className='flex hover:bg-slate-200 rounded-sm items-center justify-between'>
+                          <DropdownMenuLabel className='flex cursor-pointer hover:bg-slate-200 rounded-sm items-center justify-between'>
                             <QRCodeDialog QRUrl={`${BASEURL}/${shortLink}`} />
                           </DropdownMenuLabel>
                           <DropdownMenuLabel
-                            className='flex hover:bg-red-500 hover:text-white rounded-sm text-red-400 items-center justify-between'
+                            className='flex hover:bg-red-500 cursor-pointer hover:text-white rounded-sm text-red-400 items-center justify-between'
                             onClick={() => deleteLink(id)}
                           >
                             Delete <FaDeleteLeft />
