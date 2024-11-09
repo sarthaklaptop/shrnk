@@ -1,36 +1,43 @@
 'use client'
 
 import BasicLineChart from '@/components/BasiLineChart';
+import { DeviceStats } from '@/components/DeviceStats';
+import { LocationStats } from '@/components/LocationStats';
 import axios from 'axios';
+import chalk from 'chalk';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
+import { toast } from 'sonner';
 
 function Page() {
     const params = useParams();
     const shortLink = params.shortLink;
 
-    const [linkData, setLinkData] = useState("");
+    const [stats, setStats] = useState();
 
     useEffect(() => {
-      const fetchData = async () => {
+      const fetchStats = async () => {
         try {
-          const response = await axios.get(`/api/link?id=${shortLink}`);
-          console.log("User Links:", response.data.data); 
-          setLinkData(response.data.data);
+          console.log("Fetching stats for shortLink: ", shortLink)
+          const result = await axios.get(`/api/linkStats?shortLink=${shortLink}`);
+          setStats(result.data);
+          console.log("stats Data", result.data);
         } catch (error) {
-          console.error("Error details: ", error);
-          console.error("Error fetching user links:", error);
+          console.log("Error details: ",error)
+          toast("Error Loading Stats")
         }
-      };
-    
-      fetchData(); // Call the async function
-    }, [shortLink]);
+      }
+
+      fetchStats();
+    }, []);
     
 
   return (
-    <div className='bg-white w-full rounded-lg mt-2 border-[1px] border-gray-300 p-2'>
+    <div className='bg-white w-full h-screen overflow-y-auto rounded-lg mt-2 border-[1px] border-gray-300 p-2'>
         <h1>Analytics Page {shortLink}</h1>
         <BasicLineChart/>
+          <DeviceStats stats={stats}/>
+          <LocationStats stats={stats}/>
     </div>
   )
 }

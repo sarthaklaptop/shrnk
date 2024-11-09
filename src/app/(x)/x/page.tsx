@@ -127,7 +127,7 @@ export default function Page() {
                       <PiFileCsvDuotone className='w-5 h-5'/>
                   </span>
                   <span className="absolute flex items-center justify-center w-full h-full text-red-500 transition-all duration-300 transform group-hover:translate-x-full ease">Download CSV</span>
-                  <span className="relative invisible">Download CSV</span>
+                  <span className="re1lative invisible">Download CSV</span>
               </a>
               </DropdownMenuLabel>
             </DropdownMenuContent>
