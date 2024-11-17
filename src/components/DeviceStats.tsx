@@ -6,7 +6,7 @@ export function DeviceStats({stats}:any) {
 
     const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
-    console.log("Stats from DeviceStats: ",stats);
+    // console.log("Stats from DeviceStats: ",stats);
 
     const deviceCount = stats && Array.isArray(stats.clicks)
     ? stats.clicks.reduce((acc: any, click: any) => {

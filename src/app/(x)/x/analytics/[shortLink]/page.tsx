@@ -21,7 +21,7 @@ function Page() {
           console.log("Fetching stats for shortLink: ", shortLink)
           const result = await axios.get(`/api/linkStats?shortLink=${shortLink}`);
           setStats(result.data);
-          console.log("stats Data", result.data);
+          // console.log("stats Data", result.data);
         } catch (error) {
           console.log("Error details: ",error)
           toast("Error Loading Stats")

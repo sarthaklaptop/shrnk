@@ -13,7 +13,7 @@ import {
 
 export function LocationStats({stats}:any) {
 
-    console.log("Stats from Location Stats: ",stats);
+    // console.log("Stats from Location Stats: ",stats);
 
     const cityCount = stats && Array.isArray(stats.clicks) 
     ? stats.clicks.reduce((acc:any, item:any) => {

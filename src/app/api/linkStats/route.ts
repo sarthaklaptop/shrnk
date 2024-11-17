@@ -50,20 +50,6 @@ export async function GET(request: NextRequest) {
             clickCount: clicks.length,
             clicks,
         };
-        
-        // const stats = await Promise.all(user.userLinks.map(async (link) => {
-        //     const clicks = await prisma.click.findMany({
-        //         where: {
-        //             linkId: link.id
-        //         }
-        //     });
-
-        //     return {
-        //         link: link.shortLink,
-        //         clickCount: clicks.length,
-        //         clicks,
-        //     };
-        // }));
 
         return NextResponse.json(stats);
 
