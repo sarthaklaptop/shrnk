@@ -50,7 +50,7 @@ export default function BasiLineChart() {
     }
 
     fetchStats();
-  }, [])
+  }, [shortLink])
 
 
 
