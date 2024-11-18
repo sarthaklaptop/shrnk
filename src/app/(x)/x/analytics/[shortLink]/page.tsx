@@ -33,7 +33,7 @@ function Page() {
     
 
   return (
-    <div className='bg-white w-full h-screen overflow-y-auto rounded-lg mt-2 border-[1px] border-gray-300 p-2'>
+    <div classNameName='bg-white w-full h-screen overflow-y-auto rounded-lg mt-2 border-[1px] border-gray-300 p-2'>
         <h1>Analytics Page {shortLink}</h1>
         <BasicLineChart/>
           <DeviceStats stats={stats}/>

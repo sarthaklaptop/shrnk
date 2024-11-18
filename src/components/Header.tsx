@@ -10,6 +10,8 @@ import { DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@radix
 import { DropdownMenu, DropdownMenuContent } from './ui/dropdown-menu'
 import { NavigationMenuDemo } from './NavigationMenu'
 import { userStorage } from '@/store/link'
+import { MenuItem } from './ui/navbar-menu'
+import { NavbarDemo } from './navbar'
 
 export default function  Header() {
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
@@ -32,12 +34,16 @@ export default function  Header() {
   }, [session, initialLoading, setUser]);
 
   return (
-    <div className='w-full fixed top-0 h-[60px] text-white p-3 flex justify-between items-center bg-black'>
+    <div className='w-11/12 fixed top-0 h-[60px] text-white p-3 flex justify-between items-center '>
         <Link href="/">
-        <h2 className='font-bold text-xl text-white'>StableGen</h2>
+          <h2 className='font-bold text-2xl text-red-500'>Shrnk</h2>
         </Link>
 
-        {/* <NavigationMenuDemo/> */}
+        {/* <NavbarDemo/> */}
+        <div className="relative w-full h-screen">
+          <NavbarDemo />
+        </div>
+
 
         {initialLoading && status === "loading" ? <FiLoader className='animate-spin'/> : (
           !session ? (

@@ -4,6 +4,8 @@ import "./globals.css";
 import Provider from "./provider";
 import Header from "@/components/Header";
 import { Toaster } from "@/components/ui/sonner"
+import GridPattern from "@/components/ui/grid-pattern";
+import { cn } from "@/lib/utils";
 
 
 const geistSans = localFont({
@@ -30,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}
       >
         <Provider>
           <main>

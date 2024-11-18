@@ -78,11 +78,13 @@ export function PlaceholdersAndVanishInputDemo() {
   }
   return (
     <div className=" m-2 flex flex-col w-2/4 justify-center  items-center px-4">
-      <PlaceholdersAndVanishInput
-        placeholders={placeholders}
-        onChange={handleChange}
-        onSubmit={onSubmit}
-      />
+      <div className="z-10 bg-white w-full">
+        <PlaceholdersAndVanishInput
+          placeholders={placeholders}
+          onChange={handleChange}
+          onSubmit={onSubmit}
+        />
+      </div>
 
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger></DialogTrigger>

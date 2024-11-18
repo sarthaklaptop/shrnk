@@ -1,19 +1,45 @@
+import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { PlaceholdersAndVanishInputDemo } from "@/components/placeholder";
-import { BackgroundLines } from "@/components/ui/background-lines";
-import axios from "axios";
-import Image from "next/image";
-import { useState } from "react";
-import { toast } from "sonner";
+import SuperCharge from "@/components/Supercharge";
+import GridPattern from "@/components/ui/grid-pattern";
+import WordRotate from "@/components/ui/word-rotate";
+import { cn } from "@/lib/utils";
+
 
 export default function Home() {
   return (
-    <div>
+    <div className="w-11/12 mx-auto">
       <Header/>
-      <div className="flex flex-col items-center justify-center h-lvh w-full">
-        <h1 className="text-4xl text-red-500 font-bold">URL Shortner</h1>
-        <PlaceholdersAndVanishInputDemo/>
+      
+      <div className=" overflow-hidden bg-background bg-gray-50">
+        <div className="z-10 flex flex-col items-center justify-center h-lvh w-full">
+          <h1 className="text-4xl text-red-500 font-bold">
+            Short Links, Big Impact.
+            <WordRotate
+              className="text-4xl font-bold text-black dark:text-white"
+              words={["Create", "Share", "Analyze"]}
+            />  
+          </h1>
+          <PlaceholdersAndVanishInputDemo/>
+        </div>
+
+        <SuperCharge/>  
+
+        <Footer/>
+        
+        <GridPattern
+          width={30}
+          height={30}
+          x={-1}
+          y={-1}
+          strokeDasharray={"4 2"}
+          className={cn(
+            "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]",
+          )}
+        />
       </div>
+      
     </div>
   );
 }

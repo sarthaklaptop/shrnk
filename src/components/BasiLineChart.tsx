@@ -19,10 +19,10 @@ export default function BasiLineChart() {
     const fetchStats = async () => {
       try {
         // console.log("Fetching stats for BasiLineChart: ", shortLink)
-        console.log("ShortLink value: ", shortLink);
+        // console.log("ShortLink value: ", shortLink);
         const result = await axios.get(`/api/link?id=${shortLink}`);
         const timestamps = result.data.mainData;
-        console.log("from baseLineChart ", timestamps);
+        // console.log("from baseLineChart ", timestamps);
         if (!Array.isArray(timestamps)) {
           throw new Error("Invalid data format");
         }
@@ -33,14 +33,14 @@ export default function BasiLineChart() {
           return acc;
         }, {} as Record<string, number>);
 
-        console.log("grouped data ", groupedData);
+        // console.log("grouped data ", groupedData);
 
         const formattedData = Object.entries(groupedData).map(([date, clicks]) => ({
           date,
           clicks: clicks as number
         }));
 
-        console.log("formatted data, ", formattedData);
+        // console.log("formatted data, ", formattedData);
 
         setChartData(formattedData);
       } catch (error) {
