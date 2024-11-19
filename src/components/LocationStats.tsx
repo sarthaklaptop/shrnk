@@ -32,10 +32,10 @@ export function LocationStats({stats}:any) {
       }));
     
       return (
-        <div style={{width: "80%", height: 300}}>
-            <p>Location Stats</p>
+        <div className="p-2 border rounded-lg h-96 max-h-80">
+          <p className='font-semibold m-2'>Location Stats</p>
           <ResponsiveContainer>
-            <LineChart width={700} height={300} data={cities.slice(0, 5)}>
+            <LineChart data={cities.slice(0, 5)}>
               <XAxis dataKey="city" />
               <YAxis />
               <Tooltip labelStyle={{color: "green"}} />

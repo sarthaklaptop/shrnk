@@ -4,7 +4,7 @@ import {PieChart, Pie, Cell, ResponsiveContainer} from "recharts";
 
 export function DeviceStats({stats}:any) {
 
-    const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+    const COLORS = ["#93c5fd", "#00C49F", "#FFBB28", "#FF8042"];
 
     // console.log("Stats from DeviceStats: ",stats);
 
@@ -27,8 +27,8 @@ export function DeviceStats({stats}:any) {
 
 
   return (
-    <div>
-        <div>DeviceStats</div>
+    <div className='p-2 border rounded-lg'>
+        <div className='m-2 font-semibold'>DeviceStats</div>
         <div style={{width: "100%", height: 300}}>
             <ResponsiveContainer>
                 <PieChart width={700} height={400}>
