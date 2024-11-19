@@ -10,6 +10,7 @@ export const userStorage = create(persist( (set) => ({
     user: {
       image: null,
       email: null,
+      id: null
     },
     setUser: ({image, email}:User) => set({ user: { image, email } }),
   }), {

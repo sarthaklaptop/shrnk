@@ -13,42 +13,32 @@ import { cn } from "@/lib/utils";
 import { signOut, useSession } from "next-auth/react";
 import TabsDemo from "@/app/(x)/x/page";
 import { Button } from "./ui/button";
-import { usePathname } from "next/navigation";
 import ProfilePage from "@/app/(x)/profile/page";
-import SettingsPage from "@/app/(x)/settings/page";
-import { AvatarImage } from "@radix-ui/react-avatar";
-import { Avatar } from "./ui/avatar";
 import Page from "@/app/(x)/x/analytics/[shortLink]/page";
+import { usePathname } from "next/navigation"; // Ensure you have this import
+import { FaLink } from "react-icons/fa6";
 
 export function SidebarDemo() {
+
+  const pathname = usePathname();
+
   const links = [
     {
       label: "Links",
       href: "/x",
       icon: (
-        <DashboardIcon />
+        <FaLink />
       ),
     },
     {
       label:    "Profile",
       href: "/profile",
       icon: (
-        // <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
         <PersonIcon />
       ),
-    },
-    {
-      label: "Settings",
-      href: "/settings",
-      icon: (
-        // <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-        <IoMdSettings />
-      ),
-    },
+    }
   ];
   const [open, setOpen] = useState(false);
-
-//   const userMail = session?.user?.email;
 
   const {data: session, status} = useSession();
   return (
@@ -63,9 +53,22 @@ export function SidebarDemo() {
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             <Logo />
             <div className="mt-8 flex flex-col gap-2 ">
-              {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
-              ))}
+              {/* {links.map((link, idx) => (
+                <SidebarLink className="hover:bg-gray-200 rounded-lg p-2" key={idx} link={link} />
+              ))} */}
+              {links.map((link, idx) => {
+                const isActive = pathname === link.href; // Check if link is active
+                return (
+                  <SidebarLink
+                    key={idx}
+                    link={link}
+                    className={cn(
+                      "rounded-lg p-2 hover:bg-gray-200",
+                      isActive && "bg-red-300 font-medium text-red-700" 
+                    )}
+                  />
+                );
+              })}
             </div>
           </div>
           <div>
@@ -135,10 +138,6 @@ const Dashboard = () => {
 
   if (pathname === '/profile') {
     return <ProfilePage />;
-  }
-
-  if(pathname === '/settings') {
-    return <SettingsPage />;
   }
 
   if(pathname.startsWith('/x/analytics')) {
