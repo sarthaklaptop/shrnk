@@ -17,10 +17,14 @@ import ProfilePage from "@/app/(x)/profile/page";
 import Page from "@/app/(x)/x/analytics/[shortLink]/page";
 import { usePathname } from "next/navigation"; // Ensure you have this import
 import { FaLink } from "react-icons/fa6";
+import { userStorage } from "@/store/link";
+import { useStore } from "zustand";
 
 export function SidebarDemo() {
 
   const pathname = usePathname();
+  // const { setUser } = userStorage.getState();
+  const { credits } = useStore(userStorage, (state) => state.user);
 
   const links = [
     {
@@ -71,7 +75,11 @@ export function SidebarDemo() {
               })}
             </div>
           </div>
-          <div>
+
+          <div className="flex flex-col justify-center">
+            <div className="border-2 border-gray-400 w-fit p-1 rounded-full">
+              <div className="flex gap-1 font-mono">Credits <p className="underline"><span className="font-bold">{credits}</span>/10</p></div>
+            </div>
             <SidebarLink
               link={{
                 label: ``,
@@ -87,18 +95,18 @@ export function SidebarDemo() {
                 ),
               }}
             />
-                <div className=" flex gap-2">
-                    <Button
-                    onClick={() => signOut()}
-                    className="flex-shrink-0 relative inline-flex h-10 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
-                    >
-                    <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
-                    <span className="inline-flex h-full w-full px-4 cursor-pointer items-center justify-center rounded-full bg-slate-100 p-2 text-sm font-medium text-black backdrop-blur-3xl">
-                        Logout
-                    </span>
-                    </Button>
-                </div>
+            <div className=" flex gap-2">
+                <Button
+                onClick={() => signOut()}
+                className="flex-shrink-0 relative inline-flex h-10 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
+                >
+                <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+                <span className="inline-flex h-full w-full px-4 cursor-pointer items-center justify-center rounded-full bg-slate-100 p-2 text-sm font-medium text-black backdrop-blur-3xl">
+                    Logout
+                </span>
+                </Button>
             </div>
+          </div>
         </SidebarBody>
       </Sidebar>
       <Dashboard />

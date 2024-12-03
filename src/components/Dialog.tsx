@@ -18,6 +18,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import validUrl from "valid-url";
 import axios from "axios";
+import { userStorage } from "@/store/link";
 
 export function DialogCloseButton() {
   const [urlInput, setUrlInput] = useState(""); 
@@ -43,16 +44,19 @@ export function DialogCloseButton() {
     }
 
     try {
-      console.log("Inside try/catch")
       const result = await axios.post("/api/link", { longLink: urlInput });
       const newLink = { shortLink: result.data.data.shortLink, longLink: urlInput };
       console.log("Short URL created: ", result.data);
+      const currentCredits = userStorage.getState().user.credits;
+      if (currentCredits !== null) {
+        userStorage.getState().updateCredits(currentCredits - 1);
+      }
       toast("Short URL created");
       console.log("Short URL created: ", result.data.data.shortLink);
       setResponse(result.data.data.shortLink);
-    } catch (error) {
-      console.error("Error details: ", error);
-      toast("Error creating short URL");
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.error || "Unexpected error occurred.";
+      toast.warning(errorMessage);
     }
   };
 
@@ -89,7 +93,7 @@ export function DialogCloseButton() {
           </div>
           <DialogClose asChild>
             <Button type="submit" size="sm" className="px-3">
-              Create Link
+              Create LinkDestination URL
             </Button>
           </DialogClose>
         </form>

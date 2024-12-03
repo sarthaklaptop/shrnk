@@ -11,37 +11,37 @@ import chalk from "chalk";
 export async function GET(request: NextRequest) {
     try {
       const { searchParams } = new URL(request.url);
-    const shortLink = searchParams.get('id');
+      const shortLink = searchParams.get('id');
 
-    if (!shortLink) {
-      return NextResponse.json({ error: "ID is required" }, { status: 400 });
-    }
+      if (!shortLink) {
+        return NextResponse.json({ error: "ID is required" }, { status: 400 });
+      }
 
-    const session = await getServerSession(authOptions);
+      const session = await getServerSession(authOptions);
 
-    if (!session || !session.user || !session.user.email) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    }
+      if (!session || !session.user || !session.user.email) {
+        return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+      }
 
-    console.log("Before DB Call");
+      console.log("Before DB Call");
 
-    const data = await prisma.link.findUnique({
-      where: { shortLink }
-    });
+      const data = await prisma.link.findUnique({
+        where: { shortLink }
+      });
 
-    const mainData = data?.clickHistory;
-    console.log(chalk.green(mainData));
+      const mainData = data?.clickHistory;
+      console.log(chalk.green(mainData));
 
-    console.log("After DB Call");
+      console.log("After DB Call");
 
-    if(!data) {
-      return NextResponse.json({ error: "Link not found" }, { status: 404 });
-    }
+      if(!data) {
+        return NextResponse.json({ error: "Link not found" }, { status: 404 });
+      }
 
-    return NextResponse.json(
-      {mainData},
-      {status: 200}
-    )
+      return NextResponse.json(
+        {mainData},
+        {status: 200}
+      )
       
     } catch (error: Response | any) {
       console.error("Error Getting short URL:", error);

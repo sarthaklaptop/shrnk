@@ -14,7 +14,7 @@ const nanoid = customAlphabet(alphabet, 6);
 
 export async function POST(request: NextRequest) {
   try {
-    // console.log(chalk.bgBlue("Inside POST route"));
+    console.log(chalk.bgBlue("Inside POST route"));
     const session = await getServerSession(authOptions);
     const { longLink } = await request.json();
 
@@ -31,9 +31,46 @@ export async function POST(request: NextRequest) {
         where: {
           email: session.user.email,
         },
+        select: {
+          id: true,
+          credits: true,
+          image: true,
+          userType: true,
+          name: true,
+          email: true,
+          emailVerified: true,
+        }
       });
+
+      console.log(chalk.bgCyan('User: ', JSON.stringify(user)));
       userId = user ? user.id : null;
+
+      const credits = user?.credits;
+
+      console.log(chalk.bgGray("Retrieved credits:- ", credits));
+
+      if (credits === undefined || credits === null) {
+        return NextResponse.json(
+          { error: "Credits field not found for user" },
+          { status: 500 }
+        );
+      }
+
+      if(credits == 0) {
+        return NextResponse.json(
+          { error: 'Insufficient credits to create a short URL' },
+          { status: 403 }
+        );
+      }
+
+      if(userId) {
+        await prisma.user.update({
+          where: { id: userId },
+          data: { credits: { decrement: 1 } },
+        });
+      }
     }
+
     let redirectUrl;
     
     // chalk.bgGreen(console.log(userId));
@@ -74,7 +111,6 @@ export async function POST(request: NextRequest) {
       data: redirectUrl,
     });
   } catch (error: Response | any) {
-    console.error("Error creating short URL:", error);
     return NextResponse.json(
       { error: "Error creating short URL", details: error.message },
       { status: 500 }

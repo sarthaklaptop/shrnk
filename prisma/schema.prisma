@@ -47,13 +47,22 @@ model User {
     accounts      Account[]
     sessions      Session[]
     userLinks     Link[]
+    userType      UserType  @default(FREE)
+    credits       Int       @default(10)
+    creditRenewed DateTime?
 
     @@map("users")
 }
 
+// Enum for different type of users
+enum UserType {
+  FREE
+  PREMIUM
+}
+
 model Link {
     id            String   @id @default(uuid())
-    longLink      String   @unique
+    longLink      String   
     shortLink     String   @unique
     fullShortLink String   @unique @default("")
     createdAt     DateTime @default(now())
@@ -89,29 +98,4 @@ model VerificationToken {
     @@map("verification_tokens")
 }
 
-// model Link {
-//     id            String      @id @default(uuid())
-//     longLink      String   @unique
-//     shortLink     String   @unique
-//     fullShortLink String   @unique @default("")
-//     createdAt     DateTime @default(now())
-//     count         Int      @default(0)
-//     clickLimit    Int      @default(0)
-//     expiresAt     DateTime
-//     @@map("links")
-// }
 
-// model UserLink { 
-//     id            String      @id @default(uuid())
-//     longLink      String      @unique
-//     shortLink     String      @unique
-//     fullShortLink String      @unique @default("")
-//     createdAt     DateTime    @default(now())
-//     count         Int         @default(0)
-//     clickLimit    Int         @default(0)
-//     expiresAt     DateTime
-//     userId        String      // Foreign key to User
-//     user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-//     @@map("user_links")
-// }

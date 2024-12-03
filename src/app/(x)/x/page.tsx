@@ -1,7 +1,7 @@
 'use client';
 
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +16,8 @@ import { PiFileCsvDuotone } from "react-icons/pi";
 import Links from '@/components/analytics/Links';
 import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
 import axios from 'axios';
+import { useSession } from 'next-auth/react';
+import { userStorage } from '@/store/link';
 
 
 interface UserLink {
@@ -29,6 +31,8 @@ interface UserLink {
 export default function Page() {
   const [userLinks, setUserLinks] = useState<UserLink[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { data: session, status } = useSession();
+  const { user, setUser } = userStorage(); 
 
   const csvConfig = mkConfig({ useKeysAsHeaders: true });
 
@@ -44,6 +48,31 @@ export default function Page() {
       return []; 
     }   
   };
+
+  useEffect(() => {
+    if(status == 'authenticated' && session?.user?.id) {
+      const fetchUserData = async () => {
+        try {
+          // console.log("Before response from /x")
+          const response = await axios.get(`api/user/${session.user.id}`);
+          // console.log('response data from /x', {response});
+          
+          const { image, email, credits } = response.data.user;
+          
+          setUser({
+            image,
+            email,
+            id: session.user.id,
+            credits,
+          })
+          console.log(userStorage.getState()); 
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      } ;
+      fetchUserData();
+    }
+  }, [status, session?.user?.id, setUser])
 
   const downloadCSV = async () => {
     setIsLoading(true);

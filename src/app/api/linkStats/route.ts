@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
             },
         })
 
-        if(!user ) {
+        if(!user) {
             return NextResponse.json({error: "User not found"}, {status: 401});
         }
 
