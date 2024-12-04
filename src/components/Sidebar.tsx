@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "./ui/sidebar";
 import { DiHaskell } from "react-icons/di";
 import { MdLogout } from "react-icons/md";
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import PersonIcon from '@mui/icons-material/Person';
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import PersonIcon from "@mui/icons-material/Person";
 import { IoMdSettings } from "react-icons/io";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -19,9 +19,9 @@ import { usePathname } from "next/navigation"; // Ensure you have this import
 import { FaLink } from "react-icons/fa6";
 import { userStorage } from "@/store/link";
 import { useStore } from "zustand";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 
 export function SidebarDemo() {
-
   const pathname = usePathname();
   // const { setUser } = userStorage.getState();
   const { credits } = useStore(userStorage, (state) => state.user);
@@ -30,21 +30,17 @@ export function SidebarDemo() {
     {
       label: "Links",
       href: "/x",
-      icon: (
-        <FaLink />
-      ),
+      icon: <FaLink />,
     },
     {
-      label:    "Profile",
+      label: "Profile",
       href: "/profile",
-      icon: (
-        <PersonIcon />
-      ),
-    }
+      icon: <PersonIcon />,
+    },
   ];
   const [open, setOpen] = useState(false);
 
-  const {data: session, status} = useSession();
+  const { data: session, status } = useSession();
   return (
     <div
       className={cn(
@@ -68,7 +64,7 @@ export function SidebarDemo() {
                     link={link}
                     className={cn(
                       "rounded-lg p-2 hover:bg-gray-200",
-                      isActive && "bg-red-300 font-medium text-red-700" 
+                      isActive && "bg-red-300 font-medium text-red-700"
                     )}
                   />
                 );
@@ -77,16 +73,46 @@ export function SidebarDemo() {
           </div>
 
           <div className="flex flex-col justify-center">
-            <div className="border-2 border-gray-400 w-fit p-1 rounded-full">
-              <div className="flex gap-1 font-mono">Credits <p className="underline"><span className="font-bold">{credits}</span>/10</p></div>
-            </div>
+            <HoverCard>
+              <HoverCardTrigger>
+                <div className="border-2 cursor-pointer border-gray-400 w-fit p-1 rounded-full">
+                  <div className="flex gap-1 font-mono">
+                    Credits{" "}
+                    <span className="font-bold underline">{credits}</span>
+                  </div>
+                </div>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-80 cursor-pointer">
+                <div className="flex justify-between space-x-4">
+                  <div className="space-y-1">
+                    <h4 className="text-xl font-bold bg-gradient-to-r from-red-500 to-purple-500 bg-clip-text text-transparent">Upgrade to Pro</h4>
+                    <p className="text-sm">
+                      With Upgrading to pro You will get 25 Monthly Credits More
+                    </p>
+                    <div className="flex mx-auto items-center justify-center w-full">
+                      <button className="p-[3px] relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-purple-500 rounded-lg" />
+                        <div className="px-8 py-2  bg-white  text-black font-bold rounded-[6px]  relative group transition duration-200  hover:bg-transparent hover:text-white hover:font-bold">
+                          Upgrade
+                        </div>
+                      </button>
+                    </div>
+                    {/* <button></button> */}
+                  </div>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+
             <SidebarLink
               link={{
                 label: ``,
                 href: "#",
                 icon: (
                   <Image
-                    src={session?.user?.image || "https://avatar.iran.liara.run/public/15"}
+                    src={
+                      session?.user?.image ||
+                      "https://avatar.iran.liara.run/public/15"
+                    }
                     className="h-7 w-7 flex-shrink-0 rounded-full"
                     width={50}
                     height={50}
@@ -96,15 +122,15 @@ export function SidebarDemo() {
               }}
             />
             <div className=" flex gap-2">
-                <Button
+              <Button
                 onClick={() => signOut()}
                 className="flex-shrink-0 relative inline-flex h-10 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
-                >
+              >
                 <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
                 <span className="inline-flex h-full w-full px-4 cursor-pointer items-center justify-center rounded-full bg-slate-100 p-2 text-sm font-medium text-black backdrop-blur-3xl">
-                    Logout
+                  Logout
                 </span>
-                </Button>
+              </Button>
             </div>
           </div>
         </SidebarBody>
@@ -144,17 +170,17 @@ export const LogoIcon = () => {
 const Dashboard = () => {
   const pathname = usePathname();
 
-  if (pathname === '/profile') {
+  if (pathname === "/profile") {
     return <ProfilePage />;
   }
 
-  if(pathname.startsWith('/x/analytics')) {
-    return < Page/>;
+  if (pathname.startsWith("/x/analytics")) {
+    return <Page />;
   }
 
   return (
     <div className="flex flex-1 gap-0">
-      <TabsDemo/>
+      <TabsDemo />
     </div>
   );
 };
