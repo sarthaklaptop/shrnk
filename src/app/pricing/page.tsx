@@ -1,6 +1,32 @@
+'use client'
+
 import Header from "@/components/Header"
+import { useEffect, useState } from "react";
+import { PayPalButton } from "react-paypal-button-v2";
 
 export default function Pricing() {
+
+    const [scriptLoaded, setScriptLoaded] = useState(false);
+
+    const addPayPalScript = () => {
+        if(window.paypal) {
+            setScriptLoaded(true);
+            return;
+        }
+
+        const script = document.createElement("script");
+        script.src = 'https://sandbox.paypal.com/sdk/js?client-id=AS69o9fqd9SPsxWtOVG_f5uIi_62h8VUHk98az5HnT2NS_kiPCQnoH2cf4X2oHC6ViVVTbwpR9xgUUoi'
+
+        script.type = "text/javascript"
+        script.async = true;
+        script.onload = () => setScriptLoaded(true);
+        document.body.appendChild(script);
+    }
+
+    useEffect(() => {
+        addPayPalScript();
+    }, [])
+
     return (
         <div>
             <Header/>
@@ -382,6 +408,16 @@ export default function Pricing() {
                                 className="block w-full rounded-md border border-primary bg-primary p-3 text-center text-base font-medium text-white transition hover:bg-opacity-90"
                                 >
                             Get Started with Pro
+                            { scriptLoaded ? 
+                                <PayPalButton
+                                    amount={24}
+                                    onSuccess={(details:any, data:any) => 
+                                        console.log("Details:-> ",details)
+                                    }
+                                /> : <span>Loading...</span>
+
+                            }
+                            
                             </a>
                             <div>
                                 <span className="absolute right-0 top-7 z-[-1]">
