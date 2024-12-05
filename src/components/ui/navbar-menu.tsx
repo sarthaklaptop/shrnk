@@ -60,6 +60,53 @@ export const MenuItem = ({
   );
 };
 
+// export const MenuItem = ({
+//   setActive,
+//   active,
+//   item,
+//   children,
+// }: {
+//   setActive: (item: string | null) => void;
+//   active: string | null;
+//   item: string;
+//   children?: React.ReactNode;
+// }) => {
+//   const handleMouseEnter = () => setActive(item);
+//   const handleMouseLeave = () => setActive(null);
+
+//   return (
+//     <div
+//       className="relative"
+//       onMouseEnter={handleMouseEnter}
+//       onMouseLeave={handleMouseLeave}
+//     >
+//       <motion.p
+//         transition={{ duration: 0.3 }}
+//         className="cursor-pointer text-black hover:opacity-90 dark:text-white"
+//       >
+//         {item}
+//       </motion.p>
+
+//       {active === item && (
+//         <motion.div
+//           initial={{ opacity: 0, scale: 0.95, y: 10 }}
+//           animate={{ opacity: 1, scale: 1, y: 0 }}
+//           transition={{
+//             type: "spring",
+//             stiffness: 100,
+//             damping: 12,
+//           }}
+//           className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 pt-2 w-56 z-50"
+//         >
+//           <div className="bg-white dark:bg-black rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+//             <div className="p-4">{children}</div>
+//           </div>
+//         </motion.div>
+//       )}
+//     </div>
+//   );
+// };
+
 export const Menu = ({
   setActive,
   children,
