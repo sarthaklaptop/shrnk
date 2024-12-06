@@ -1,49 +1,50 @@
-import { Copy } from "lucide-react";
-import { Button } from "@/components/ui/button";
+
+import { QrCode } from "@ark-ui/react/qr-code";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { FaLink } from "react-icons/fa6";
 import { FaRegQuestionCircle } from "react-icons/fa";
-import { useState } from "react";
-import { toast } from "sonner";
-import validUrl from "valid-url";
-import axios from "axios";
 import { MdQrCodeScanner } from "react-icons/md";
-import Image from "next/image";
+import ShrnkLogo from "../../../public/ShrnkLogo.png"
 
-export function QRCodeDialog({QRUrl}: {QRUrl: string}) {
-  
-  const link = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${QRUrl}`;
+export function QRCodeDialog({ QRUrl }: { QRUrl: string }) {
+  // const link = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${QRUrl}`;
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-          <div className=" flex items-center hover:font-bold m-[1px] transition-all duration-75 justify-between w-full gap-2">
-            QR Code <MdQrCodeScanner/>
-          </div>
+        <div className=" flex items-center hover:font-bold m-[1px] transition-all duration-75 justify-between w-full gap-2">
+          QR Code <MdQrCodeScanner />
+        </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex gap-1"> 
+          <DialogTitle className="flex gap-1">
             QR Code Preview <FaRegQuestionCircle />
           </DialogTitle>
         </DialogHeader>
-        <div className="flex items-center justify-center p-4 bg-gradient-to-r from-blue-200 to-cyan-200 rounded-lg">
-            <Image src={link} width={150} height={150} alt="QR Code" />            
-        </div>
+        {/* <div className="flex items-center justify-center p-4 bg-gradient-to-r from-blue-200 to-cyan-200 rounded-lg">
+          <Image src={link} width={150} height={150} alt="QR Code" />            
+        </div> */}
+          <QrCode.Root value={`${QRUrl}`} encoding={{ ecc: "H" }}>
+            <QrCode.Frame>
+              <QrCode.Pattern />
+            </QrCode.Frame>
+            <QrCode.Overlay>
+              <img 
+                src='/ShrnkNoBg.png' 
+                alt="Shrnk Logo"
+                // style={{
+                //   width: "150px", // Adjust size as needed
+                // }}             
+              />
+            </QrCode.Overlay>
+          </QrCode.Root>
       </DialogContent>
     </Dialog>
   );
 }
-
-
