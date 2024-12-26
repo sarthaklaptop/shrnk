@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useState } from "react";
 import useMeasure from "react-use-measure";
 import {
@@ -11,6 +11,10 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { FaCheckCircle } from "react-icons/fa";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { userStorage } from "@/store/link";
+// import { useRouter } from "next/router";
 
 interface DragCloseDrawerInterface {
   open: boolean;
@@ -19,21 +23,56 @@ interface DragCloseDrawerInterface {
 }
 
 export const DragCloseDrawerExample = () => {
-    const [open, setOpen] = useState(false);
+  const user = userStorage(state => state.user);
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
 
-    const { data: session, status } = useSession();
+  const [isLoaded, setIsLoaded] = useState(false);
 
-    const handleButtonClick = () => {
-        if (status === "unauthenticated") {
-          toast.error("Login is required", {
-            duration: 4000,
-            style: { color: "red" },
-          });
-          return;
-        }
-        setOpen(true);
-    };
+  const { data: session, status } = useSession();
 
+  const handleButtonClick = () => {
+    if (status === "unauthenticated") {
+      toast.error("Login is required", {
+        duration: 4000,
+        style: { color: "red" },
+      });
+      return;
+    }
+
+    console.log(user);
+
+    console.log(user.userType);
+    if(user.userType === "PREMIUM") {
+      toast.error("You are already a premium user", {
+        duration: 4000,
+        style: { color: "red" },
+      });
+      return;
+    }
+    setOpen(true);
+  };
+
+  const updateUserDetails = async (payerName: string) => {
+    try {
+      if (!session?.user?.id) return;
+
+      const response = await axios.patch(`/api/user/${session.user.id}`, {
+        userType: "PREMIUM",
+        credits: 1000,
+      });
+
+      if (response.status === 200) {
+        toast.success(`Purchase Completed Successfully ${payerName}`);
+        router.push("/x");
+      } else {
+        toast.error("Error updating user");
+      }
+    } catch (error) {
+      console.log("Error updating user:", error);
+      toast.error("Error updating user");
+    }
+  };
 
   return (
     <div className="grid place-content-center ">
@@ -53,87 +92,104 @@ export const DragCloseDrawerExample = () => {
         >
           <div className="flex flex-col mx-auto items-center justify-center w-2/3">
             <h2 className="text-4xl font-bold text-neutral-200 mb-4">
-                Complete your purchase
+              Complete your purchase
             </h2>
             <p className="text-gray-400">
-                Select your preferred payment method to access premium features
+              Select your preferred payment method to access premium features
             </p>
 
             <div className="flex w-full items-center justify-center gap-10 m-10">
-                <div className="flex w-full flex-col p-10 rounded-lg bg-zinc-800 text-gray-200">
-                    <p className="text-xl font-semibold">Pro Membership Benefits</p>
-                    <div className="p-4 flex flex-col gap-2 rounded-lg ">
-                        <p className="text-base flex gap-2 items-center justify-start text-body-color dark:text-dark-6">
-                            <FaCheckCircle color="green"/>
-                            1,000 new links/mo
-                        </p>
-                        <p className="text-base flex gap-2 items-center justify-start text-body-color dark:text-dark-66">
-                            <FaCheckCircle color="green"/>
-                            50K tracked clicks/mo
-                        </p>
-                        <p className="text-base flex gap-2 items-center justify-start text-body-color dark:text-dark-6">
-                            <FaCheckCircle color="green"/>
-                            1-year analytics retention
-                        </p>
-                        <p className="text-base flex gap-2 items-center justify-start text-body-color dark:text-dark-6">
-                            <FaCheckCircle color="green"/>
-                            10 custom domains
-                        </p>
-                        <p className="text-base flex gap-2 items-center justify-start text-body-color dark:text-dark-6">
-                            <FaCheckCircle color="green"/>
-                            Priority support
-                        </p>
-                    </div>
+              <div className="flex w-full flex-col p-10 rounded-lg bg-zinc-800 text-gray-200">
+                <p className="text-xl font-semibold">Pro Membership Benefits</p>
+                <div className="p-4 flex flex-col gap-2 rounded-lg ">
+                  <p className="text-base flex gap-2 items-center justify-start text-body-color dark:text-dark-6">
+                    <FaCheckCircle color="green" />
+                    1,000 new links/mo
+                  </p>
+                  <p className="text-base flex gap-2 items-center justify-start text-body-color dark:text-dark-66">
+                    <FaCheckCircle color="green" />
+                    50K tracked clicks/mo
+                  </p>
+                  <p className="text-base flex gap-2 items-center justify-start text-body-color dark:text-dark-6">
+                    <FaCheckCircle color="green" />
+                    1-year analytics retention
+                  </p>
+                  <p className="text-base flex gap-2 items-center justify-start text-body-color dark:text-dark-6">
+                    <FaCheckCircle color="green" />
+                    10 custom domains
+                  </p>
+                  <p className="text-base flex gap-2 items-center justify-start text-body-color dark:text-dark-6">
+                    <FaCheckCircle color="green" />
+                    Priority support
+                  </p>
                 </div>
+              </div>
 
-                <div className="border w-full rounded-lg py-10 h-full">
-                    <div className="m-4">
-                    <PayPalButtons
-                        className="" 
-                        style={{
-                            layout: "vertical", // Layout can be 'vertical' or 'horizontal'
-                            label: "paypal",    // Ensure it shows PayPal button only
-                        }}
-                        fundingSource="paypal" 
-                        createOrder={(data, actions) => {
-                        if (!actions.order)
-                            return Promise.reject("Order creation failed");
-                        return actions.order.create({
-                            intent: "CAPTURE",
-                            purchase_units: [
-                            {
-                                amount: {
-                                currency_code: "USD",
-                                value: "5.00",
-                                },
+              <div className="border w-full rounded-lg py-10 h-full">
+                <div className="m-4">
+                  <PayPalButtons
+                    className=""
+                    style={{
+                      layout: "vertical", // Layout can be 'vertical' or 'horizontal'
+                      label: "paypal", // Ensure it shows PayPal button only
+                    }}
+                    fundingSource="paypal"
+                    createOrder={(data, actions) => {
+                      if (!actions.order)
+                        return Promise.reject("Order creation failed");
+                      return actions.order.create({
+                        intent: "CAPTURE",
+                        purchase_units: [
+                          {
+                            amount: {
+                              currency_code: "USD",
+                              value: "5.00",
                             },
-                            ],
-                        });
-                        }}
-                        onApprove={(data, actions) => {
-                        if (!actions?.order)
-                            return Promise.reject("Order capture failed");
-                        return actions.order.capture().then((details) => {
-                            const payerName =
-                            details?.payer?.name?.given_name || "Customer";
-                            toast.success(`Transaction completed by ${payerName}`, {
-                                duration: 5000,
-                                style: {
-                                    color: "green",
-                                }
-                            });
-                            alert(`Transaction completed by ${payerName}`);
-                            console.log("Data: ",data);
-                            console.log("Details: ", details);
-                            setOpen(false);
-                        });
-                        }}
-                    />
-                    <p className="text-gray-500 line-through text-sm">$9.99/month</p>
-                    <p className="text-gray-200 font-medium text-lg">$4.99/month</p>
-                    <p className="text-green-600 text-sm">67% discount for users</p> 
-                    </div>
+                          },
+                        ],
+                      });
+                    }}
+                    onApprove={async (data, actions) => {
+                      if (!actions?.order)
+                        return Promise.reject("Order capture failed");
+                      // return actions.order.capture().then((details) => {
+                      //   const payerName =
+                      //     details?.payer?.name?.given_name || "Customer";
+                      //   toast.success(`Transaction completed by ${payerName}`, {
+                      //     duration: 5000,
+                      //     style: {
+                      //       color: "green",
+                      //     },
+                      //   });
+                      //   // alert(`Transaction completed by ${payerName}`);
+                      //   console.log("Data: ", data);
+                      //   console.log("Details: ", details);
+                      //   setOpen(false);
+                      const details = await actions.order.capture();
+                      const payerName =
+                        details?.payer?.name?.given_name || "Customer";
+
+                      await updateUserDetails(payerName);
+
+                      // toast.success(`Transaction completed by ${payerName}`, {
+                      //   duration: 5000,
+                      //   style: {
+                      //     color: "green",
+                      //   },
+                      // });
+                    }}
+                  />
+                  <p className="text-gray-500 line-through text-sm">
+                    $9.99/month
+                  </p>
+                  <p className="text-gray-200 font-medium text-lg">
+                    $4.99/month
+                  </p>
+                  <p className="text-green-600 text-sm">
+                    67% discount for users
+                  </p>
                 </div>
+              </div>
             </div>
           </div>
         </PayPalScriptProvider>

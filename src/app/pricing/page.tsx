@@ -1,6 +1,13 @@
+"use client";
+
 import { DragCloseDrawerExample } from "@/components/PaymentCloseDraw";
+import { userStorage } from "@/store/link";
 
 export default function Pricing() {
+  const user = userStorage((state) => state.user);
+
+  console.log(user);
+
   return (
     <div>
       <section className="relative overflow-hidden bg-white dark:bg-dark lg:pt-[100px] lg:pb-[90px]">
@@ -86,11 +93,11 @@ export default function Pricing() {
                           y2="172"
                           gradientUnits="userSpaceOnUse"
                         >
-                          <stop stop-color="#F0372A" stop-opacity="0.09" />
+                          <stop stopColor="#F0372A" stopOpacity="0.09" />
                           <stop
                             offset="1"
-                            stop-color="#C4C4C4"
-                            stop-opacity="0"
+                            stopColor="#C4C4C4"
+                            stopOpacity="0"
                           />
                         </linearGradient>
                       </defs>
@@ -396,11 +403,11 @@ export default function Pricing() {
                           y2="172"
                           gradientUnits="userSpaceOnUse"
                         >
-                          <stop stop-color="#F0372A" stop-opacity="0.09" />
+                          <stop stopColor="#F0372A" stopOpacity="0.09" />
                           <stop
                             offset="1"
-                            stop-color="#C4C4C4"
-                            stop-opacity="0"
+                            stopColor="#C4C4C4"
+                            stopOpacity="0"
                           />
                         </linearGradient>
                       </defs>

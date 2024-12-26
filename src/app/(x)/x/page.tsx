@@ -57,15 +57,17 @@ export default function Page() {
           const response = await axios.get(`api/user/${session.user.id}`);
           // console.log('response data from /x', {response});
           
-          const { image, email, credits } = response.data.user;
+          const { image, email, credits, userType } = response.data.user;
           
           setUser({
             image,
             email,
             id: session.user.id,
             credits,
+            userType
           })
-          console.log(userStorage.getState()); 
+          console.log(userStorage.getState().user.userType); 
+          console.log("User State:", userStorage.getState().user);
         } catch (error) {
           console.error('Error fetching user data:', error);
         }
