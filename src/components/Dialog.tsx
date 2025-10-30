@@ -72,28 +72,33 @@ export function DialogCloseButton() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex gap-1"> 
+          <DialogTitle className="flex items-center gap-1">
             <FaLink /> New link
           </DialogTitle>
-          <DialogDescription className="flex gap-1 items-center">
+          <DialogDescription className="flex items-center gap-1">
             Destination URL <FaRegQuestionCircle />
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={onSubmit} className="flex items-center space-x-2">
-          <div className="grid flex-1 gap-2">
-            <Label htmlFor="link" className="sr-only">
-              Link
-            </Label>
-            <Input
-              id="link"
-              value={urlInput}
-              onChange={handleChange}
-              required // Add required attribute for form validation
-            />
-          </div>
+
+        {/* ---------- 80 / 20 FORM ---------- */}
+        <form onSubmit={onSubmit} className="grid grid-cols-5 gap-2 mt-4">
+          {/* INPUT – 4 columns = 80% */}
+          <Label htmlFor="link" className="sr-only">
+            Link
+          </Label>
+          <Input
+            id="link"
+            placeholder="https://example.com/very/long/url..."
+            value={urlInput}
+            onChange={handleChange}
+            required
+            className="col-span-4 w-full"
+          />
+
+          {/* BUTTON – 1 column = 20% */}
           <DialogClose asChild>
-            <Button type="submit" size="sm" className="px-3">
-              Create LinkDestination URL
+            <Button type="submit" size="sm" className="col-span-1 w-full">
+              Create
             </Button>
           </DialogClose>
         </form>

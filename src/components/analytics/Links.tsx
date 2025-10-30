@@ -124,7 +124,7 @@ export default function Links() {
 
   return (
     <div>
-      <ScrollArea className="h-96 w-full m-4">
+      <ScrollArea className="h-[calc(100vh-220px)] w-full mx-4 my-8">
         <div className="flex flex-col gap-2">
           {userLinks.map(({ id, shortLink, longLink, count }: UserLink) => (
             <div key={id} className="relative">
