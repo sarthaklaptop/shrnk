@@ -38,6 +38,7 @@ export function PlaceholdersAndVanishInputDemo() {
   const [urlInput, setUrlInput] = useState(""); 
   const [response, setResponse] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrlInput(e.target.value);  
@@ -59,16 +60,21 @@ export function PlaceholdersAndVanishInputDemo() {
     }
 
     try {
+      setIsLoading(true);
+      setIsDialogOpen(true);
       const result = await axios.post("/api/link", { longLink: urlInput });
       const newLink = { shortLink: result.data.data.shortLink, longLink: urlInput };
       console.log("Short URL created: ", result.data);
-      setIsDialogOpen(true);
       toast("Short URL created");
       console.log("Short URL created: ", result.data.data.shortLink);
       setResponse(result.data.data.shortLink)
+      setIsLoading(false);
     } catch (error) {
       console.error("Error details: ", error);
       toast("Error creating short URL");
+      setIsLoading(false);
+      // Keep dialog open to show error/skeleton state if needed, or close:
+      // setIsDialogOpen(false);
     }
   };
 
@@ -77,7 +83,7 @@ export function PlaceholdersAndVanishInputDemo() {
     toast("Copied to clipboard");
   }
   return (
-    <div className=" m-2 flex flex-col w-2/4 justify-center  items-center px-4">
+    <div className=" m-2 flex flex-col w-full sm:w-3/4 md:w-2/3 lg:w-1/2 justify-center items-center px-4">
       <div className="z-10 bg-white w-full">
         <PlaceholdersAndVanishInput
           placeholders={placeholders}
@@ -88,40 +94,82 @@ export function PlaceholdersAndVanishInputDemo() {
 
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger></DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <div className="flex items-center gap-2 border-2 justify-center mx-auto p-1 bg-slate-200 rounded-lg ">
-            <a href={`api/${response}`} className="font-bold" target="_blank" rel="noopener noreferrer">
-              {BASEURL}{response}
-            </a>
-            <span className="border-2 p-1 rounded-full bg-zinc-100 cursor-pointer" onClick={() => copyClipBoard({response})}>
-              <MdContentCopy/>
-            </span>
-          </div> 
-          <DialogTitle className="flex flex-col items-center justify-center">
-            <p className="text-lg text-red-500">This link will be deleted in 24h.</p>
-            <p className="text-red-400 text-sm">To keep links and avail many other features, create an account.</p>
-          </DialogTitle>
-          <DialogDescription>
+      <DialogContent className="sm:max-w-md p-0 overflow-hidden rounded-2xl border-0">
+        {isLoading ? (
+          <>
+            <div className="bg-gradient-to-br from-red-600 to-red-500 text-white px-6 py-5">
+              <h3 className="text-base font-semibold">Creating short link…</h3>
+              <p className="text-xs text-red-50/90">Hold on while we set things up.</p>
+            </div>
+            <div className="p-6 space-y-5">
+              <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-rose-50/60 px-3 py-3">
+                <div className="h-4 w-40 bg-red-100 rounded animate-pulse" />
+                <div className="ml-auto h-6 w-6 rounded-md border border-red-200 bg-white flex items-center justify-center">
+                  <div className="h-3 w-3 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="h-4 w-44 bg-zinc-200 rounded animate-pulse" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div className="h-4 bg-zinc-100 rounded animate-pulse" />
+                  <div className="h-4 bg-zinc-100 rounded animate-pulse" />
+                  <div className="h-4 bg-zinc-100 rounded animate-pulse" />
+                  <div className="h-4 bg-zinc-100 rounded animate-pulse" />
+                </div>
+              </div>
+              <button disabled className="w-full rounded-lg bg-red-500/70 text-white py-2.5 text-sm font-medium">
+                Preparing…
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="bg-gradient-to-br from-red-600 to-red-500 text-white px-6 py-5">
+              <h3 className="text-base font-semibold">Short link created</h3>
+              <p className="text-xs text-red-50/90">This temporary link will be deleted in 24 hours.</p>
+            </div>
 
-            <ul className="flex items-center justify-center flex-col">
-              <li> <span className="font-bold">Analytics: </span> All time, daily and unique views</li>
-              <li> <span className="font-bold">Bar Charts: </span> Last 7 days views charted</li>
-              <li> <span className="font-bold">Editable: </span> Edit titles, URLs and destinations easily</li>
-              <li> <span className="font-bold">Filters: </span> Filter by create, views and more</li>
-              <li> <span className="font-bold">Search: </span> Search for URLs with syntax highlighting</li>
-              <li> <span className="font-bold">Theme: </span> Light (default) and dark mode</li>
-            </ul>
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <button
-              className="bg-black text-white w-full p-1 rounded-md text-sm"
-              onClick={() => signIn("google")}
-          >
-              Create Account! Its 100% free!
-          </button>
-        </DialogFooter>
+            <div className="p-6 space-y-5">
+              <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-rose-50/60 px-3 py-2 text-sm">
+                <a
+                  href={`api/${response}`}
+                  className="font-mono font-medium truncate text-zinc-900"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {BASEURL}{response}
+                </a>
+                <button
+                  type="button"
+                  className="ml-auto inline-flex items-center justify-center rounded-md border border-red-200 bg-white px-2 py-1 text-xs text-red-700 hover:bg-red-50 active:scale-[0.98] transition"
+                  onClick={() => copyClipBoard({response})}
+                  aria-label="Copy link"
+                >
+                  <MdContentCopy className="h-4 w-4" />
+                </button>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="text-sm font-semibold text-red-600">Why create an account?</h4>
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-zinc-700">
+                  <li><span className="font-medium">Analytics:</span> All-time, daily and unique views</li>
+                  <li><span className="font-medium">Bar charts:</span> Last 7 days views charted</li>
+                  <li><span className="font-medium">Editable:</span> Edit titles, URLs and destinations</li>
+                  <li><span className="font-medium">Filters:</span> Filter by created, views and more</li>
+                  <li><span className="font-medium">Search:</span> Find URLs with syntax highlighting</li>
+                  <li><span className="font-medium">Theme:</span> Light and dark mode</li>
+                </ul>
+              </div>
+
+              <button
+                className="w-full rounded-lg bg-red-500 text-white py-2.5 text-sm font-medium hover:bg-red-700 active:scale-[0.99] transition"
+                onClick={() => signIn("google")}
+              >
+                Create an account — it’s free
+              </button>
+            </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
     </div>
