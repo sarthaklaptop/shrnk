@@ -20,7 +20,12 @@ import validUrl from "valid-url";
 import axios from "axios";
 import { userStorage } from "@/store/link";
 
-export function DialogCloseButton() {
+interface DialogCloseButtonProps {
+  label?: string;
+  className?: string;
+}
+
+export function DialogCloseButton({ label = "Create", className = "" }: DialogCloseButtonProps) {
   const [urlInput, setUrlInput] = useState(""); 
   const [response, setResponse] = useState("");
 
@@ -65,9 +70,9 @@ export function DialogCloseButton() {
       <DialogTrigger asChild>
         <Button 
           variant="outline"
-          className="px-4 py-2 rounded-md border border-black bg-white text-black text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200"
+          className={`px-4 py-2 rounded-md border border-black bg-white text-black text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200 ${className}`}
         > 
-          Create
+          {label}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">

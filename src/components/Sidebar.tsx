@@ -1,9 +1,6 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "./ui/sidebar";
-import { DiHaskell } from "react-icons/di";
-import { MdLogout } from "react-icons/md";
-import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonIcon from "@mui/icons-material/Person";
 import { IoMdSettings } from "react-icons/io";
 import Link from "next/link";
@@ -20,11 +17,14 @@ import { FaLink } from "react-icons/fa6";
 import { userStorage } from "@/store/link";
 import { useStore } from "zustand";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
+import AccountSettingsPage from "@/app/(x)/account-settings/page";
+import axios from "axios";
 
 export function SidebarDemo() {
   const pathname = usePathname();
-  // const { setUser } = userStorage.getState();
   const { credits } = useStore(userStorage, (state) => state.user);
+  const { setUser } = userStorage();
+  const [creditsLoading, setCreditsLoading] = useState(true);
 
   const links = [
     {
@@ -37,10 +37,42 @@ export function SidebarDemo() {
       href: "/profile",
       icon: <PersonIcon />,
     },
+    {
+      label: "Account Settings",
+      href: "/account-settings",
+      icon: <IoMdSettings />,
+    },
   ];
   const [open, setOpen] = useState(false);
 
   const { data: session, status } = useSession();
+
+  // Fetch user data including credits when authenticated
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user?.id) {
+      setCreditsLoading(true);
+      const fetchUserData = async () => {
+        try {
+          const response = await axios.get(`api/user/${session.user.id}`);
+          
+          const { image, email, credits, userType } = response.data.user;
+          
+          setUser({
+            image,
+            email,
+            id: session.user.id,
+            credits,
+            userType
+          });
+        } catch (error) {
+          console.error('Error fetching user data in Sidebar:', error);
+        } finally {
+          setCreditsLoading(false);
+        }
+      };
+      fetchUserData();
+    }
+  }, [status, session?.user?.id, setUser]);
   return (
     <div
       className={cn(
@@ -73,35 +105,44 @@ export function SidebarDemo() {
           </div>
 
           <div className="flex flex-col justify-center">
-            <HoverCard>
-              <HoverCardTrigger>
-                <div className="border-2 cursor-pointer border-gray-400 w-fit p-1 rounded-full">
-                  <div className="flex gap-1 font-mono">
-                    Credits{" "}
-                    <span className="font-bold underline">{credits}</span>
-                  </div>
-                </div>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-80 cursor-pointer">
-                <div className="flex justify-between space-x-4">
-                  <div className="space-y-1">
-                    <h4 className="text-xl font-bold bg-gradient-to-r from-red-500 to-purple-500 bg-clip-text text-transparent">Upgrade to Pro</h4>
-                    <p className="text-sm">
-                      With Upgrading to pro You will get 25 Monthly Credits More
-                    </p>
-                    <div className="flex mx-auto items-center justify-center w-full">
-                      <button className="p-[3px] relative">
-                        <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-purple-500 rounded-lg" />
-                        <div className="px-8 py-2  bg-white  text-black font-bold rounded-[6px]  relative group transition duration-200  hover:bg-transparent hover:text-white hover:font-bold">
-                          Upgrade
-                        </div>
-                      </button>
+            <div className="hidden lg:block">
+
+            
+              <HoverCard>
+                <HoverCardTrigger>
+                  <div className="border-2 cursor-pointer border-red-300 w-fit p-2 rounded-lg">
+                    <div className="flex gap-1 font-mono">
+                      Credits{" "}
+                      {creditsLoading ? 
+                      (
+                        <span className="inline-block w-12 h-5 bg-gray-300 rounded animate-pulse" />
+                      ) : (
+                          <span className="font-bold">{credits}</span>
+                      )
+                      }
                     </div>
-                    {/* <button></button> */}
                   </div>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-80 cursor-pointer">
+                  <div className="flex justify-between space-x-4">
+                    <div className="space-y-1">
+                      <h4 className="text-xl font-bold bg-gradient-to-r from-red-500 to-purple-500 bg-clip-text text-transparent">Upgrade to Pro</h4>
+                      <p className="text-sm">
+                        With Upgrading to pro You will get 25 Monthly Credits More
+                      </p>
+                      <div className="flex mx-auto items-center justify-center w-full">
+                        <Link href="/pricing" className="p-[3px] relative">
+                          <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-purple-500 rounded-lg" />
+                          <div className="px-8 py-2  bg-white  text-black font-bold rounded-[6px]  relative group transition duration-200  hover:bg-transparent hover:text-white hover:font-bold">
+                            Upgrade
+                          </div>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+            </div>
 
             <SidebarLink
               link={{
@@ -176,6 +217,10 @@ const Dashboard = () => {
 
   if (pathname.startsWith("/x/analytics")) {
     return <Page />;
+  }
+
+  if (pathname === "/account-settings") {
+    return <AccountSettingsPage />;
   }
 
   return (

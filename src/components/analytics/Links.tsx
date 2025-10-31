@@ -20,6 +20,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { QRCodeDialog } from "../ui/QRCode";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { useProtectedRoute } from "@/lib/hooks/useProtectedRoute";
+import { DialogCloseButton } from "@/components/Dialog";
 
 interface UserLink {
   id: string;
@@ -32,6 +33,7 @@ interface UserLink {
 export default function Links() {
   const [userLinks, setUserLinks] = useState<UserLink[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const router = useRouter();
 
   const status = useProtectedRoute();
@@ -102,6 +104,35 @@ export default function Links() {
     );
   }
 
+  if (!isLoading && status === "authenticated" && userLinks.length === 0) {
+    return (
+      <div className="w-full h-[calc(100vh-220px)] flex items-center justify-center">
+        <div className="text-center flex flex-col items-center gap-4">
+          {/* Illustration */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 200 140"
+            className="w-40 h-28 text-zinc-300"
+            aria-hidden
+          >
+            <rect x="15" y="20" width="170" height="100" rx="10" fill="#f3f4f6" />
+            <rect x="30" y="40" width="90" height="10" rx="5" fill="#e5e7eb" />
+            <rect x="30" y="60" width="140" height="10" rx="5" fill="#e5e7eb" />
+            <rect x="30" y="80" width="120" height="10" rx="5" fill="#e5e7eb" />
+            <circle cx="155" cy="50" r="8" fill="#e5e7eb" />
+          </svg>
+
+          <div className="space-y-1">
+            <p className="text-lg font-semibold">No links yet</p>
+            <p className="text-sm text-zinc-500">Create your first short link to get started.</p>
+          </div>
+
+          <DialogCloseButton label="Create your first short link" />
+        </div>
+      </div>
+    );
+  }
+
   const copyToClipboard = (shortLink: string) => {
     navigator.clipboard.writeText(`${BASEURL}/${shortLink}`);
     toast("Copied to clipboard");
@@ -112,6 +143,7 @@ export default function Links() {
   };
 
   const deleteLink = async (id: string) => {
+    setDeletingId(id);
     try {
       await axios.delete("/api/link", { data: { id } });
       toast("Link deleted successfully");
@@ -119,6 +151,8 @@ export default function Links() {
     } catch (error) {
       console.error("Error deleting link:", error);
       toast.error("Error deleting link");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -165,14 +199,28 @@ export default function Links() {
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-fit">
-                        {/* <DropdownMenuLabel className="flex cursor-pointer hover:bg-slate-200 rounded-sm items-center justify-between">
-                          <QRCodeDialog QRUrl={`${BASEURL}/${shortLink}`} />
-                        </DropdownMenuLabel> */}
-                        <DropdownMenuLabel
+                        {/* <DropdownMenuLabel
                           className="flex hover:bg-red-500 transition-all duration-200 cursor-pointer hover:text-white rounded-sm text-red-400 items-center justify-between"
                           onClick={() => deleteLink(id)}
                         >
                           Delete <FaDeleteLeft />
+                        </DropdownMenuLabel> */}
+                        <DropdownMenuLabel
+                          className={`flex items-center justify-between rounded-sm transition-all duration-200 ${
+                            deletingId === id
+                              ? "bg-red-400 text-white cursor-not-allowed"
+                              : "hover:bg-red-500 hover:text-white text-red-400 cursor-pointer"
+                          }`}
+                          onClick={() => !deletingId && deleteLink(id)}
+                          style={{ pointerEvents: deletingId === id ? "none" : "auto" }}
+                        >
+                          {deletingId === id ? (
+                            <>deleting...</>
+                          ) : (
+                            <>
+                              Delete <FaDeleteLeft />
+                            </>
+                          )}
                         </DropdownMenuLabel>
                       </DropdownMenuContent>
                     </DropdownMenu>
