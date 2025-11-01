@@ -23,10 +23,11 @@ export async function GET(
     });
 
     if (!linkRecord) {
-      return NextResponse.json(
-        { error: "Short URL not found" },
-        { status: 404 }
-      );
+    //   return NextResponse.json(
+    //     { error: "Short URL not found" },
+    //     { status: 404 }
+    //   );
+        return NextResponse.redirect(new URL('/link-not-found', request.url))
     }
 
     // 2. Check Expiry
