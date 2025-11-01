@@ -30,7 +30,6 @@ interface UserData {
 export default function AccountSettingsPage() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [nameInput, setNameInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -40,11 +39,18 @@ export default function AccountSettingsPage() {
 
   useProtectedRoute();
 
+  // Derive user data from session (Google OAuth)
   useEffect(() => {
-    if (status === 'authenticated') {
-      fetchUserData();
+    if (status === 'authenticated' && session?.user) {
+      const { id, name, email } = session.user;
+      const derivedUserData: UserData = {
+        id: id as string,
+        name: name || null,
+        email: email || null,
+      };
+      setUserData(derivedUserData);
     }
-  }, [status]);
+  }, [session, status]);
 
   useEffect(() => {
     if (userData) {
@@ -57,22 +63,9 @@ export default function AccountSettingsPage() {
       await navigator.clipboard.writeText(text);
       setCopied(true);
       toast.success('User ID copied to clipboard');
-      setTimeout(() => setCopied(false), 2000); // Reset after 2s
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       toast.error('Failed to copy');
-    }
-  };
-
-  const fetchUserData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axios.get('/api/account-settings');
-      setUserData(response.data.data);
-    } catch (error: any) {
-      console.error('Error fetching user data:', error);
-      toast.error(error.response?.data?.error || 'Failed to fetch user data');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -90,7 +83,7 @@ export default function AccountSettingsPage() {
     setIsSaving(true);
     try {
       const response = await axios.patch('/api/account-settings', { name: nameInput.trim() });
-      setUserData(response.data.data);
+      setUserData((prev) => ({ ...prev!, name: response.data.data.name }));
       toast.success('Name updated successfully');
     } catch (error: any) {
       console.error('Error updating name:', error);
@@ -105,7 +98,6 @@ export default function AccountSettingsPage() {
     try {
       await axios.delete('/api/account-settings');
       toast.success('Account deleted successfully');
-      // Sign out and redirect to home
       router.push('/api/auth/signout');
     } catch (error: any) {
       console.error('Error deleting account:', error);
@@ -117,7 +109,8 @@ export default function AccountSettingsPage() {
 
   const isNameChanged = nameInput.trim() !== (userData?.name || '');
 
-  if (status === 'loading' || isLoading) {
+  // Show loading only while session is loading
+  if (status === 'loading') {
     return (
       <div className="bg-white w-full rounded-lg mt-2 border-[1px] border-gray-300 p-2">
         <div className="w-4/5 my-4 flex flex-col mx-auto">
@@ -140,12 +133,12 @@ export default function AccountSettingsPage() {
 
         {/* User Name Section */}
         <div className="border-2 flex flex-col gap-4 rounded-lg p-4 space-y-3">
-          <div className='flex flex-col gap-2'>
+          <div className="flex flex-col gap-2">
             <Label htmlFor="name" className="text-lg font-semibold">
-                Your Name
+              Your Name
             </Label>
             <Label htmlFor="name" className="text-sm text-zinc-500">
-                This is your name on Shrnk
+              This is your name on Shrnk
             </Label>
           </div>
           <div className="flex gap-2 items-center">
@@ -167,88 +160,70 @@ export default function AccountSettingsPage() {
           </div>
         </div>
 
-        {/* Email Section */}
+        {/* Email Section - From Session (No API Call) */}
         <div className="border-2 flex flex-col gap-4 rounded-lg p-4 space-y-3">
-          <div className='flex flex-col gap-2'>
+          <div className="flex flex-col gap-2">
             <Label htmlFor="email" className="text-lg font-semibold">
-                Your Email
+              Your Email
             </Label>
             <Label htmlFor="email" className="text-sm text-zinc-500">
-                This is your email on Shrnk
+              This is your email on Shrnk
             </Label>
           </div>
 
-          <div className='flex flex-col gap-2'>
+          <div className="flex flex-col gap-2">
             <Input
-                id="email"
-                type="email"
-                value={userData?.email || ''}
-                readOnly
-                disabled
-                className="bg-gray-100 cursor-not-allowed"
+              id="email"
+              type="email"
+              value={userData?.email || 'Loading...'}
+              readOnly
+              disabled
+              className="bg-gray-100 cursor-not-allowed"
             />
             <p className="text-sm text-zinc-500">
-                Updating email option will come soon in next update
+              Email is managed by Google. Updating not supported.
             </p>
           </div>
         </div>
 
         {/* User ID Section */}
-        {/* <div className="border-2 flex flex-col gap-4 rounded-lg p-4 space-y-3">
-          <div className='flex flex-col gap-2'>
+        <div className="border-2 flex flex-col gap-4 rounded-lg p-4 space-y-3">
+          <div className="flex flex-col gap-2">
             <Label htmlFor="userId" className="text-lg font-semibold">
-                Your User Id
+              Your User Id
             </Label>
             <Label htmlFor="userId" className="text-sm text-zinc-500">
-                This is your Unique User Id on Shrnk
+              This is your Unique User Id on Shrnk
             </Label>
           </div>
-          <Input
-            id="userId"
-            type="text"
-            value={userData?.id || ''}
-            readOnly
-            disabled
-            className="bg-gray-100 cursor-not-allowed font-mono text-sm"
-          />
-        </div> */}
-        {/* User ID Section */}
-        <div className="border-2 flex flex-col gap-4 rounded-lg p-4 space-y-3">
-        <div className='flex flex-col gap-2'>
-            <Label htmlFor="userId" className="text-lg font-semibold">
-            Your User Id
-            </Label>
-            <Label htmlFor="userId" className="text-sm text-zinc-500">
-            This is your Unique User Id on Shrnk
-            </Label>
+
+          <div className="flex gap-2 items-center">
+            <Input
+              id="userId"
+              type="text"
+              value={userData?.id || ''}
+              readOnly
+              disabled
+              className="bg-gray-100 cursor-not-allowed font-mono text-sm flex-1"
+            />
+            <Button
+              onClick={() => copyUserId(userData?.id || '')}
+              disabled={!userData?.id}
+              className="px-3 py-2 rounded-md border border-black bg-white text-black text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] hover:bg-black hover:text-white transition-all duration-200 disabled:opacity-50"
+            >
+              {copied ? <Check size={16} strokeWidth={2} aria-hidden="true" /> : <Copy size={16} strokeWidth={2} aria-hidden="true" />}
+            </Button>
+          </div>
         </div>
 
-            <div className="flex gap-2 items-center">
-                <Input
-                    id="userId"
-                    type="text"
-                    value={userData?.id || ''}
-                    readOnly
-                    disabled
-                    className="bg-gray-100 cursor-not-allowed font-mono text-sm flex-1"
-                />
-                <Button
-                    onClick={() => copyUserId(userData?.id || '')}
-                    disabled={!userData?.id}
-                    className="px-3 py-2 rounded-md border border-black bg-white text-black text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] hover:bg-black hover:text-white transition-all duration-200 disabled:opacity-50"
-                >
-                    {copied ? <Check size={16} strokeWidth={2} aria-hidden="true" /> : <Copy size={16} strokeWidth={2} aria-hidden="true" />}
-                </Button>
-            </div>
-        </div>
         {/* Delete Account Section */}
         <div className="border-2 border-red-300 flex flex-col gap-4 rounded-lg p-4 space-y-3">
-          <div className='flex flex-col gap-2'>
+          <div className="flex flex-col gap-2">
             <Label className="text-lg font-semibold text-red-600">
-                Delete Account
+              Delete Account
             </Label>
             <p className="text-sm text-zinc-600">
-                Once you delete your account, there is no going back. Please be certain.
+              Once you delete your account, there is no going back. Please be certain.
             </p>
           </div>
           <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

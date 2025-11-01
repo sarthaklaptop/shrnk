@@ -30,7 +30,13 @@ interface UserLink {
   [key: string]: any;
 }
 
-export default function Links() {
+interface LinksProps {
+  searchQuery?: string;
+  searchResults?: UserLink[];
+  isSearching?: boolean;
+}
+
+export default function Links({ searchQuery = '', searchResults = [], isSearching = false}: LinksProps) {
   const [userLinks, setUserLinks] = useState<UserLink[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -39,24 +45,35 @@ export default function Links() {
   const status = useProtectedRoute();
 
   useEffect(() => {
+    // Don't fetch if we have a search query - parent handles search
+    if (searchQuery.trim()) {
+      return;
+    }
+
     const fetchUserLinks = async () => {
       setIsLoading(true);
       try {
+        // Use regular userLinks endpoint when no search query
         const response = await axios.get("/api/userLinks");
         setUserLinks(response.data.data);
       } catch (error) {
         console.error("Error fetching user links:", error);
+        setUserLinks([]);
       } finally {
         setIsLoading(false);
       }
     };
 
+    // Only fetch normal links if not searching and authenticated
     if (status === "authenticated") {
       fetchUserLinks();
     }
-  }, [status]);
+  }, [status, searchQuery]);
 
-  if (status == "loading" || isLoading) {
+  // Use searchResults when searching, otherwise use userLinks
+  const displayLinks = searchQuery.trim() ? searchResults : userLinks;
+
+  if (status == "loading" || (isLoading && !searchQuery.trim()) || (isSearching && searchQuery.trim())) {
     return (
       <div className="bg-white w-full rounded-lg mt-2 p-2">
         <div
@@ -104,7 +121,7 @@ export default function Links() {
     );
   }
 
-  if (!isLoading && status === "authenticated" && userLinks.length === 0) {
+  if ((!isLoading && !isSearching) && status === "authenticated" && displayLinks.length === 0) {
     return (
       <div className="w-full h-[calc(100vh-220px)] flex items-center justify-center">
         <div className="text-center flex flex-col items-center gap-4">
@@ -123,11 +140,19 @@ export default function Links() {
           </svg>
 
           <div className="space-y-1">
-            <p className="text-lg font-semibold">No links yet</p>
-            <p className="text-sm text-zinc-500">Create your first short link to get started.</p>
+            <p className="text-lg font-semibold">
+              {searchQuery.trim() ? 'No links found' : 'No links yet'}
+            </p>
+            <p className="text-sm text-zinc-500">
+              {searchQuery.trim() 
+                ? 'Try a different search term.' 
+                : 'Create your first short link to get started.'}
+            </p>
           </div>
 
-          <DialogCloseButton label="Create your first short link" />
+          {!searchQuery.trim() && (
+            <DialogCloseButton label="Create your first short link" />
+          )}
         </div>
       </div>
     );
@@ -147,7 +172,9 @@ export default function Links() {
     try {
       await axios.delete("/api/link", { data: { id } });
       toast("Link deleted successfully");
+      // Update both userLinks and searchResults state
       setUserLinks((prevLinks) => prevLinks.filter((link) => link.id !== id));
+      // If searching, the parent component will need to refetch or update searchResults
     } catch (error) {
       console.error("Error deleting link:", error);
       toast.error("Error deleting link");
@@ -160,7 +187,7 @@ export default function Links() {
     <div>
       <ScrollArea className="h-[calc(100vh-220px)] w-full mx-4 my-8">
         <div className="flex flex-col gap-2">
-          {userLinks.map(({ id, shortLink, longLink, count }: UserLink) => (
+          {displayLinks.map(({ id, shortLink, longLink, count }: UserLink) => (
             <div key={id} className="relative">
               <div className="flex flex-col border-red-50 border-2 rounded-lg cursor-pointer p-4 w-full gap-2">
                 <div className="flex justify-between">

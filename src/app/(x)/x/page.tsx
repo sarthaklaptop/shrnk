@@ -13,11 +13,13 @@ import { BASEURL } from '@/constants/constant';
 import { toast } from 'sonner';
 import { mkConfig, generateCsv, download } from "export-to-csv";
 import { PiFileCsvDuotone } from "react-icons/pi";
+import { IoSearchOutline } from 'react-icons/io5';
 import Links from '@/components/analytics/Links';
 import { useProtectedRoute } from '@/lib/hooks/useProtectedRoute';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { userStorage } from '@/store/link';
+import { Input } from '@/components/ui/input';
 
 
 interface UserLink {
@@ -31,6 +33,10 @@ interface UserLink {
 export default function Page() {
   const [userLinks, setUserLinks] = useState<UserLink[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [debouncedQuery, setDebouncedQuery] = useState<string>('');
+  const [searching, setSearching] = useState<boolean>(false);
+
   const { data: session, status } = useSession();
   const { user, setUser } = userStorage(); 
 
@@ -48,6 +54,53 @@ export default function Page() {
       return []; 
     }   
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (!debouncedQuery.trim()) {
+      setSearching(false);
+      // When search is cleared, fetch normal links
+      const fetchNormalLinks = async () => {
+        try {
+          const response = await axios.get<{ data: UserLink[] }>('/api/userLinks');
+          setUserLinks(response.data.data || []);
+        } catch (error) {
+          console.error('Error fetching user links:', error);
+          setUserLinks([]);
+        }
+      };
+      
+      if (status === 'authenticated') {
+        fetchNormalLinks();
+      }
+      return;
+    }
+
+    const searchLinks = async () => {
+      setSearching(true);
+      try {
+        const res = await axios.get('/api/link', {
+          params: { search: debouncedQuery },
+        });
+        setUserLinks(res.data.data || []);
+      } catch (error: any) {
+        console.error('Search error:', error);
+        toast.error(error.response?.data?.error || 'Search failed');
+        setUserLinks([]);
+      } finally {
+        setSearching(false);
+      }
+    };
+
+    searchLinks();
+  }, [debouncedQuery, status]);
 
   useEffect(() => {
     if(status == 'authenticated' && session?.user?.id) {
@@ -73,6 +126,19 @@ export default function Page() {
         }
       } ;
       fetchUserData();
+      
+      // Initial fetch of links if not searching
+      if (!searchQuery.trim() && !debouncedQuery.trim()) {
+        const fetchInitialLinks = async () => {
+          try {
+            const response = await axios.get<{ data: UserLink[] }>('/api/userLinks');
+            setUserLinks(response.data.data || []);
+          } catch (error) {
+            console.error('Error fetching initial links:', error);
+          }
+        };
+        fetchInitialLinks();
+      }
     }
   }, [status, session?.user?.id, setUser])
 
@@ -106,6 +172,21 @@ export default function Page() {
       <div className='w-4/5 my-4 flex flex-col mx-auto'>
         <h1 className='font-bold text-2xl'>Links</h1>
         <div className='flex w-full gap-2 items-center justify-end'>
+          <div className='relative flex-1 max-w-md'>
+            <IoSearchOutline className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5' />
+            <Input
+              type='text'
+              placeholder='Search by short link OR URL'
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className='pl-10 pr-4'
+            />
+            {searching && (
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                <div className="w-4 h-4 border-2 border-gray-300 rounded-full border-t-transparent animate-spin"></div>
+              </div>
+            )}
+          </div>
           <DialogCloseButton />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -134,7 +215,8 @@ export default function Page() {
           </DropdownMenu>
         </div>
 
-        <Links/>
+        <Links searchQuery={searchQuery} searchResults={userLinks}
+          isSearching={searching}/>
 
       </div>
     </div>

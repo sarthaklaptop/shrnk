@@ -3,39 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/utils/authOptions";
 import { getServerSession } from "next-auth";
 
-export async function GET(request: NextRequest) {
-    try {
-        const session = await getServerSession(authOptions);
-
-        if (!session || !session.user || !session.user.email) {
-            return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-        }
-
-        const user = await prisma.user.findUnique({
-            where: {
-                email: session.user.email,
-            },
-            select: {
-                id: true,
-                name: true,
-                email: true,
-            }
-        });
-
-        if (!user) {
-            return NextResponse.json({ error: "User not found" }, { status: 404 });
-        }
-
-        return NextResponse.json({ data: user });
-    } catch (error: any) {
-        console.error("Error fetching user account settings:", error);
-        return NextResponse.json(
-            { error: "Error fetching user account settings", details: error.message },
-            { status: 500 }
-        );
-    }
-}
-
 export async function PATCH(request: NextRequest) {
     try {
         const session = await getServerSession(authOptions);

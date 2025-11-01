@@ -171,7 +171,69 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const shortLink = searchParams.get('id');
+    const searchQuery = searchParams.get('search');
 
+    // Handle search query
+    if (searchQuery) {
+      const session = await getServerSession(authOptions);
+
+      if (!session || !session.user || !session.user.email) {
+        return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+      }
+
+      const user = await prisma.user.findUnique({
+        where: {
+          email: session.user.email,
+        },
+        select: {
+          id: true,
+        }
+      });
+
+      if (!user) {
+        return NextResponse.json({ error: "User not found" }, { status: 401 });
+      }
+
+      // let searchTerm = searchQuery.trim();
+      let searchTerm = decodeURIComponent(searchQuery).trim();
+
+      searchTerm = searchTerm.replace(/^https?:\/\//, '');
+      console.log("After removing protocol:", searchTerm);
+
+      // If searchQuery contains a URL, extract the last part (short code)
+      if (searchTerm.includes('shrnk-six.vercel.app') || 
+          searchTerm.includes('localhost:3000')) {
+        // Extract everything after the last slash
+        const parts = searchTerm.split('/');
+        searchTerm = parts[parts.length - 1];
+        console.log("Extracted short code:", searchTerm);
+      }
+
+      // Search by shortLink or longLink
+      const searchResults = await prisma.link.findMany({
+        where: {
+          userId: user.id,
+          OR: [
+            {
+              shortLink: {
+                contains: searchTerm,
+                mode: 'insensitive',
+              },
+            },
+            {
+              longLink: {
+                contains: searchQuery,
+                mode: 'insensitive',
+              },
+            },
+          ],
+        },
+      });
+
+      return NextResponse.json({ data: searchResults }, { status: 200 });
+    }
+
+    // Handle existing ID-based query
     if (!shortLink) {
       return NextResponse.json({ error: "ID is required" }, { status: 400 });
     }
@@ -210,53 +272,4 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
-  // try {
-
-  //   const session = await getServerSession(authOptions);
-
-  //   // console.log(chalk.bgBlue("Inside GET link route"));
-
-  //   if (!session || !session.user || !session.user.email) {
-  //     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  //   }
-  //   // console.log(chalk.bgRed("Inside GET link route"));
-
-  //   const { searchParams } = new URL(request.url);
-  //   const shortLink = searchParams.get('id');
-  //   // console.log(chalk.bgCyan(`Inside GET link route ${shortLink}`));
-
-  //   if (!shortLink) {
-  //     return NextResponse.json({ error: "No shortLink provided" }, { status: 400 });
-  //   }
-
-  //   const link = await prisma.link.findUnique({
-  //     where: { shortLink }
-  //   });
-
-  //   console.log("Before DB Call");
-
-  //     const data = await prisma.link.findUnique({
-  //       where: { shortLink }
-  //     });
-
-  //     console.log("After DB Call");
-
-  //     if(!data) {
-  //       return NextResponse.json({ error: "Link not found" }, { status: 404 });
-  //     }
-
-  //     return NextResponse.json(
-  //       {data},
-  //       {status: 200}
-  //     )
-
-
-    
-  // } catch (error: Response | any) {
-  //   console.error("Error Getting short URL:", error);
-  //   return NextResponse.json(
-  //     { error: "Error Getting short URL", details: error.message },
-  //     { status: 500 }
-  //   );
-  // }
 }
