@@ -73,6 +73,7 @@ model Link {
     user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
     clickHistory  Json?
     clicks        Click[]
+    password      String?  @db.Text
 
     @@map("links")
 }

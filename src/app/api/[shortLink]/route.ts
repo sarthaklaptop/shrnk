@@ -19,14 +19,11 @@ export async function GET(
         longLink: true,
         expiresAt: true,
         userId: true,
+        password: true,
       },
     });
 
     if (!linkRecord) {
-    //   return NextResponse.json(
-    //     { error: "Short URL not found" },
-    //     { status: 404 }
-    //   );
         return NextResponse.redirect(new URL('/link-not-found', request.url))
     }
 
@@ -41,6 +38,17 @@ export async function GET(
         { error: "This link has expired" },
         { status: 410 }
       );
+    }
+
+    // 3. Check Password Protection
+    if (linkRecord.password) {
+      // Check if password was verified via cookie
+      const verifiedCookie = request.cookies.get(`verified_${shortLink}`);
+      
+      if (!verifiedCookie || verifiedCookie.value !== "true") {
+        // Redirect to password verification page
+        return NextResponse.redirect(new URL(`/verify-password/${shortLink}`, request.url));
+      }
     }
 
     // 3. Process in Background

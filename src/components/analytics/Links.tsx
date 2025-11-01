@@ -19,14 +19,17 @@ import {
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { QRCodeDialog } from "../ui/QRCode";
 import { FaDeleteLeft } from "react-icons/fa6";
+import { Lock } from "lucide-react";
 import { useProtectedRoute } from "@/lib/hooks/useProtectedRoute";
 import { DialogCloseButton } from "@/components/Dialog";
+import { Check } from "lucide-react";
 
 interface UserLink {
   id: string;
   shortLink: string;
   longLink: string;
   count: number;
+  password?: string | null;
   [key: string]: any;
 }
 
@@ -40,6 +43,7 @@ export default function Links({ searchQuery = '', searchResults = [], isSearchin
   const [userLinks, setUserLinks] = useState<UserLink[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const router = useRouter();
 
   const status = useProtectedRoute();
@@ -158,9 +162,16 @@ export default function Links({ searchQuery = '', searchResults = [], isSearchin
     );
   }
 
-  const copyToClipboard = (shortLink: string) => {
+  const copyToClipboard = (shortLink: string, id: string) => {
     navigator.clipboard.writeText(`${BASEURL}/${shortLink}`);
     toast("Copied to clipboard");
+
+    setCopiedId(id);
+
+    setTimeout(() => {
+      setCopiedId(null);
+    }, 2000);
+
   };
 
   const handleNavigation = (shortLink: string) => {
@@ -187,7 +198,7 @@ export default function Links({ searchQuery = '', searchResults = [], isSearchin
     <div>
       <ScrollArea className="h-[calc(100vh-220px)] w-full mx-4 my-8">
         <div className="flex flex-col gap-2">
-          {displayLinks.map(({ id, shortLink, longLink, count }: UserLink) => (
+          {displayLinks.map(({ id, shortLink, longLink, count, password }: UserLink) => (
             <div key={id} className="relative">
               <div className="flex flex-col border-red-50 border-2 rounded-lg cursor-pointer p-4 w-full gap-2">
                 <div className="flex justify-between">
@@ -200,11 +211,30 @@ export default function Links({ searchQuery = '', searchResults = [], isSearchin
                     >
                       {BASEURL}/{shortLink}
                     </a>
+                    {password && (
+                      <span
+                        className="group relative border-2 border-yellow-300 p-1 rounded-full bg-yellow-100 hover:bg-yellow-200 cursor-help"
+                        title="Password Protected"
+                      >
+                        <Lock className="w-3.5 h-3.5 text-yellow-700" />
+                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                          Password Protected
+                        </span>
+                      </span>
+                    )}
                     <span
-                      className="border-2 p-1 rounded-full bg-zinc-100 hover:bg-zinc-200 cursor-pointer"
-                      onClick={() => copyToClipboard(shortLink)}
+                      className={`p-2 rounded-full cursor-pointer transition-all duration-200 ${
+                        copiedId === id 
+                          ? 'bg-green-100 hover:bg-green-200 border-green-300' 
+                          : 'bg-zinc-100 hover:bg-zinc-200'
+                      }`}
+                      onClick={() => copyToClipboard(shortLink, id)}
                     >
-                      <MdContentCopy />
+                      {copiedId === id ? (
+                        <Check className="w-4 h-4 text-green-600" />
+                      ) : (
+                        <MdContentCopy />
+                      )}
                     </span>
                   </div>
                   <div className="flex gap-1 z-10">
@@ -226,12 +256,6 @@ export default function Links({ searchQuery = '', searchResults = [], isSearchin
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent className="w-fit">
-                        {/* <DropdownMenuLabel
-                          className="flex hover:bg-red-500 transition-all duration-200 cursor-pointer hover:text-white rounded-sm text-red-400 items-center justify-between"
-                          onClick={() => deleteLink(id)}
-                        >
-                          Delete <FaDeleteLeft />
-                        </DropdownMenuLabel> */}
                         <DropdownMenuLabel
                           className={`flex items-center justify-between rounded-sm transition-all duration-200 ${
                             deletingId === id

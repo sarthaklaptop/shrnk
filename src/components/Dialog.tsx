@@ -5,7 +5,6 @@ import {
   DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -14,11 +13,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FaLink } from "react-icons/fa6";
 import { FaRegQuestionCircle } from "react-icons/fa";
+import { Lock } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import validUrl from "valid-url";
 import axios from "axios";
 import { userStorage } from "@/store/link";
+import { PasswordDialog } from "./PasswordDialog";
 
 interface DialogCloseButtonProps {
   label?: string;
@@ -28,9 +29,21 @@ interface DialogCloseButtonProps {
 export function DialogCloseButton({ label = "Create", className = "" }: DialogCloseButtonProps) {
   const [urlInput, setUrlInput] = useState(""); 
   const [response, setResponse] = useState("");
+  const [password, setPassword] = useState<string | null>(null);
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+  const user = userStorage.getState().user;
+  const isPremium = user.userType === "PREMIUM";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrlInput(e.target.value);  
+  };
+
+  const handlePasswordSet = (pwd: string) => {
+    setPassword(pwd);
+  };
+
+  const handleRemovePassword = () => {
+    setPassword(null);
   };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -49,7 +62,12 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
     }
 
     try {
-      const result = await axios.post("/api/link", { longLink: urlInput });
+      const payload: { longLink: string; password?: string } = { longLink: urlInput };
+      if (password) {
+        payload.password = password;
+      }
+
+      const result = await axios.post("/api/link", payload);
       const newLink = { shortLink: result.data.data.shortLink, longLink: urlInput };
       console.log("Short URL created: ", result.data);
       const currentCredits = userStorage.getState().user.credits;
@@ -59,6 +77,8 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
       toast("Short URL created");
       console.log("Short URL created: ", result.data.data.shortLink);
       setResponse(result.data.data.shortLink);
+      setUrlInput("");
+      setPassword(null);
     } catch (error: any) {
       const errorMessage = error.response?.data?.error || "Unexpected error occurred.";
       toast.warning(errorMessage);
@@ -85,28 +105,82 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
           </DialogDescription>
         </DialogHeader>
 
-        {/* ---------- 80 / 20 FORM ---------- */}
-        <form onSubmit={onSubmit} className="grid grid-cols-5 gap-2 mt-4">
-          {/* INPUT – 4 columns = 80% */}
-          <Label htmlFor="link" className="sr-only">
-            Link
-          </Label>
-          <Input
-            id="link"
-            placeholder="https://example.com/very/long/url..."
-            value={urlInput}
-            onChange={handleChange}
-            required
-            className="col-span-4 w-full"
-          />
+        <form onSubmit={onSubmit} className="space-y-4 mt-4">
+          {/* Full width URL input */}
+          <div className="space-y-2">
+            <Label htmlFor="link" className="sr-only">
+              Destination URL
+            </Label>
+            <Input
+              id="link"
+              placeholder="https://example.com/very/long/url..."
+              value={urlInput}
+              onChange={handleChange}
+              required
+              className="w-full border-2 border-black rounded-lg"
+            />
+          </div>
 
-          {/* BUTTON – 1 column = 20% */}
+          {/* Password Protection Section */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between p-3 border-[1px] border-gray-300 rounded-lg bg-gray-50">
+              <div className="flex items-center gap-2">
+                <Lock className="w-4 h-4 text-gray-600" />
+                <span className="text-sm font-medium text-gray-900">
+                  Password Protection
+                </span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-yellow-400 text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0)]">
+                  PRO
+                </span>
+              </div>
+              {password ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">Password set</span>
+                  <button
+                    type="button"
+                    onClick={handleRemovePassword}
+                    className="text-xs text-red-600 hover:text-red-800 font-medium border-[1px] border-red-600 px-2 py-1 rounded hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition-all duration-200"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!isPremium) {
+                      toast.warning("Password protection is a premium feature. Upgrade to PRO to use this feature.");
+                      return;
+                    }
+                    setPasswordDialogOpen(true);
+                  }}
+                  disabled={!isPremium}
+                  className="text-xs font-medium border-[1px] border-black px-3 py-1.5 rounded bg-white text-black hover:bg-gray-100 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Add Password
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Create Button */}
           <DialogClose asChild>
-            <Button type="submit" size="sm" className="col-span-1 w-full">
+            <Button 
+              type="submit" 
+              className="w-full border-2 border-black bg-black text-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition-all duration-200"
+            >
               Create
             </Button>
           </DialogClose>
         </form>
+
+        {/* Password Dialog */}
+        <PasswordDialog
+          open={passwordDialogOpen}
+          onOpenChange={setPasswordDialogOpen}
+          onPasswordSet={handlePasswordSet}
+          isPremium={isPremium}
+        />
       </DialogContent>
     </Dialog>
   );

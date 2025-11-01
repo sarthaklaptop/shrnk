@@ -7,6 +7,7 @@ import { authOptions } from "@/utils/authOptions";
 import { getServerSession } from "next-auth";
 import { PrismaClient } from "@prisma/client";
 import chalk from "chalk";
+import bcrypt from "bcryptjs";
 
 const alphabet =
   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -16,7 +17,7 @@ export async function POST(request: NextRequest) {
   try {
     console.log(chalk.bgBlue("Inside POST route"));
     const session = await getServerSession(authOptions);
-    const { longLink } = await request.json();
+    const { longLink, password } = await request.json();
 
     
     if (!longLink) {
@@ -63,6 +64,14 @@ export async function POST(request: NextRequest) {
         );
       }
 
+      // Check if password is provided and user is premium
+      if (password && user?.userType !== 'PREMIUM') {
+        return NextResponse.json(
+          { error: 'Password protection is a premium feature. Please upgrade to PRO.' },
+          { status: 403 }
+        );
+      }
+
       if(userId) {
         await prisma.user.update({
           where: { id: userId },
@@ -70,6 +79,9 @@ export async function POST(request: NextRequest) {
         });
       }
     }
+
+    // Hash password if provided
+    const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
 
     let redirectUrl;
     
@@ -86,6 +98,7 @@ export async function POST(request: NextRequest) {
           // userId: userId,
           user: { connect: { id: userId } }, 
           clickHistory: [],
+          password: hashedPassword,
         },
       });
     } else {
@@ -99,6 +112,7 @@ export async function POST(request: NextRequest) {
           clickLimit: 0,
           expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
           clickHistory: [],
+          password: hashedPassword,
         },
       });
     }
