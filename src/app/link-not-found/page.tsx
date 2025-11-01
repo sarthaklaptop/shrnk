@@ -81,7 +81,7 @@ export default function LinkNotFoundPage() {
               Oops! Link Not Found
             </h1>
             <p className="text-gray-600 text-base md:text-lg">
-              This short link doesn't exist or might have expired
+              This short link does not exist in our system
             </p>
           </motion.div>
 

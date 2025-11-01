@@ -10,6 +10,7 @@ import {
 import { FaRegQuestionCircle } from "react-icons/fa";
 import { MdQrCodeScanner } from "react-icons/md";
 import ShrnkLogo from "../../../public/ShrnkLogo.png"
+import Image from "next/image";
 
 export function QRCodeDialog({ QRUrl }: { QRUrl: string }) {
   // const link = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${QRUrl}`;
@@ -35,12 +36,9 @@ export function QRCodeDialog({ QRUrl }: { QRUrl: string }) {
               <QrCode.Pattern />
             </QrCode.Frame>
             <QrCode.Overlay>
-              <img 
-                src='/ShrnkNoBg.png' 
-                alt="Shrnk Logo"
-                // style={{
-                //   width: "150px", // Adjust size as needed
-                // }}             
+              <Image
+                src={ShrnkLogo} 
+                alt="Shrnk Logo"           
               />
             </QrCode.Overlay>
           </QrCode.Root>

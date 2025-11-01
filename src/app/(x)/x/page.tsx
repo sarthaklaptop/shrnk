@@ -140,7 +140,7 @@ export default function Page() {
         fetchInitialLinks();
       }
     }
-  }, [status, session?.user?.id, setUser])
+  }, [status, session?.user?.id, setUser, debouncedQuery, searchQuery])
 
   const downloadCSV = async () => {
     setIsLoading(true);
