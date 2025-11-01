@@ -73,8 +73,6 @@ export async function POST(request: NextRequest) {
 
     let redirectUrl;
     
-    // chalk.bgGreen(console.log(userId));
-    
     if (userId) {
       console.log(chalk.bgBlue("No User",userId));
       redirectUrl = await prisma.link.create({
@@ -99,7 +97,7 @@ export async function POST(request: NextRequest) {
           fullShortLink: `${BASEURL}/${shortLink}`,
           count: 0,
           clickLimit: 0,
-          expiresAt: new Date(Date.now() + 30 * 60 * 1000),
+          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
           clickHistory: [],
         },
       });
