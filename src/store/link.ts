@@ -10,7 +10,7 @@ interface User {
 
 interface UserStore {
   user: User;
-  setUser: (user: User) => void;
+  setUser: (user: User | null) => void;
   updateCredits: (credits: number) => void;
   updateUserType: (userType: "FREE" | "PREMIUM") => void;
   clearUser: () => void;
@@ -24,8 +24,16 @@ export const userStorage = create<UserStore>((set) => ({
     credits: null,
     userType: "FREE",
   },
-  setUser: ({ image, email, id, credits, userType }: User) =>
-    set({ user: { image, email, id, credits, userType } }),
+  setUser: (user) =>
+    set({
+      user: user || {
+        image: null,
+        email: null,
+        id: null,
+        credits: null,
+        userType: "FREE",
+      },
+    }),
   updateCredits: (credits: number) =>
     set((state: any) => ({ user: { ...state.user, credits } })),
   clearUser: () =>

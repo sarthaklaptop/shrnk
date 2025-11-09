@@ -1,102 +1,100 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-// NeonDB 
 model Account {
-    id                String  @id @default(cuid())
-    userId            String  @map("user_id")
-    type              String
-    provider          String
-    providerAccountId String  @map("provider_account_id")
-    refresh_token     String? @db.Text
-    access_token      String? @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? @db.Text
-    session_state     String?
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@unique([provider, providerAccountId])
-    @@map("accounts")
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
 model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique @map("session_token")
-    userId       String   @map("user_id")
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@map("sessions")
+  @@map("sessions")
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime? @map("email_verified")
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
-    userLinks     Link[]
-    userType      UserType  @default(FREE)
-    credits       Int       @default(10)
-    creditRenewed DateTime?
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  creditRenewed DateTime?
+  credits       Int       @default(10)
+  userType      UserType  @default(FREE)
+  accounts      Account[]
+  links         Link[]
+  sessions      Session[]
 
-    @@map("users")
+  @@map("users")
 }
 
-// Enum for different type of users
+model Link {
+  id            String   @id @default(uuid())
+  longLink      String
+  shortLink     String   @unique
+  fullShortLink String   @unique
+  createdAt     DateTime @default(now())
+  clickLimit    Int      @default(0)
+  expiresAt     DateTime
+  userId        String?
+  password      String?
+  clickCount    Int      @default(0)
+  clicks        Click[]
+  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("links")
+}
+
+model Click {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  deviceType String   @default("desktop")
+  city       String?
+  country    String?
+  linkId     String
+  browser    String?
+  os         String?
+  link       Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+
+  @@index([linkId])
+  @@index([createdAt])
+  @@map("clicks")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
 enum UserType {
   FREE
   PREMIUM
 }
-
-model Link {
-    id            String   @id @default(uuid())
-    longLink      String   
-    shortLink     String   @unique
-    fullShortLink String   @unique @default("")
-    createdAt     DateTime @default(now())
-    count         Int      @default(0)
-    clickLimit    Int      @default(0)
-    expiresAt     DateTime
-    userId        String? // @default("null")
-    user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-    clickHistory  Json?
-    clicks        Click[]
-    password      String?  @db.Text
-
-    @@map("links")
-}
-
-model Click {
-    id         String   @id @default(uuid())
-    createdAt  DateTime @default(now())
-    deviceType String   @default("desktop")
-    city       String?
-    country    String?
-    linkId     String
-    link       Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
-
-    @@map("clicks")
-}
-
-model VerificationToken {
-    identifier String
-    token      String
-    expires    DateTime
-
-    @@unique([identifier, token])
-    @@map("verification_tokens")
-}
-
-

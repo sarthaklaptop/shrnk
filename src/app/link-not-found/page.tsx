@@ -99,7 +99,7 @@ export default function LinkNotFoundPage() {
                 📅 Link Expired
               </p>
               <p className="text-sm text-gray-600">
-                Free links expire after 30 minutes
+                Free links expire 24 hours
               </p>
             </motion.div>
 
@@ -200,7 +200,7 @@ export default function LinkNotFoundPage() {
             <p className="text-sm text-gray-500">
               Need help?{" "}
               <a
-                href="mailto:support@shrnk.com"
+                href="mailto:shrnk.contact@gmail.com"
                 className="text-red-500 hover:underline font-medium"
               >
                 Contact Support

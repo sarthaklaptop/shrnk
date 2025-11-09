@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
                 email: session.user?.email,
             },
             include: {
-                userLinks: true,
+                links: true,
             },
         })
 
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: "shortLink parameter is required" }, { status: 400 });
         }
 
-        const link = user.userLinks.find(link => link.shortLink === shortLink);
+        const link = user.links.find(link => link.shortLink === shortLink);
 
         if (!link) {
             return NextResponse.json({ error: "Link not found" }, { status: 404 });
