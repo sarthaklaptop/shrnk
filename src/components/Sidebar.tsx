@@ -72,29 +72,21 @@ export function SidebarDemo() {
     }
   }, [status, session?.user?.id, setUser]);
   return (
-    <div
-      className={cn(
-        "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-red-500 w-full flex-1 mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden",
-        "h-screen" // for your use case, use `h-screen` instead of `h-[60vh]`
-      )}
-    >
+    <div className={cn("h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700")}>
       <Sidebar open={open} setOpen={setOpen} animate={false}>
-        <SidebarBody className="justify-between gap-10">
+        <SidebarBody className="justify-between gap-10 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             <Logo />
-            <div className="mt-8 flex flex-col gap-2 ">
-              {/* {links.map((link, idx) => (
-                <SidebarLink className="hover:bg-gray-200 rounded-lg p-2" key={idx} link={link} />
-              ))} */}
+            <div className="mt-8 flex flex-col gap-1">
               {links.map((link, idx) => {
-                const isActive = pathname === link.href; // Check if link is active
+                const isActive = pathname === link.href;
                 return (
                   <SidebarLink
                     key={idx}
                     link={link}
                     className={cn(
-                      "rounded-lg p-2 hover:bg-gray-200",
-                      isActive && "bg-red-300 font-medium text-red-700"
+                      "rounded-md transition-all duration-200 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white",
+                      isActive && "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white font-semibold"
                     )}
                   />
                 );
@@ -102,38 +94,33 @@ export function SidebarDemo() {
             </div>
           </div>
 
-          <div className="flex flex-col justify-center">
+          <div className="flex flex-col justify-center gap-3">
             <div className="hidden lg:block">
-
-            
               <HoverCard>
                 <HoverCardTrigger>
-                  <div className="border-2 cursor-pointer border-red-300 w-fit p-2 rounded-lg">
-                    <div className="flex gap-1 font-mono">
-                      Credits{" "}
-                      {creditsLoading ? 
-                      (
-                        <span className="inline-block w-12 h-5 bg-gray-300 rounded animate-pulse" />
+                  <div className="border border-gray-200 dark:border-gray-700 cursor-pointer w-fit p-3 rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-gray-600 dark:text-gray-400">Credits</span>
+                      {creditsLoading ? (
+                        <span className="inline-block w-8 h-4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse" />
                       ) : (
-                          <span className="font-bold">{credits}</span>
-                      )
-                      }
+                        <span className="font-semibold text-gray-900 dark:text-white">{credits}</span>
+                      )}
                     </div>
                   </div>
                 </HoverCardTrigger>
-                <HoverCardContent className="w-80 cursor-pointer">
+                <HoverCardContent className="w-80 cursor-pointer border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
                   <div className="flex justify-between space-x-4">
                     <div className="space-y-1">
-                      <h4 className="text-xl font-bold bg-gradient-to-r from-red-500 to-purple-500 bg-clip-text text-transparent">Upgrade to Pro</h4>
-                      <p className="text-sm">
-                        With Upgrading to pro You will get 25 Monthly Credits More
+                      <h4 className="text-lg font-semibold text-gray-900 dark:text-white">Upgrade to Pro</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Get 25 additional monthly credits and unlock premium features
                       </p>
-                      <div className="flex mx-auto items-center justify-center w-full">
-                        <Link href="/pricing" className="p-[3px] relative">
-                          <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-purple-500 rounded-lg" />
-                          <div className="px-8 py-2  bg-white  text-black font-bold rounded-[6px]  relative group transition duration-200  hover:bg-transparent hover:text-white hover:font-bold">
-                            Upgrade
-                          </div>
+                      <div className="flex mx-auto items-center justify-center w-full pt-2">
+                        <Link href="/pricing" className="w-full">
+                          <Button className="w-full bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200">
+                            Upgrade to Pro
+                          </Button>
                         </Link>
                       </div>
                     </div>
@@ -144,7 +131,7 @@ export function SidebarDemo() {
 
             <SidebarLink
               link={{
-                label: ``,
+                label: "",
                 href: "#",
                 icon: (
                   <Image
@@ -152,23 +139,23 @@ export function SidebarDemo() {
                       session?.user?.image ||
                       "https://avatar.iran.liara.run/public/15"
                     }
-                    className="h-7 w-7 flex-shrink-0 rounded-full"
+                    className="h-8 w-8 flex-shrink-0 rounded-full ring-2 ring-gray-200 dark:ring-gray-700"
                     width={50}
                     height={50}
                     alt="Avatar"
                   />
                 ),
               }}
+              className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             />
-            <div className=" flex gap-2">
+            <div className="flex gap-2">
               <Button
                 onClick={() => signOut()}
-                className="flex-shrink-0 relative inline-flex h-10 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
               >
-                <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
-                <span className="inline-flex h-full w-full px-4 cursor-pointer items-center justify-center rounded-full bg-slate-100 p-2 text-sm font-medium text-black backdrop-blur-3xl">
-                  Logout
-                </span>
+                Logout
               </Button>
             </div>
           </div>
