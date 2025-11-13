@@ -176,105 +176,136 @@ export default function Links({ searchQuery = '', searchResults = [], isSearchin
   };
 
   return (
-    <div>
-      <ScrollArea className="h-[calc(100vh-220px)] w-full mx-4 my-8">
-        <div className="flex flex-col gap-2">
-          {displayLinks.map(({ id, shortLink, longLink, count, password }: UserLink) => (
-            <div key={id} className="relative">
-              <div className="flex flex-col border-red-50 border-2 rounded-lg cursor-pointer p-4 w-full gap-2">
-                <div className="flex justify-between">
-                  <div className="flex items-center gap-2">
-                    <a
-                      href={`api/${shortLink}`}
-                      className="font-bold"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {BASEURL}/{shortLink}
-                    </a>
-                    {password && (
-                      <span
-                        className="group relative border-2 border-yellow-300 p-1 rounded-full bg-yellow-100 hover:bg-yellow-200 cursor-help"
-                        title="Password Protected"
+    <div className="w-full">
+      <ScrollArea className="h-[calc(100vh-220px)]">
+        <div className="min-w-full">
+          {/* Table Header */}
+          <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 z-10">
+            <div className="grid grid-cols-12 gap-4 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+              <div className="col-span-4">Short URL</div>
+              <div className="col-span-5">Original URL</div>
+              <div className="col-span-1">Clicks</div>
+              <div className="col-span-1">Created</div>
+              <div className="col-span-1 text-right">Actions</div>
+            </div>
+          </div>
+
+          {/* Table Body */}
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            {displayLinks.map(({ id, shortLink, longLink, count, password }: UserLink) => (
+              <div
+                key={id}
+                className="group hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+              >
+                <div className="grid grid-cols-12 gap-4 px-4 py-3 items-center">
+                  {/* Short URL Column */}
+                  <div className="col-span-4">
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={`${BASEURL}/${shortLink}`}
+                        className="font-medium text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 truncate"
+                        target="_blank"
+                        rel="noopener noreferrer"
                       >
-                        <Lock className="w-3.5 h-3.5 text-yellow-700" />
-                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                          Password Protected
+                        {BASEURL}/{shortLink}
+                      </a>
+                      {password && (
+                        <span className="group/badge relative">
+                          <Lock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                          <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded opacity-0 group-hover/badge:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                            Password Protected
+                          </span>
                         </span>
-                      </span>
-                    )}
-                    <span
-                      className={`p-2 rounded-full cursor-pointer transition-all duration-200 ${
-                        copiedId === id 
-                          ? 'bg-green-100 hover:bg-green-200 border-green-300' 
-                          : 'bg-zinc-100 hover:bg-zinc-200'
-                      }`}
-                      onClick={() => copyToClipboard(shortLink, id)}
-                    >
-                      {copiedId === id ? (
-                        <Check className="w-4 h-4 text-green-600" />
-                      ) : (
-                        <MdContentCopy />
                       )}
+                    </div>
+                  </div>
+
+                  {/* Original URL Column */}
+                  <div className="col-span-5">
+                    <div className="flex items-center gap-1">
+                      <a
+                        href={longLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 truncate flex items-center gap-1"
+                      >
+                        <span className="truncate max-w-md">
+                          {longLink.length > 60
+                            ? `${longLink.slice(0, 60)}...`
+                            : longLink}
+                        </span>
+                        <ArrowRight className="w-3 h-3 flex-shrink-0" />
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Clicks Column */}
+                  <div className="col-span-1">
+                    <button
+                      onClick={() => handleNavigation(shortLink)}
+                      className="flex items-center gap-1 text-sm font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                    >
+                      <BarChart3 className="w-3 h-3" />
+                      {count}
+                    </button>
+                  </div>
+
+                  {/* Created Date Column */}
+                  <div className="col-span-1">
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      {new Date().toLocaleDateString()}
                     </span>
                   </div>
-                  <div className="flex gap-1 z-10">
-                    <span
-                      className="flex border-2 p-[0.5px] cursor-pointer hover:bg-slate-200 hover:font-bold transition-all duration-75 rounded-sm items-center justify-between"
-                      onClick={() => handleNavigation(shortLink)}
+
+                  {/* Actions Column */}
+                  <div className="col-span-1 flex items-center justify-end gap-1">
+                    {/* Copy Button */}
+                    <button
+                      onClick={() => copyToClipboard(shortLink, id)}
+                      className={`p-1.5 rounded-md transition-all duration-200 ${
+                        copiedId === id
+                          ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
+                          : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                      title="Copy link"
                     >
-                      <a className="flex items-center gap-1 px-1">
-                        <HiCursorClick /> {count} clicks
-                      </a>
-                    </span>
-                    <span className="flex border-2 p-[0.5px] cursor-pointer hover:bg-slate-200  rounded-sm items-center justify-between">
-                        <QRCodeDialog QRUrl={`${BASEURL}/${shortLink}`} />
-                    </span>
+                      {copiedId === id ? (
+                        <Check className="w-4 h-4" />
+                      ) : (
+                        <Copy className="w-4 h-4" />
+                      )}
+                    </button>
+
+                    {/* QR Code Button */}
+                    <div className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md p-1.5 transition-colors cursor-pointer">
+                      <QRCodeDialog QRUrl={`${BASEURL}/${shortLink}`} />
+                    </div>
+
+                    {/* More Actions Dropdown */}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <button className="border-[1px] rounded-lg p-1 border-black flex items-center justify-center">
-                          <BsThreeDotsVertical className="cursor-pointer" />
+                        <button className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors">
+                          <MoreHorizontal className="w-4 h-4" />
                         </button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-fit">
-                        <DropdownMenuLabel
-                          className={`flex items-center justify-between rounded-sm transition-all duration-200 ${
-                            deletingId === id
-                              ? "bg-red-400 text-white cursor-not-allowed"
-                              : "hover:bg-red-500 hover:text-white text-red-400 cursor-pointer"
+                      <DropdownMenuContent align="end" className="w-40">
+                        <DropdownMenuItem
+                          onClick={() => deleteLink(id)}
+                          className={`flex items-center gap-2 text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400 ${
+                            deletingId === id ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
                           }`}
-                          onClick={() => !deletingId && deleteLink(id)}
-                          style={{ pointerEvents: deletingId === id ? "none" : "auto" }}
+                          disabled={deletingId === id}
                         >
-                          {deletingId === id ? (
-                            <>deleting...</>
-                          ) : (
-                            <>
-                              Delete <FaDeleteLeft />
-                            </>
-                          )}
-                        </DropdownMenuLabel>
+                          <Trash2 className="w-4 h-4" />
+                          {deletingId === id ? 'Deleting...' : 'Delete'}
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
                 </div>
-                <div className="flex items-center text-zinc-500">
-                  <span>
-                    <MdOutlineSubdirectoryArrowRight />
-                  </span>
-                  <a
-                    className="hover:underline"
-                    target="_blank"
-                    href={longLink}
-                  >
-                    {longLink.length > 70
-                      ? `${longLink.slice(0, 70)}...`
-                      : longLink}
-                  </a>
-                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </ScrollArea>
     </div>
