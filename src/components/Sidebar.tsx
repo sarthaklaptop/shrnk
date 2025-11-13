@@ -28,17 +28,17 @@ export function SidebarDemo() {
     {
       label: "Links",
       href: "/x",
-      icon: <FaLink />,
+      icon: <Link2 className="w-4 h-4" />,
     },
     {
       label: "Profile",
       href: "/profile",
-      icon: <PersonIcon />,
+      icon: <User className="w-4 h-4" />,
     },
     {
       label: "Account Settings",
       href: "/account-settings",
-      icon: <IoMdSettings />,
+      icon: <Settings className="w-4 h-4" />,
     },
   ];
   const [open, setOpen] = useState(false);
