@@ -19,6 +19,7 @@ import { useSession } from 'next-auth/react';
 import { userStorage } from '@/store/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 
 interface UserLink {
