@@ -5,21 +5,16 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { BASEURL } from "@/constants/constant";
-import { MdContentCopy, MdOutlineSubdirectoryArrowRight } from "react-icons/md";
+import { Copy, ArrowRight, BarChart3, MoreHorizontal, Trash2, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { HiCursorClick } from "react-icons/hi";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuLabel,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import { QRCodeDialog } from "../ui/QRCode";
-import { FaDeleteLeft } from "react-icons/fa6";
-import { Lock } from "lucide-react";
 import { useProtectedRoute } from "@/lib/hooks/useProtectedRoute";
 import { DialogCloseButton } from "@/components/Dialog";
 import { Check } from "lucide-react";
