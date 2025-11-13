@@ -180,6 +180,7 @@ export default function Page() {
           </div>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <DialogCloseButton label="Create Link" />
           </div>
         </div>
