@@ -1,4 +1,4 @@
-import { Copy } from "lucide-react";
+import { Link2, Lock, HelpCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,9 +11,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FaLink } from "react-icons/fa6";
-import { FaRegQuestionCircle } from "react-icons/fa";
-import { Lock } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import validUrl from "valid-url";
