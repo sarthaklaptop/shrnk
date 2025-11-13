@@ -1,8 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "./ui/sidebar";
-import PersonIcon from "@mui/icons-material/Person";
-import { IoMdSettings } from "react-icons/io";
+import { User, Settings, Link2 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -12,8 +11,7 @@ import TabsDemo from "@/app/(x)/x/page";
 import { Button } from "./ui/button";
 import ProfilePage from "@/app/(x)/profile/page";
 import Page from "@/app/(x)/x/analytics/[shortLink]/page";
-import { usePathname } from "next/navigation"; // Ensure you have this import
-import { FaLink } from "react-icons/fa6";
+import { usePathname } from "next/navigation";
 import { userStorage } from "@/store/link";
 import { useStore } from "zustand";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
