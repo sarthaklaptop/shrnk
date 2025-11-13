@@ -85,27 +85,34 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button 
-          variant="outline"
-          className={`px-4 py-2 rounded-md border border-black bg-white text-black text-sm hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-200 ${className}`}
-        > 
+        <Button
+          className={`modern-button-primary ${className}`}
+        >
           {label}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-1">
-            <FaLink /> New link
-          </DialogTitle>
-          <DialogDescription className="flex items-center gap-1">
-            Destination URL <FaRegQuestionCircle />
+      <DialogContent className="sm:max-w-lg border-gray-200 dark:border-gray-700 shadow-large">
+        <DialogHeader className="space-y-2">
+          <div className="flex items-center justify-between">
+            <DialogTitle className="flex items-center gap-2 text-lg font-semibold">
+              <Link2 className="w-5 h-5" />
+              Create New Link
+            </DialogTitle>
+            <DialogClose asChild>
+              <button className="rounded-md p-1 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            </DialogClose>
+          </div>
+          <DialogDescription className="text-sm text-gray-600 dark:text-gray-400">
+            Enter the destination URL you want to shorten
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={onSubmit} className="space-y-4 mt-4">
-          {/* Full width URL input */}
+        <form onSubmit={onSubmit} className="space-y-6 mt-6">
+          {/* URL Input Section */}
           <div className="space-y-2">
-            <Label htmlFor="link" className="sr-only">
+            <Label htmlFor="link" className="text-sm font-medium text-gray-900 dark:text-gray-100">
               Destination URL
             </Label>
             <Input
@@ -114,29 +121,34 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
               value={urlInput}
               onChange={handleChange}
               required
-              className="w-full border-2 border-black rounded-lg"
+              className="modern-input h-11"
             />
           </div>
 
           {/* Password Protection Section */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between p-3 border-[1px] border-gray-300 rounded-lg bg-gray-50">
-              <div className="flex items-center gap-2">
-                <Lock className="w-4 h-4 text-gray-600" />
-                <span className="text-sm font-medium text-gray-900">
-                  Password Protection
-                </span>
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-yellow-400 text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0)]">
-                  PRO
-                </span>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+              <div className="flex items-center gap-3">
+                <Lock className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                <div>
+                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    Password Protection
+                  </span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-800">
+                      PRO
+                    </span>
+                    <HelpCircle className="w-3 h-3 text-gray-400" />
+                  </div>
+                </div>
               </div>
               {password ? (
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">Password set</span>
+                  <span className="text-sm text-green-600 dark:text-green-400">Protected</span>
                   <button
                     type="button"
                     onClick={handleRemovePassword}
-                    className="text-xs text-red-600 hover:text-red-800 font-medium border-[1px] border-red-600 px-2 py-1 rounded hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition-all duration-200"
+                    className="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-medium transition-colors"
                   >
                     Remove
                   </button>
@@ -152,7 +164,7 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
                     setPasswordDialogOpen(true);
                   }}
                   disabled={!isPremium}
-                  className="text-xs font-medium border-[1px] border-black px-3 py-1.5 rounded bg-white text-black hover:bg-gray-100 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="text-xs font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Add Password
                 </button>
@@ -160,15 +172,24 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
             </div>
           </div>
 
-          {/* Create Button */}
-          <DialogClose asChild>
-            <Button 
-              type="submit" 
-              className="w-full border-2 border-black bg-black text-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition-all duration-200"
+          {/* Action Buttons */}
+          <div className="flex gap-3 pt-2">
+            <DialogClose asChild>
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              type="submit"
+              className="flex-1 modern-button-primary"
             >
-              Create
+              Create Link
             </Button>
-          </DialogClose>
+          </div>
         </form>
 
         {/* Password Dialog */}
