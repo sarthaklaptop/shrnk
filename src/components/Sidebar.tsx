@@ -169,26 +169,27 @@ export const Logo = () => {
   return (
     <Link
       href="/"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
+      className="font-normal flex space-x-2 items-center text-sm text-black dark:text-white py-1 relative z-20"
     >
-      <div className="h-5 w-6 bg-red-400 dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
+      <div className="h-6 w-6 bg-black dark:bg-white rounded-lg flex-shrink-0" />
       <motion.span
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="font-medium text-red-500 whitespace-pre"
+        className="font-semibold text-black dark:text-white whitespace-pre"
       >
         Shrnk
       </motion.span>
     </Link>
   );
 };
+
 export const LogoIcon = () => {
   return (
     <Link
-      href=""
-      className="font-normal flex space-x-2 items-center text-sm text-red-500 py-1 relative z-20"
+      href="/"
+      className="font-normal flex space-x-2 items-center text-sm text-black dark:text-white py-1 relative z-20"
     >
-      <div className="h-5 w-6 bg-red-400 dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
+      <div className="h-6 w-6 bg-black dark:bg-white rounded-lg flex-shrink-0" />
     </Link>
   );
 };
