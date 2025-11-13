@@ -74,47 +74,42 @@ export default function Links({ searchQuery = '', searchResults = [], isSearchin
 
   if (status == "loading" || (isLoading && !searchQuery.trim()) || (isSearching && searchQuery.trim())) {
     return (
-      <div className="bg-white w-full rounded-lg mt-2 p-2">
-        <div
-          role="status"
-          className="w-full p-4 space-y-4  divide-y divide-gray-200 rounded shadow animate-pulse dark:divide-gray-700 md:p-6 dark:border-gray-700"
-        >
-          <div className="flex border-2 border-red-50 p-4 rounded-lg  items-center justify-between">
-            <div>
-              <div className="h-2.5 bg-gray-300  rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-              <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+      <div className="w-full">
+        <div className="min-w-full">
+          {/* Table Header Skeleton */}
+          <div className="border-b border-gray-200 dark:border-gray-700">
+            <div className="grid grid-cols-12 gap-4 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+              <div className="col-span-4">Short URL</div>
+              <div className="col-span-5">Original URL</div>
+              <div className="col-span-1">Clicks</div>
+              <div className="col-span-1">Date</div>
+              <div className="col-span-1"></div>
             </div>
-            <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
           </div>
-          <div className="flex border-2 border-red-50 p-4 rounded-lg  items-center justify-between">
-            <div>
-              <div className="h-2.5 bg-gray-300  rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-              <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-            </div>
-            <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
+
+          {/* Table Row Skeletons */}
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="grid grid-cols-12 gap-4 px-4 py-3 items-center animate-pulse">
+                <div className="col-span-4">
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-32 mb-2"></div>
+                  <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
+                </div>
+                <div className="col-span-5">
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48"></div>
+                </div>
+                <div className="col-span-1">
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-8"></div>
+                </div>
+                <div className="col-span-1">
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-12"></div>
+                </div>
+                <div className="col-span-1">
+                  <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+                </div>
+              </div>
+            ))}
           </div>
-          <div className="flex border-2 border-red-50 p-4 rounded-lg  items-center justify-between">
-            <div>
-              <div className="h-2.5 bg-gray-300  rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-              <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-            </div>
-            <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-          </div>
-          <div className="flex border-2 border-red-50 p-4 rounded-lg  items-center justify-between">
-            <div>
-              <div className="h-2.5 bg-gray-300  rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-              <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-            </div>
-            <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-          </div>
-          <div className="flex border-2 border-red-50 p-4 rounded-lg  items-center justify-between">
-            <div>
-              <div className="h-2.5 bg-gray-300  rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-              <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-            </div>
-            <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-          </div>
-          <span className="sr-only">Loading...</span>
         </div>
       </div>
     );
