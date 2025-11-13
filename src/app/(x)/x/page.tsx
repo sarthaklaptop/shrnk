@@ -167,18 +167,32 @@ export default function Page() {
   };
   
   return (
-    <div className='bg-white w-full rounded-lg mt-2 border-[1px] border-gray-300 p-2'>
-      <div className='w-4/5 my-4 flex flex-col mx-auto'>
-        <h1 className='font-bold text-2xl'>Links</h1>
-        <div className='flex w-full gap-2 items-center justify-end'>
-          <div className='relative flex-1 max-w-md'>
-            <IoSearchOutline className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5' />
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Header Section */}
+      <div className="mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Links</h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Manage and track your shortened links
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <DialogCloseButton label="Create Link" />
+          </div>
+        </div>
+
+        {/* Search and Actions Bar */}
+        <div className="mt-6 flex flex-col sm:flex-row gap-4 items-center">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
-              type='text'
-              placeholder='Search by short link OR URL'
+              type="text"
+              placeholder="Search by short link or URL..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className='pl-10 pr-4'
+              className="pl-10 pr-10 h-10"
             />
             {searching && (
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
@@ -186,37 +200,39 @@ export default function Page() {
               </div>
             )}
           </div>
-          <DialogCloseButton />
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button 
-                className='border-[1px] rounded-lg px-2 py-2 border-black flex items-center justify-center'
+              <Button
+                variant="outline"
+                size="sm"
                 disabled={isLoading}
+                className="h-10"
               >
-              {isLoading ? (
-                  <span className="loader w-4 h-4 border-2 border-gray-300 rounded-full border-t-transparent animate-spin"></span>
+                {isLoading ? (
+                  <div className="w-4 h-4 border-2 border-gray-300 rounded-full border-t-transparent animate-spin" />
                 ) : (
-                  <BsThreeDotsVertical className='cursor-pointer' />
+                  <MoreHorizontal className="w-4 h-4" />
                 )}
-              </button>
+              </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className='w-56 cursor-pointer '>
-              <DropdownMenuLabel onClick={() => downloadCSV()}>
-              <a href="#_" className="relative inline-flex items-center justify-center p-1 px-2 py-2 overflow-hidden font-medium text-red-600 transition duration-300 ease-out border-2 border-red-500 rounded-full shadow-md group">
-                  <span className="absolute inset-0 flex items-center justify-center w-full h-full text-white duration-300 -translate-x-full bg-red-500 group-hover:translate-x-0 ease">
-                      <PiFileCsvDuotone className='w-5 h-5'/>
-                  </span>
-                  <span className="absolute flex items-center justify-center w-full h-full text-red-500 transition-all duration-300 transform group-hover:translate-x-full ease">Download CSV</span>
-                  <span className="re1lative invisible">Download CSV</span>
-              </a>
-              </DropdownMenuLabel>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={() => downloadCSV()}>
+                <Download className="w-4 h-4 mr-2" />
+                Download CSV
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+      </div>
 
-        <Links searchQuery={searchQuery} searchResults={userLinks}
-          isSearching={searching}/>
-
+      {/* Links Table */}
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+        <Links
+          searchQuery={searchQuery}
+          searchResults={userLinks}
+          isSearching={searching}
+        />
       </div>
     </div>
   );
