@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { BASEURL } from "@/constants/constant";
-import { Copy, ArrowRight, BarChart3, MoreHorizontal, Trash2, Lock } from "lucide-react";
+import { Copy, ArrowRight, BarChart3, MoreHorizontal, Trash2, Lock, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import {
