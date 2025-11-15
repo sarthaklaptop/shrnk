@@ -26,7 +26,7 @@ interface UserLink {
   id: string;
   shortLink: string;
   longLink: string;
-  count: number;
+  clickCount: number;
   [key: string]: any;
 }
 
@@ -47,6 +47,7 @@ export default function Page() {
   const fetchUserLinks = async () => {
     try {
       const response = await axios.get<{ data: UserLink[] }>('/api/userLinks');
+      console.log(`linnks response:- ${response}`)
       return response.data.data || []; 
     } catch (error) {
       console.error('Error fetching user links:', error);
@@ -70,6 +71,8 @@ export default function Page() {
       const fetchNormalLinks = async () => {
         try {
           const response = await axios.get<{ data: UserLink[] }>('/api/userLinks');
+          // console.log(`💋💋responseeee:- ${response.data.data}`)
+          // console.log(`💋💋responseeee:- `, JSON.stringify(response.data.data, null, 2))
           setUserLinks(response.data.data || []);
         } catch (error) {
           console.error('Error fetching user links:', error);
@@ -108,7 +111,7 @@ export default function Page() {
         try {
           // console.log("Before response from /x")
           const response = await axios.get(`api/user/${session.user.id}`);
-          // console.log('response data from /x', {response});
+          console.log('response data from /x', {response});
           
           const { image, email, credits, userType } = response.data.user;
           
@@ -132,6 +135,7 @@ export default function Page() {
         const fetchInitialLinks = async () => {
           try {
             const response = await axios.get<{ data: UserLink[] }>('/api/userLinks');
+            console.log(`response for all the links: ${response.data.data}`)
             setUserLinks(response.data.data || []);
           } catch (error) {
             console.error('Error fetching initial links:', error);
@@ -151,6 +155,8 @@ export default function Page() {
         toast('No data available for export');
         return;
       }
+
+      console.log(`links to be downloaded as csv: ${JSON.stringify(links)}`);
   
       const csvData = links.map((link: UserLink) => ({
         id: link.id.toString(),

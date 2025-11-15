@@ -28,7 +28,7 @@ interface UserLink {
   id: string;
   shortLink: string;
   longLink: string;
-  count: number;
+  clickCount: number;
   password?: string | null;
   [key: string]: any;
 }
@@ -198,7 +198,7 @@ export default function Links({ searchQuery = '', searchResults = [], isSearchin
     <div>
       <ScrollArea className="h-[calc(100vh-220px)] w-full mx-4 my-8">
         <div className="flex flex-col gap-2">
-          {displayLinks.map(({ id, shortLink, longLink, count, password }: UserLink) => (
+          {displayLinks.map(({ id, shortLink, longLink, clickCount, password }: UserLink) => (
             <div key={id} className="relative">
               <div className="flex flex-col border-red-50 border-2 rounded-lg cursor-pointer p-4 w-full gap-2">
                 <div className="flex justify-between">
@@ -243,7 +243,7 @@ export default function Links({ searchQuery = '', searchResults = [], isSearchin
                       onClick={() => handleNavigation(shortLink)}
                     >
                       <a className="flex items-center gap-1 px-1">
-                        <HiCursorClick /> {count} clicks
+                        <HiCursorClick /> {clickCount} clicks
                       </a>
                     </span>
                     <span className="flex border-2 p-[0.5px] cursor-pointer hover:bg-slate-200  rounded-sm items-center justify-between">

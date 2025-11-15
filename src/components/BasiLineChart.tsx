@@ -2,55 +2,27 @@
 
 import * as React from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { toast } from "sonner";
-import axios from "axios";
 
-export default function BasiLineChart() {
-  const params = useParams();
-  const shortLink = params.shortLink;
+interface ChartData {
+  date: string;
+  clicks: number;
+}
 
-  const [chartData, setChartData] = useState<
-    { date: string; clicks: number }[]
-  >([]);
+interface BasicLineChartProps {
+  chartData: ChartData[];
+}
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const result = await axios.get(`/api/link?id=${shortLink}`);
-        const timestamps = result.data.mainData;
-        if (!Array.isArray(timestamps)) {
-          throw new Error("Invalid data format");
-        }
-
-        const groupedData = timestamps.reduce(
-          (acc, timestamp) => {
-            const date = new Date(timestamp).toISOString().split("T")[0];
-            acc[date] = (acc[date] || 0) + 1;
-            return acc;
-          },
-          {} as Record<string, number>,
-        );
-
-        const formattedData = Object.entries(groupedData).map(
-          ([date, clicks]) => ({
-            date,
-            clicks: clicks as number,
-          }),
-        );
-        setChartData(formattedData);
-      } catch (error) {
-        console.log("Error details: ", error);
-        toast("Error Loading Stats");
-      }
-    };
-
-    fetchStats();
-  }, [shortLink]);
+export default function BasicLineChart({ chartData }: BasicLineChartProps) {
+  if (!chartData || chartData.length === 0) {
+    return (
+      <div className="h-[300px] flex items-center justify-center">
+        <p className="text-gray-500">No click data available</p>
+      </div>
+    );
+  }
 
   return (
-      <BarChart
+    <BarChart
       dataset={chartData}
       xAxis={[
         {
@@ -59,16 +31,22 @@ export default function BasiLineChart() {
           label: "Date",
           tickPlacement: "middle",
           colorMap: {
-            type: 'piecewise',
+            type: "piecewise",
             thresholds: [],
-            colors: ['rgb(252 165 165)'],
-          }
+            colors: ["rgb(252 165 165)"],
+          },
         },
       ]}
-      yAxis={[{ dataKey: "clicks", label: "Clicks" }]}
-      series={[{ dataKey: "clicks", label: "Clicks per Date", color: "rgb(252 165 165)" }]}
+      yAxis={[{ label: "Clicks" }]}
+      series={[
+        {
+          dataKey: "clicks",
+          label: "Clicks per Date",
+          color: "rgb(252 165 165)",
+        },
+      ]}
       height={300}
+      margin={{ top: 10, right: 10, bottom: 30, left: 40 }}
     />
-    
   );
 }
