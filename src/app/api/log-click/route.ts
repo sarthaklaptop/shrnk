@@ -6,15 +6,7 @@ import { UAParser } from "ua-parser-js";
 export const runtime = "nodejs";
 
 async function getGeolocation(request: NextRequest): Promise<{ country: string; city: string }> {
-  const vercelCountry = request.headers.get("x-vercel-ip-country");
-  const vercelCity = request.headers.get("x-vercel-ip-city");
-
-  if (vercelCountry && vercelCity) {
-    console.log(chalk.green(`✅ Geo from Vercel headers: ${vercelCountry}, ${vercelCity}`));
-    return { country: vercelCountry, city: vercelCity };
-  }
-
-  console.log(chalk.yellow("⚠️  No Vercel headers, using IP-API for geolocation..."));
+  console.log(chalk.yellow("Using IP-API for geolocation (bypassing Vercel headers for accuracy)..."));
   
   try {
     const clientIp = 
@@ -26,14 +18,14 @@ async function getGeolocation(request: NextRequest): Promise<{ country: string; 
 
     // Skip truly local IPs
     if (!clientIp || clientIp === '127.0.0.1' || clientIp === '::1' || clientIp.startsWith('192.168.') || clientIp.startsWith('10.')) {
-      console.log(chalk.yellow("🏠 Local development IP detected, fetching from external IP..."));
+      console.log(chalk.yellow("Local development IP detected, fetching from external IP..."));
       
       // Get public IP for localhost testing
       const publicIpResponse = await fetch('https://api.ipify.org?format=json', {
         signal: AbortSignal.timeout(3000),
       });
       const { ip: publicIp } = await publicIpResponse.json();
-      console.log(chalk.blue(`🌍 Public IP: ${publicIp}`));
+      console.log(chalk.blue(`Public IP: ${publicIp}`));
       
       // Use public IP for geolocation
       const geoResponse = await fetch(`http://ip-api.com/json/${publicIp}?fields=status,countryCode,city`, {
@@ -45,7 +37,7 @@ async function getGeolocation(request: NextRequest): Promise<{ country: string; 
       if (geoData.status === 'success') {
         const country = geoData.countryCode || "Unknown";
         const city = geoData.city || "Unknown";
-        console.log(chalk.green(`✅ Geo from IP-API (public): ${country}, ${city}`));
+        console.log(chalk.green(`Geo from IP-API (public): ${country}, ${city}`));
         return { country, city };
       }
     } else {
@@ -59,15 +51,15 @@ async function getGeolocation(request: NextRequest): Promise<{ country: string; 
       if (geoData.status === 'success') {
         const country = geoData.countryCode || "Unknown";
         const city = geoData.city || "Unknown";
-        console.log(chalk.green(`✅ Geo from IP-API: ${country}, ${city}`));
+        console.log(chalk.green(`Geo from IP-API: ${country}, ${city}`));
         return { country, city };
       }
     }
   } catch (error) {
-    console.log(chalk.red("❌ Geo lookup failed:", error instanceof Error ? error.message : 'Unknown error'));
+    console.log(chalk.red("Geo lookup failed:", error instanceof Error ? error.message : 'Unknown error'));
   }
 
-  console.log(chalk.yellow("⚠️  Fallback to Unknown"));
+  console.log(chalk.yellow("Fallback to Unknown"));
   return { country: "Unknown", city: "Unknown" };
 }
 
@@ -82,7 +74,7 @@ export async function POST(request: NextRequest) {
 
     // ✅ Validate linkId first
     if (!linkId || typeof linkId !== 'string') {
-      console.error(chalk.red("❌ Invalid or missing linkId"));
+      console.error(chalk.red("Invalid or missing linkId"));
       return NextResponse.json({ error: "linkId is required" }, { status: 400 });
     }
 
@@ -94,12 +86,12 @@ export async function POST(request: NextRequest) {
     const os = parser.getOS().name || "Unknown";
     const browser = parser.getBrowser().name || "Unknown";
 
-    console.log(chalk.blue(`📊 Parsed: device=${deviceType}, os=${os}, browser=${browser}, country=${country}, city=${city}`));
+    console.log(chalk.blue(`Parsed: device=${deviceType}, os=${os}, browser=${browser}, country=${country}, city=${city}`));
 
     // ✅ Use transaction to ensure both operations succeed or both fail
     const result = await prisma.$transaction(async (tx) => {
       // Save click
-      console.log(chalk.yellow("💾 Creating click record..."));
+      console.log(chalk.yellow("Creating click record..."));
       const click = await tx.click.create({
         data: {
           linkId, // ✅ TypeScript knows linkId is string now
@@ -110,15 +102,15 @@ export async function POST(request: NextRequest) {
           browser,
         },
       });
-      console.log(chalk.green("✅ Click created:", click.id));
+      console.log(chalk.green("Click created:", click.id));
 
       // Increment counter
-      console.log(chalk.yellow("⬆️  Incrementing click count..."));
+      console.log(chalk.yellow("Incrementing click count..."));
       await tx.link.update({
         where: { id: linkId },
         data: { clickCount: { increment: 1 } },
       });
-      console.log(chalk.green("✅ Counter incremented"));
+      console.log(chalk.green("Counter incremented"));
 
       return click;
     });

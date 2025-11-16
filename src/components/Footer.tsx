@@ -1,8 +1,24 @@
+import Link from 'next/link';
+
 export default function Footer () {
     return (
         <footer className="mx-auto w-full max-w-container px-4 sm:px-6 lg:px-8">
             <div className="border-t border-slate-900/5 py-10">
                 <p className="flex items-center justify-center font-bold text-2xl text-red-500">Shrnk</p>
+                
+                {/* Navigation Links */}
+                <div className="mt-6 flex items-center justify-center gap-6 flex-wrap">
+                    <Link href="/about" className="text-sm text-slate-600 hover:text-red-500 transition-colors duration-200">
+                        About
+                    </Link>
+                    <Link href="/contact" className="text-sm text-slate-600 hover:text-red-500 transition-colors duration-200">
+                        Contact
+                    </Link>
+                    <Link href="/legal/terms" className="text-sm text-slate-600 hover:text-red-500 transition-colors duration-200">
+                        Legal
+                    </Link>
+                </div>
+                
                 <p className="mt-5 text-center text-sm leading-6 text-slate-500">© 2022 <span>Shrnk</span>. All rights reserved.</p>
                 <div className="flex items-center justify-center my-2">
                     <button className="bg-slate-800 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6  text-white inline-block">
