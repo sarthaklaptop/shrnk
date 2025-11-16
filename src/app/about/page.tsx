@@ -114,7 +114,7 @@ const AboutUsPage = () => {
             Shrnk was founded in 2025 with a simple mission: to make link sharing simple, secure, and powerful. In an era of lengthy URLs and complex link management, we saw an opportunity to create a service that prioritizes user experience, security, and reliability.
           </p>
           <p className="text-gray-700 leading-relaxed">
-            We're a dedicated team of developers, designers, and support specialists passionate about creating tools that make the internet more accessible and manageable.
+            Were a dedicated team of developers, designers, and support specialists passionate about creating tools that make the internet more accessible and manageable.
           </p>
         </motion.div>
 

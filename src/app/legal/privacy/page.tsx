@@ -5,6 +5,33 @@ import { motion } from 'framer-motion';
 import { ChevronRight, Shield, Lock, Eye, Database, Globe, UserCheck, Mail, ArrowLeft, Cookie, FileText } from 'lucide-react';
 import Link from 'next/link';
 
+interface Subsection {
+  title: string;
+  subtitle?: string;
+  items?: string[];
+  subtitle2?: string;
+  items2?: string[];
+}
+
+interface ShareCategory {
+  title: string;
+  items: string[];
+}
+
+interface Section {
+  id: string;
+  icon: React.ReactNode;
+  title: string;
+  content?: string;
+  intro?: string;
+  items?: string[];
+  weDoNot?: string[];
+  weMayShare?: ShareCategory[];
+  weTrack?: string[];
+  weUse?: string[];
+  subsections?: Subsection[];
+}
+
 const PrivacyPolicyPage = () => {
   const [openSections, setOpenSections] = useState<Set<string>>(new Set(['introduction']));
 
@@ -18,7 +45,7 @@ const PrivacyPolicyPage = () => {
     setOpenSections(newOpenSections);
   };
 
-  const sections = [
+  const sections: Section[] = [
     {
       id: 'introduction',
       icon: <Shield className="w-5 h-5" />,

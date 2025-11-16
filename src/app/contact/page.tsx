@@ -96,7 +96,7 @@ const ContactUsPage = () => {
             </div>
             <div className="flex-1">
               <h1 className="text-4xl sm:text-5xl font-black mb-2">Contact Us</h1>
-              <p className="text-gray-600 font-medium">We're here to help! Get in touch with us.</p>
+              <p className="text-gray-600 font-medium">Were here to help! Get in touch with us.</p>
             </div>
           </div>
         </div>

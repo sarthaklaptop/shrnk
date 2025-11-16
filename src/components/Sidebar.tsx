@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Sidebar, SidebarBody, SidebarLink } from "./ui/sidebar";
+import { Sidebar, SidebarBody, SidebarLink, useSidebar } from "./ui/sidebar";
 import PersonIcon from "@mui/icons-material/Person";
 import { IoMdSettings } from "react-icons/io";
 import Link from "next/link";
@@ -19,6 +19,47 @@ import { useStore } from "zustand";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import AccountSettingsPage from "@/app/(x)/account-settings/page";
 import axios from "axios";
+import { LogOut } from "lucide-react";
+
+const LogoutButton = () => {
+  const { open, animate } = useSidebar();
+
+  const handleItemClick = () => {
+    signOut();
+  };
+
+  return (
+    <div className="p-3">
+      <button
+        onClick={handleItemClick}
+        className={`
+          w-full flex items-center rounded-md text-left transition-all duration-200 group relative
+          text-red-600 hover:bg-red-50 hover:text-red-700
+          ${
+            !open && animate
+              ? "justify-center p-2.5"
+              : "space-x-2.5 px-3 py-2.5"
+          }
+        `}
+        title={!open && animate ? "Logout" : undefined}
+      >
+        <div className="flex items-center justify-center min-w-[24px]">
+          <LogOut className="h-5 w-5 flex-shrink-0 text-red-500 group-hover:text-red-600" />
+        </div>
+
+        {(open || !animate) && <span className="text-sm">Logout</span>}
+
+        {/* Tooltip for collapsed state */}
+        {!open && animate && (
+          <div className="absolute left-full ml-2 px-2 py-1 bg-slate-800 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+            Logout
+            <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-slate-800 rotate-45" />
+          </div>
+        )}
+      </button>
+    </div>
+  );
+};
 
 export function SidebarDemo() {
   const pathname = usePathname();
@@ -49,23 +90,23 @@ export function SidebarDemo() {
 
   // Fetch user data including credits when authenticated
   useEffect(() => {
-    if (status === 'authenticated' && session?.user?.id) {
+    if (status === "authenticated" && session?.user?.id) {
       setCreditsLoading(true);
       const fetchUserData = async () => {
         try {
-          const response = await axios.get(`api/user/${session.user.id}`);
-          
+          const response = await axios.get(`/api/user/${session.user.id}`);
+
           const { image, email, credits, userType } = response.data.user;
-          
+
           setUser({
             image,
             email,
             id: session.user.id,
             credits,
-            userType
+            userType,
           });
         } catch (error) {
-          console.error('Error fetching user data in Sidebar:', error);
+          console.error("Error fetching user data in Sidebar:", error);
         } finally {
           setCreditsLoading(false);
         }
@@ -106,29 +147,28 @@ export function SidebarDemo() {
 
           <div className="flex flex-col justify-center">
             <div className="hidden lg:block">
-
-            
               <HoverCard>
                 <HoverCardTrigger>
                   <div className="border-2 cursor-pointer border-red-300 w-fit p-2 rounded-lg">
                     <div className="flex gap-1 font-mono">
                       Credits{" "}
-                      {creditsLoading ? 
-                      (
+                      {creditsLoading ? (
                         <span className="inline-block w-12 h-5 bg-gray-300 rounded animate-pulse" />
                       ) : (
-                          <span className="font-bold">{credits}</span>
-                      )
-                      }
+                        <span className="font-bold">{credits}</span>
+                      )}
                     </div>
                   </div>
                 </HoverCardTrigger>
                 <HoverCardContent className="w-80 cursor-pointer">
                   <div className="flex justify-between space-x-4">
                     <div className="space-y-1">
-                      <h4 className="text-xl font-bold bg-gradient-to-r from-red-500 to-purple-500 bg-clip-text text-transparent">Upgrade to Pro</h4>
+                      <h4 className="text-xl font-bold bg-gradient-to-r from-red-500 to-purple-500 bg-clip-text text-transparent">
+                        Upgrade to Pro
+                      </h4>
                       <p className="text-sm">
-                        With Upgrading to pro You will get 25 Monthly Credits More
+                        With Upgrading to pro You will get 25 Monthly Credits
+                        More
                       </p>
                       <div className="flex mx-auto items-center justify-center w-full">
                         <Link href="/pricing" className="p-[3px] relative">
@@ -146,7 +186,7 @@ export function SidebarDemo() {
 
             <SidebarLink
               link={{
-                label: ``,
+                label: session?.user?.name || "Loading...",
                 href: "#",
                 icon: (
                   <Image
@@ -162,17 +202,7 @@ export function SidebarDemo() {
                 ),
               }}
             />
-            <div className=" flex gap-2">
-              <Button
-                onClick={() => signOut()}
-                className="flex-shrink-0 relative inline-flex h-10 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50"
-              >
-                <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
-                <span className="inline-flex h-full w-full px-4 cursor-pointer items-center justify-center rounded-full bg-slate-100 p-2 text-sm font-medium text-black backdrop-blur-3xl">
-                  Logout
-                </span>
-              </Button>
-            </div>
+            <LogoutButton />
           </div>
         </SidebarBody>
       </Sidebar>

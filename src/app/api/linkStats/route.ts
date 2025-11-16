@@ -24,11 +24,25 @@ export async function GET(request: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
-      select: { id: true },
+      select: { id: true, userType: true },
     });
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 401 });
+    }
+
+    // For free users, enforce 30-day limit
+    if (user.userType === "FREE" && timeRange !== "30d" && timeRange !== "all") {
+      return NextResponse.json(
+        { error: "Free users can only access 30 days of analytics data" },
+        { status: 403 }
+      );
+    }
+
+    // For free users, if "all" is selected, default to 30d
+    let effectiveTimeRange = timeRange;
+    if (user.userType === "FREE" && timeRange === "all") {
+      effectiveTimeRange = "30d";
     }
 
     // Get link
@@ -51,9 +65,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    // Calculate time filter
+    // Calculate time filter using effectiveTimeRange
     let dateFilter: Date | undefined;
-    switch (timeRange) {
+    switch (effectiveTimeRange) {
       case "30d":
         dateFilter = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
         break;
@@ -65,6 +79,9 @@ export async function GET(request: NextRequest) {
         break;
       case "1y":
         dateFilter = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000);
+        break;
+      case "all":
+        dateFilter = undefined;
         break;
     }
 
@@ -105,14 +122,14 @@ export async function GET(request: NextRequest) {
 
     // Fill missing days if needed
     let chartData = dailyClicksArray;
-    if (timeRange !== "all") {
+    if (effectiveTimeRange !== "all") {
       const daysMap: Record<string, number> = {
         "30d": 30,
         "90d": 90,
         "6m": 180,
         "1y": 365,
       };
-      const days = daysMap[timeRange] || 30;
+      const days = daysMap[effectiveTimeRange] || 30;
       
       const result: Array<{ date: string; clicks: number }> = [];
       const today = new Date();
@@ -134,7 +151,8 @@ export async function GET(request: NextRequest) {
       clicks,
       stats,
       chartData,
-      timeRange,
+      timeRange: effectiveTimeRange,
+      isPremium: user.userType === "PREMIUM",
     });
   } catch (error: any) {
     console.error("Error in linkStats:", error);
