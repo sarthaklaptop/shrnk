@@ -2,12 +2,17 @@
 
 import { DragCloseDrawerExample } from "@/components/PaymentCloseDraw";
 import { userStorage } from "@/store/link";
+import { useState } from "react";
 
 export default function Pricing() {
   const user = userStorage((state) => state.user);
+    const [currency, setCurrency] = useState<'USD' | 'INR'>('USD');
 
-  console.log(user);
 
+const priceMap = {
+    FREE: { USD: 0, INR: 0 },
+    PRO: { USD: 4.99, INR: 445 }
+  };
   return (
     <div>
       <section className="relative overflow-hidden bg-white dark:bg-dark lg:pt-[100px] lg:pb-[90px]">
@@ -25,6 +30,30 @@ export default function Pricing() {
                   There are many variations of passages of Lorem Ipsum available
                   but the majority have suffered alteration in some form.
                 </p>
+
+                {/* Currency Toggle */}
+                <div className="mt-6 flex justify-center gap-4">
+                  <button
+                    onClick={() => setCurrency('USD')}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                      currency === 'USD'
+                        ? 'bg-primary text-white'
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                  >
+                    USD ($)
+                  </button>
+                  <button
+                    onClick={() => setCurrency('INR')}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                      currency === 'INR'
+                        ? 'bg-primary text-white'
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                  >
+                    INR (₹)
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -32,10 +61,12 @@ export default function Pricing() {
             <div className="w-full px-4 md:w-1/2 lg:w-1/3">
               <div className="relative z-10 mb-10 overflow-hidden rounded-[10px] border-2 border-stroke dark:border-dark-3 bg-white dark:bg-dark-2 py-10 px-8 shadow-pricing sm:p-12 lg:py-10 lg:px-6 xl:p-[50px]">
                 <span className="mb-3 block text-lg font-semibold text-primary">
-                  Pro
+                  Free
                 </span>
                 <h2 className="mb-5 text-[42px] font-bold text-dark dark:text-white">
-                  <span>$0</span>
+                  <span>
+                    {currency === 'USD' ? '$0' : '₹0'}
+                  </span>
                   <span className="text-base font-medium text-body-color dark:text-dark-6">
                     / mo
                   </span>
@@ -338,7 +369,7 @@ export default function Pricing() {
                     </svg>
                   </span>
                 </div>
-              </div>
+              </div>  
             </div>
             <div className="w-full px-4 md:w-1/2 lg:w-1/3">
               <div className="relative z-10 mb-10 overflow-hidden rounded-[10px] border-2 border-stroke border-red-500 bg-white dark:bg-dark-2 py-10 px-8 shadow-pricing sm:p-12 lg:py-10 lg:px-6 xl:p-[50px]">
@@ -346,7 +377,9 @@ export default function Pricing() {
                   Pro
                 </span>
                 <h2 className="mb-5 text-[42px] font-bold text-dark dark:text-white">
-                  <span>$4.99</span>
+                  <span>
+                    {currency === 'USD' ? '$4.99' : '₹445'}
+                  </span>
                   <span className="text-base font-medium text-body-color dark:text-dark-6">
                     / mo
                   </span>
