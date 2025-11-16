@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronRight, Shield, Lock, Eye, Database, Globe, UserCheck, Mail, ArrowLeft, Cookie, FileText } from 'lucide-react';
+import { ChevronRight, Shield, Lock, Eye, Database, Globe, UserCheck, Mail, ArrowLeft, Cookie, FileText, DollarSign, RefreshCw, XCircle, CheckCircle, Clock } from 'lucide-react';
 import Link from 'next/link';
 
 interface Subsection {
@@ -296,6 +296,150 @@ const PrivacyPolicyPage = () => {
         'Significant changes notified via email',
         'Continued use implies acceptance'
       ]
+    },
+    {
+      id: 'return-refund',
+      icon: <DollarSign className="w-5 h-5" />,
+      title: 'Return & Refund Policy',
+      content: 'This section outlines our policy regarding returns and refunds for premium subscriptions and services.',
+      subsections: [
+        {
+          title: 'Refund Eligibility & Duration',
+          subtitle: 'Eligible for Refund (Within 7 Days):',
+          items: [
+            'First-time subscribers: Full refund within 7 days of initial purchase',
+            'Service outage exceeding 48 consecutive hours',
+            'Technical issues preventing use of paid features for more than 7 days',
+            'Accidental duplicate charges',
+            'Billing errors on our part'
+          ],
+          subtitle2: 'Not Eligible for Refund:',
+          items2: [
+            'Change of mind after the 7-day period',
+            'Failure to use the service',
+            'Violation of Terms of Service leading to account suspension',
+            'Partial month refunds after cancellation',
+            'Third-party payment processing fees'
+          ]
+        },
+        {
+          title: 'Refund Processing Duration',
+          subtitle: 'Processing Timeline:',
+          items: [
+            'Refund request review: 3-5 business days',
+            'Approved refund processing: 7-10 business days',
+            'Bank processing time: Additional 5-10 business days',
+            'Total estimated time: 15-25 business days from request to receipt'
+          ]
+        },
+        {
+          title: 'Refund Modes',
+          subtitle: 'Refund Methods:',
+          items: [
+            'Original payment method: Refunds issued to the same payment method used for purchase',
+            'Credit/Debit cards: Refunded to original card (appears in 5-10 business days)',
+            'Digital wallets: Refunded to original wallet account',
+            'Bank transfers: Processed via original payment gateway',
+            'Note: Refunds cannot be transferred to different payment methods'
+          ]
+        },
+        {
+          title: 'How to Request a Refund',
+          subtitle: 'Refund Request Process:',
+          items: [
+            'Email your request to shrnk.contact@gmail.com',
+            'Subject line: "Refund Request - [Your Email]"',
+            'Include: Account email, Transaction ID, Reason for refund, Date of purchase',
+            'Response time: 24-48 hours for initial acknowledgment',
+            'Processing begins after approval'
+          ]
+        },
+        {
+          title: 'Free Plan',
+          subtitle: 'No Refunds:',
+          items: [
+            'Free plan users: No refunds applicable as service is free',
+            'Credits are non-transferable and have no monetary value',
+            'Free credits cannot be refunded or exchanged'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'cancellation',
+      icon: <XCircle className="w-5 h-5" />,
+      title: 'Cancellation Policy',
+      content: 'This section explains how you can cancel your subscription and what happens when you do.',
+      subsections: [
+        {
+          title: 'Cancellation Duration & Process',
+          subtitle: 'Cancellation Timeline:',
+          items: [
+            'Cancellation request processing: Immediate (within 24 hours)',
+            'Access duration: Premium features remain active until end of current billing period',
+            'Effective cancellation: Takes effect at the end of the current billing cycle',
+            'No immediate termination: Service continues until paid period expires'
+          ]
+        },
+        {
+          title: 'How to Cancel',
+          subtitle: 'Cancellation Methods:',
+          items: [
+            'Account Dashboard: Cancel anytime from your account settings',
+            'Email Request: Send cancellation request to shrnk.contact@gmail.com',
+            'Include: Account email and reason for cancellation (optional)',
+            'Confirmation: You will receive email confirmation within 24 hours'
+          ]
+        },
+        {
+          title: 'Cancellation Duration Details',
+          subtitle: 'Monthly Subscriptions:',
+          items: [
+            'Cancellation before renewal: Prevents next billing cycle',
+            'Remaining access: Full access until end of current month',
+            'Example: Cancel on day 15, access continues until day 30/31',
+            'No prorated refunds: Partial month refunds not available'
+          ],
+          subtitle2: 'Annual Subscriptions:',
+          items2: [
+            'Cancellation anytime: Can cancel at any point during annual period',
+            'Remaining access: Full access until end of annual billing period',
+            'Example: Cancel after 6 months, access continues for remaining 6 months',
+            'No prorated refunds: Partial year refunds not available'
+          ]
+        },
+        {
+          title: 'What Happens After Cancellation',
+          subtitle: 'Post-Cancellation:',
+          items: [
+            'Premium features: Access continues until billing period ends',
+            'Link expiration: Premium links remain active until their set expiration',
+            'Data retention: Your data and links are retained for 30 days',
+            'Account status: Account downgrades to free plan after billing period',
+            'Credits: Unused premium credits expire at end of subscription period'
+          ]
+        },
+        {
+          title: 'Reactivation',
+          subtitle: 'Resubscribing:',
+          items: [
+            'Reactivation: Can resubscribe anytime from account dashboard',
+            'Immediate access: Premium features restored immediately upon payment',
+            'Previous data: All your previous links and data remain intact',
+            'Billing: New billing cycle starts from reactivation date'
+          ]
+        },
+        {
+          title: 'Cancellation by Shrnk',
+          subtitle: 'We May Cancel Your Subscription If:',
+          items: [
+            'Violation of Terms of Service: Immediate cancellation without refund',
+            'Fraudulent activity: Account suspended and subscription cancelled',
+            'Payment failure: Subscription cancelled after 3 failed payment attempts',
+            'Notice period: 7 days notice for non-payment related cancellations'
+          ]
+        }
+      ]
     }
   ];
 
@@ -320,7 +464,7 @@ const PrivacyPolicyPage = () => {
               <Lock className="w-8 h-8" />
             </div>
             <div className="flex-1">
-              <h1 className="text-4xl sm:text-2xl font-black mb-2">Privacy Policy</h1>
+              <h1 className="text-4xl sm:text-2xl font-black mb-2">Privacy, Refund & Cancellation Policy</h1>
               <p className="text-gray-600 text-sm font-medium">Last Updated: November 2, 2025</p>
             </div>
           </div>
@@ -332,7 +476,7 @@ const PrivacyPolicyPage = () => {
         {/* Important Notice */}
         <div className="mb-8 p-4 bg-red-300 border-2 border-black rounded-lg">
           <p className="font-semibold">
-            Your privacy is important to us. This policy explains how we handle your data with transparency and care.
+            This comprehensive policy covers Data Privacy, Return & Refund Policy (with duration and refund modes), and Cancellation Policy (with duration). Your privacy and satisfaction are important to us.
           </p>
         </div>
 
