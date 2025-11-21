@@ -169,7 +169,7 @@ export const SidebarLink = ({
     <Link
       href={link.href}
       className={cn(
-        "flex items-center justify-start gap-2 group/sidebar p-3 mx-3 my-2.5",
+        "flex items-center justify-start gap-2 group/sidebar p-2",
         className
       )}
       {...props}

@@ -174,8 +174,8 @@ export default function Page() {
   };
   
   return (
-    <div className='bg-white w-full rounded-lg mt-2 border-[1px] border-gray-300 p-2'>
-      <div className='w-4/5 my-4 flex flex-col mx-auto'>
+    <div className='bg-white w-full rounded-lg mt-2 border-[1px] border-gray-300 p-2 py-4'>
+      <div className='w-11/12 m-2 p-2 flex flex-col mx-auto'>
         <h1 className='font-bold text-2xl'>Links</h1>
         <div className='flex w-full gap-2 items-center justify-end'>
           <div className='relative flex-1 max-w-md'>

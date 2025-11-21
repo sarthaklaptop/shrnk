@@ -29,7 +29,7 @@ const LogoutButton = () => {
   };
 
   return (
-    <div className="p-3">
+    <div className="p-2">
       <button
         onClick={handleItemClick}
         className={`
@@ -38,7 +38,7 @@ const LogoutButton = () => {
           ${
             !open && animate
               ? "justify-center p-2.5"
-              : "space-x-2.5 px-3 py-2.5"
+              : "space-x-2.5 py-2.5"
           }
         `}
         title={!open && animate ? "Logout" : undefined}
@@ -126,18 +126,15 @@ export function SidebarDemo() {
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             <Logo />
             <div className="mt-8 flex flex-col gap-2 ">
-              {/* {links.map((link, idx) => (
-                <SidebarLink className="hover:bg-gray-200 rounded-lg p-2" key={idx} link={link} />
-              ))} */}
               {links.map((link, idx) => {
-                const isActive = pathname === link.href; // Check if link is active
+                const isActive = pathname === link.href; 
                 return (
                   <SidebarLink
                     key={idx}
                     link={link}
                     className={cn(
                       "rounded-lg p-2 hover:bg-gray-200",
-                      isActive && "bg-red-300 font-medium text-red-700"
+                      isActive && "bg-red-300 font-medium text-red-700 "
                     )}
                   />
                 );
@@ -146,10 +143,10 @@ export function SidebarDemo() {
           </div>
 
           <div className="flex flex-col justify-center">
-            <div className="hidden lg:block">
+            <div className="hidden lg:block m-2">
               <HoverCard>
                 <HoverCardTrigger>
-                  <div className="border-2 cursor-pointer border-red-300 w-fit p-2 rounded-lg">
+                  <div className="border-2 flex items-center justify-center cursor-pointer border-red-300 w-full p-2 rounded-lg mx-auto">
                     <div className="flex gap-1 font-mono">
                       Credits{" "}
                       {creditsLoading ? (

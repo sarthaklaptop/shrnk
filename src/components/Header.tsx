@@ -73,8 +73,15 @@ export default function Header() {
                 <h3 className="text-base font-semibold">Menu</h3>
               </div>
               <nav className="flex-1 p-4 space-y-3">
-                <a href="#features-section" className="block text-zinc-800 font-medium">Features</a>
-                <a href="/pricing" className="block text-zinc-800 font-medium">Pricing</a>
+                <a
+                  href="#features-section"
+                  className="block text-zinc-800 font-medium"
+                >
+                  Features
+                </a>
+                <a href="/pricing" className="block text-zinc-800 font-medium">
+                  Pricing
+                </a>
               </nav>
               <div className="p-4 border-t">
                 {status === "loading" ? (
@@ -83,11 +90,19 @@ export default function Header() {
                     Verifying...
                   </Button>
                 ) : !session ? (
-                  <Button className="w-full" onClick={() => signIn("google", { callbackUrl: "/x" })}>
+                  <Button
+                    className="w-full"
+                    onClick={() => signIn("google", { callbackUrl: "/x" })}
+                  >
                     Login
                   </Button>
                 ) : (
-                  <a href="/x" className="block w-full text-center font-medium text-red-600">My Account</a>
+                  <a
+                    href="/x"
+                    className="block w-full text-center font-medium text-red-600"
+                  >
+                    My Account
+                  </a>
                 )}
               </div>
             </div>
@@ -116,11 +131,16 @@ export default function Header() {
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 cursor-pointer">
-              <DropdownMenuLabel>
+              <DropdownMenuLabel className="p-2 rounded-lg hover:bg-red-300 hover:text-red-700 transition-all duration-200">
                 <a href="/x">My Account</a>
               </DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => signOut()}>
-                <span>Log out</span>
+              <DropdownMenuItem className="border-none outline-none focus:outline-none">
+                <DropdownMenuLabel
+                  className="p-2 rounded-lg hover:bg-red-300 hover:text-red-700 transition-all duration-200 border-none"
+                  onClick={() => signOut()}
+                >
+                  <span>Log out</span>
+                </DropdownMenuLabel>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
