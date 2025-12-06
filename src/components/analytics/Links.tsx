@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { BASEURL } from "@/constants/constant";
 import { MdContentCopy, MdOutlineSubdirectoryArrowRight } from "react-icons/md";
@@ -23,6 +23,7 @@ import { Lock } from "lucide-react";
 import { useProtectedRoute } from "@/lib/hooks/useProtectedRoute";
 import { DialogCloseButton } from "@/components/Dialog";
 import { Check } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface UserLink {
   id: string;
@@ -40,44 +41,17 @@ interface LinksProps {
 }
 
 export default function Links({ searchQuery = '', searchResults = [], isSearching = false}: LinksProps) {
-  const [userLinks, setUserLinks] = useState<UserLink[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const status = useProtectedRoute();
 
-  useEffect(() => {
-    // Don't fetch if we have a search query - parent handles search
-    if (searchQuery.trim()) {
-      return;
-    }
+  // Use searchResults directly - they come from React Query when not searching, or from search when searching
+  const displayLinks = searchResults || [];
 
-    const fetchUserLinks = async () => {
-      setIsLoading(true);
-      try {
-        // Use regular userLinks endpoint when no search query
-        const response = await axios.get("/api/userLinks");
-        setUserLinks(response.data.data);
-      } catch (error) {
-        console.error("Error fetching user links:", error);
-        setUserLinks([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    // Only fetch normal links if not searching and authenticated
-    if (status === "authenticated") {
-      fetchUserLinks();
-    }
-  }, [status, searchQuery]);
-
-  // Use searchResults when searching, otherwise use userLinks
-  const displayLinks = searchQuery.trim() ? searchResults : userLinks;
-
-  if (status == "loading" || (isLoading && !searchQuery.trim()) || (isSearching && searchQuery.trim())) {
+  if (status == "loading" || isSearching) {
     return (
       <div className="bg-white w-full rounded-lg mt-2 p-2">
         <div
@@ -125,7 +99,7 @@ export default function Links({ searchQuery = '', searchResults = [], isSearchin
     );
   }
 
-  if ((!isLoading && !isSearching) && status === "authenticated" && displayLinks.length === 0) {
+  if (status === "authenticated" && displayLinks.length === 0) {
     return (
       <div className="w-full h-[calc(100vh-220px)] flex items-center justify-center">
         <div className="text-center flex flex-col items-center gap-4">
@@ -183,9 +157,12 @@ export default function Links({ searchQuery = '', searchResults = [], isSearchin
     try {
       await axios.delete("/api/link", { data: { id } });
       toast("Link deleted successfully");
-      // Update both userLinks and searchResults state
-      setUserLinks((prevLinks) => prevLinks.filter((link) => link.id !== id));
-      // If searching, the parent component will need to refetch or update searchResults
+      
+      // Update React Query cache by removing the deleted link
+      queryClient.setQueryData<UserLink[]>(["links"], (old) => {
+        if (!old) return [];
+        return old.filter((link) => link.id !== id);
+      });
     } catch (error) {
       console.error("Error deleting link:", error);
       toast.error("Error deleting link");

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Provider from "./provider";
+import { Providers } from "./providers";
 import Header from "@/components/Header";
 import { Toaster } from "@/components/ui/sonner"
 import GridPattern from "@/components/ui/grid-pattern";
@@ -34,12 +35,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50`}
       >
-        <Provider>
-          <main>
-            <Toaster />
-            {children}
-          </main>
-        </Provider>
+        <Providers>
+          <Provider>
+            <main>
+              <Toaster />
+              {children}
+            </main>
+          </Provider>
+        </Providers>
       </body>
     </html>
   );

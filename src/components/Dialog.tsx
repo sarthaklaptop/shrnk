@@ -17,9 +17,9 @@ import { Lock } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import validUrl from "valid-url";
-import axios from "axios";
 import { userStorage } from "@/store/link";
 import { PasswordDialog } from "./PasswordDialog";
+import { useCreateLink } from "@/hooks/useCreateLink";
 
 interface DialogCloseButtonProps {
   label?: string;
@@ -31,8 +31,11 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
   const [response, setResponse] = useState("");
   const [password, setPassword] = useState<string | null>(null);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const user = userStorage.getState().user;
   const isPremium = user.userType === "PREMIUM";
+  
+  const { mutateAsync: createLink, isPending } = useCreateLink();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrlInput(e.target.value);  
@@ -68,29 +71,37 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
 
     toast.promise<{ shortLink: string }>(
       (async () => {
-        const result = await axios.post("/api/link", payload);
-        console.log("Short URL created: ", result.data);
-        const currentCredits = userStorage.getState().user.credits;
-        if (currentCredits !== null) {
-          userStorage.getState().updateCredits(currentCredits - 1);
+        try {
+          const newLink = await createLink(payload);
+          console.log("Short URL created: ", newLink);
+          
+          // Update credits
+          const currentCredits = userStorage.getState().user.credits;
+          if (currentCredits !== null) {
+            userStorage.getState().updateCredits(currentCredits - 1);
+          }
+          
+          const shortLink = newLink.shortLink;
+          console.log("Short URL created: ", shortLink);
+          setResponse(shortLink);
+          setUrlInput("");
+          setPassword(null);
+          setDialogOpen(false);
+          return { shortLink };
+        } catch (error: any) {
+          throw error;
         }
-        const shortLink = result.data.data.shortLink;
-        console.log("Short URL created: ", shortLink);
-        setResponse(shortLink);
-        setUrlInput("");
-        setPassword(null);
-        return { shortLink };
       })(),
       {
         loading: "Creating link...",
         success: "Short URL created",
-        error: (error: any) => error.response?.data?.error || "Unexpected error occurred.",
+        error: (error: any) => error.message || error.response?.data?.error || "Unexpected error occurred.",
       }
     );
   };
 
   return (
-    <Dialog>
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button 
           variant="outline"
@@ -121,6 +132,7 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
               value={urlInput}
               onChange={handleChange}
               required
+              disabled={isPending}
               className="w-full border-2 border-black rounded-lg"
             />
           </div>
@@ -143,7 +155,8 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
                   <button
                     type="button"
                     onClick={handleRemovePassword}
-                    className="text-xs text-red-600 hover:text-red-800 font-medium border-[1px] border-red-600 px-2 py-1 rounded hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition-all duration-200"
+                    disabled={isPending}
+                    className="text-xs text-red-600 hover:text-red-800 font-medium border-[1px] border-red-600 px-2 py-1 rounded hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Remove
                   </button>
@@ -158,7 +171,7 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
                     }
                     setPasswordDialogOpen(true);
                   }}
-                  disabled={!isPremium}
+                  disabled={!isPremium || isPending}
                   className="text-xs font-medium border-[1px] border-black px-3 py-1.5 rounded bg-white text-black hover:bg-gray-100 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Add Password
@@ -171,9 +184,10 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
           <DialogClose asChild>
             <Button 
               type="submit" 
-              className="w-full border-2 border-black bg-black text-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition-all duration-200"
+              disabled={isPending}
+              className="w-full border-2 border-black bg-black text-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Create
+              {isPending ? "Creating..." : "Create"}
             </Button>
           </DialogClose>
         </form>

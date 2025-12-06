@@ -28,6 +28,9 @@ export async function GET(request: NextRequest) {
             where: {
                 userId: user.id,
             },
+            orderBy: {
+                createdAt: 'desc',
+            },
         })
 
         return NextResponse.json({ data: userLinks });

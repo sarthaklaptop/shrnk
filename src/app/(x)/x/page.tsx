@@ -20,7 +20,8 @@ import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { userStorage } from '@/store/link';
 import { Input } from '@/components/ui/input';
-
+import { useLinks } from '@/hooks/useLinks';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface UserLink {
   id: string;
@@ -31,30 +32,22 @@ interface UserLink {
 }
 
 export default function Page() {
-  const [userLinks, setUserLinks] = useState<UserLink[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [debouncedQuery, setDebouncedQuery] = useState<string>('');
   const [searching, setSearching] = useState<boolean>(false);
+  const [searchResults, setSearchResults] = useState<UserLink[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { data: session, status } = useSession();
-  const { user, setUser } = userStorage(); 
+  const { user, setUser } = userStorage();
+  const queryClient = useQueryClient();
 
   const csvConfig = mkConfig({ useKeysAsHeaders: true });
 
   useProtectedRoute();
 
-  const fetchUserLinks = async () => {
-    try {
-      const response = await axios.get<{ data: UserLink[] }>('/api/userLinks');
-      console.log(`linnks response:- ${response}`)
-      return response.data.data || []; 
-    } catch (error) {
-      console.error('Error fetching user links:', error);
-      toast('Failed to fetch links');
-      return []; 
-    }   
-  };
+  // Use React Query to fetch links
+  const { data: links = [], isLoading: linksLoading, isError: linksError } = useLinks();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -67,22 +60,7 @@ export default function Page() {
   useEffect(() => {
     if (!debouncedQuery.trim()) {
       setSearching(false);
-      // When search is cleared, fetch normal links
-      const fetchNormalLinks = async () => {
-        try {
-          const response = await axios.get<{ data: UserLink[] }>('/api/userLinks');
-          // console.log(`💋💋responseeee:- ${response.data.data}`)
-          // console.log(`💋💋responseeee:- `, JSON.stringify(response.data.data, null, 2))
-          setUserLinks(response.data.data || []);
-        } catch (error) {
-          console.error('Error fetching user links:', error);
-          setUserLinks([]);
-        }
-      };
-      
-      if (status === 'authenticated') {
-        fetchNormalLinks();
-      }
+      setSearchResults([]);
       return;
     }
 
@@ -92,24 +70,25 @@ export default function Page() {
         const res = await axios.get('/api/link', {
           params: { search: debouncedQuery },
         });
-        setUserLinks(res.data.data || []);
+        setSearchResults(res.data.data || []);
       } catch (error: any) {
         console.error('Search error:', error);
         toast.error(error.response?.data?.error || 'Search failed');
-        setUserLinks([]);
+        setSearchResults([]);
       } finally {
         setSearching(false);
       }
     };
 
-    searchLinks();
+    if (status === 'authenticated') {
+      searchLinks();
+    }
   }, [debouncedQuery, status]);
 
   useEffect(() => {
     if(status == 'authenticated' && session?.user?.id) {
       const fetchUserData = async () => {
         try {
-          // console.log("Before response from /x")
           const response = await axios.get(`api/user/${session.user.id}`);
           console.log('response data from /x', {response});
           
@@ -127,44 +106,32 @@ export default function Page() {
         } catch (error) {
           console.error('Error fetching user data:', error);
         }
-      } ;
+      };
       fetchUserData();
-      
-      // Initial fetch of links if not searching
-      if (!searchQuery.trim() && !debouncedQuery.trim()) {
-        const fetchInitialLinks = async () => {
-          try {
-            const response = await axios.get<{ data: UserLink[] }>('/api/userLinks');
-            console.log(`response for all the links: ${response.data.data}`)
-            setUserLinks(response.data.data || []);
-          } catch (error) {
-            console.error('Error fetching initial links:', error);
-          }
-        };
-        fetchInitialLinks();
-      }
     }
-  }, [status, session?.user?.id, setUser, debouncedQuery, searchQuery])
+  }, [status, session?.user?.id, setUser]);
 
   const downloadCSV = async () => {
     setIsLoading(true);
     try {
-      const links = await fetchUserLinks(); // Fetch data directly here
-  
-      if (links.length === 0) {
+      // Get links from React Query cache or fetch fresh
+      const cachedLinks = queryClient.getQueryData<UserLink[]>(['links']);
+      const linksToExport = cachedLinks || links;
+
+      if (linksToExport.length === 0) {
         toast('No data available for export');
         return;
       }
 
-      console.log(`links to be downloaded as csv: ${JSON.stringify(links)}`);
-  
-      const csvData = links.map((link: UserLink) => ({
+      console.log(`links to be downloaded as csv: ${JSON.stringify(linksToExport)}`);
+
+      const csvData = linksToExport.map((link: UserLink) => ({
         id: link.id.toString(),
-        shortLink: BASEURL + link.shortLink.toString(),
+        shortLink: BASEURL + '/' + link.shortLink.toString(),
         longLink: link.longLink.toString(),
-        count: link.count.toString(),
+        count: (link.clickCount || 0).toString(),
       }));
-  
+
       const csv = generateCsv(csvConfig)(csvData);
       download(csvConfig)(csv as any);
       toast('CSV file downloaded successfully');
@@ -173,6 +140,10 @@ export default function Page() {
     }
   };
   
+  // Determine which links to display: search results or regular links
+  const displayLinks = searchQuery.trim() ? searchResults : links;
+  const isDisplayLoading = searchQuery.trim() ? searching : linksLoading;
+
   return (
     <div className='bg-white w-full rounded-lg mt-2 border-[1px] border-gray-300 p-2 py-4'>
       <div className='w-11/12 m-2 p-2 flex flex-col mx-auto'>
@@ -221,8 +192,11 @@ export default function Page() {
           </DropdownMenu>
         </div>
 
-        <Links searchQuery={searchQuery} searchResults={userLinks}
-          isSearching={searching}/>
+        <Links 
+          searchQuery={searchQuery} 
+          searchResults={displayLinks}
+          isSearching={isDisplayLoading}
+        />
 
       </div>
     </div>
