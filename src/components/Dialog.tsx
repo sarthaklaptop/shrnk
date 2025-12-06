@@ -61,28 +61,32 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
       return;
     }
 
-    try {
-      const payload: { longLink: string; password?: string } = { longLink: urlInput };
-      if (password) {
-        payload.password = password;
-      }
-
-      const result = await axios.post("/api/link", payload);
-      const newLink = { shortLink: result.data.data.shortLink, longLink: urlInput };
-      console.log("Short URL created: ", result.data);
-      const currentCredits = userStorage.getState().user.credits;
-      if (currentCredits !== null) {
-        userStorage.getState().updateCredits(currentCredits - 1);
-      }
-      toast("Short URL created");
-      console.log("Short URL created: ", result.data.data.shortLink);
-      setResponse(result.data.data.shortLink);
-      setUrlInput("");
-      setPassword(null);
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.error || "Unexpected error occurred.";
-      toast.warning(errorMessage);
+    const payload: { longLink: string; password?: string } = { longLink: urlInput };
+    if (password) {
+      payload.password = password;
     }
+
+    toast.promise<{ shortLink: string }>(
+      (async () => {
+        const result = await axios.post("/api/link", payload);
+        console.log("Short URL created: ", result.data);
+        const currentCredits = userStorage.getState().user.credits;
+        if (currentCredits !== null) {
+          userStorage.getState().updateCredits(currentCredits - 1);
+        }
+        const shortLink = result.data.data.shortLink;
+        console.log("Short URL created: ", shortLink);
+        setResponse(shortLink);
+        setUrlInput("");
+        setPassword(null);
+        return { shortLink };
+      })(),
+      {
+        loading: "Creating link...",
+        success: "Short URL created",
+        error: (error: any) => error.response?.data?.error || "Unexpected error occurred.",
+      }
+    );
   };
 
   return (
