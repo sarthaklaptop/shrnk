@@ -15,10 +15,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Link from "next/link";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 function Page() {
   const params = useParams();
-  const shortLink = params.shortLink;
+  const shortLink = params.shortLink as string;
 
   const [stats, setStats] = useState<any>(null);
   const [timeRange, setTimeRange] = useState("30d"); // Default to 30d for free users
@@ -81,9 +90,47 @@ function Page() {
   return (
     <div className="bg-white w-4/5 h-screen overflow-y-auto rounded-lg mt-2 border-[1px] border-gray-300 p-4">
       <div className="flex flex-col justify-between items-left mb-4">
-        <p className="text-content-emphasis min-w-0 text-lg font-semibold leading-7 mb-2">Analytics</p>
+        <p className="text-content-emphasis min-w-0 text-lg font-semibold leading-7 mb-2">
+          Analytics
+        </p>
 
-        <hr className="mb-4"/>
+        <hr className="mb-4" />
+
+        {/* Breadcrumb Navigation */}
+        <Breadcrumb className="mb-4">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link
+                  href="/x"
+                  className="
+                    relative
+                    text-base font-semibold leading-7 text-neutral-900
+                    cursor-pointer transition-all ease-in-out
+                    before:absolute before:bottom-0 before:left-[50%]
+                    before:h-[1px] before:w-0 before:bg-red-400 before:origin-center
+                    before:transition-[width] before:ease-in-out before:duration-700
+                    after:absolute after:bottom-0 after:right-[50%]
+                    after:h-[1px] after:w-0 after:bg-red-400 after:origin-center
+                    after:transition-[width] after:ease-in-out after:duration-700
+                    hover:before:w-[50%] hover:after:w-[50%]
+                    hover:text-red-400
+                  "
+                >
+                  Links
+                </Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage className="text-base font-semibold leading-7">
+                {shortLink}
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
+        <hr className="mb-4" />
 
         <div>
           <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>

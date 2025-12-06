@@ -111,6 +111,103 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export async function PATCH(request: NextRequest) {
+  try {
+    console.log(chalk.bgBlue("Inside PATCH route"));
+
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user || !session.user.email) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    const { id, longLink, password, removePassword } = await request.json();
+
+    if (!id) {
+      return NextResponse.json({ error: "Link ID is required" }, { status: 400 });
+    }
+
+    if (!longLink) {
+      return NextResponse.json({ error: "URL is required" }, { status: 400 });
+    }
+
+    // Fetch the user
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { id: true, userType: true },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 401 });
+    }
+
+    // Find the link and verify ownership
+    const existingLink = await prisma.link.findUnique({
+      where: { id },
+      select: { userId: true, password: true },
+    });
+
+    if (!existingLink) {
+      return NextResponse.json({ error: "Link not found" }, { status: 404 });
+    }
+
+    if (existingLink.userId !== user.id) {
+      return NextResponse.json(
+        { error: "Not authorized to update this link" },
+        { status: 403 }
+      );
+    }
+
+    // Prepare update data
+    const updateData: any = { longLink };
+
+    // Handle password changes
+    if (password !== undefined) {
+      // If password is provided (add or change), hash it
+      // Note: If password is empty string, treat as remove, but frontend sends null/undefined for no change
+      if (password && password.trim() !== "") {
+        if (user.userType !== "PREMIUM") {
+          return NextResponse.json(
+            { error: "Password protection is a premium feature" },
+            { status: 403 }
+          );
+        }
+        updateData.password = await bcrypt.hash(password, 10);
+      } else if (removePassword) {
+        // Explicit remove
+        updateData.password = null;
+      }
+      // If password is null/undefined and no removePassword, no change to password
+    } else if (removePassword) {
+      updateData.password = null;
+    }
+
+    // Update the link
+    const updatedLink = await prisma.link.update({
+      where: { id },
+      data: updateData,
+    });
+
+    console.log(chalk.bgGreen("Link Updated Successfully"));
+
+    return NextResponse.json(
+      {
+        message: "Link updated successfully",
+        data: updatedLink,
+      },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    console.error("Error updating link:", error);
+    return NextResponse.json(
+      {
+        error: "Error updating link",
+        details: error.message ?? "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
+}
+
 export async function DELETE(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
