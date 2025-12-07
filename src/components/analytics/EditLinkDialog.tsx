@@ -105,14 +105,24 @@ export function EditLinkDialog({ open, onOpenChange, link, onSuccess }: EditLink
       );
     } else if (initialHasPassword) {
       return (
-        <button
-          type="button"
-          onClick={handlePasswordAction}
-          disabled={!isPremium || isPending}
-          className="text-xs font-medium border-[1px] border-black px-3 py-1.5 rounded bg-white text-black hover:bg-gray-100 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Change Password
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handlePasswordAction}
+            disabled={!isPremium || isPending}
+            className="text-xs font-medium border-[1px] border-black px-1 py-1 rounded bg-white text-black hover:bg-gray-100 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Change Password
+          </button>
+          <button
+            type="button"
+            onClick={handleRemovePassword}
+            disabled={isPending}
+            className="text-xs text-red-600 hover:text-red-800 font-medium border-[1px] border-red-600 px-1 py-1 rounded bg-white hover:bg-red-50 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Remove Password
+          </button>
+        </div>
       );
     } else {
       return (
@@ -216,7 +226,7 @@ export function EditLinkDialog({ open, onOpenChange, link, onSuccess }: EditLink
 
             {/* Password Protection Section */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between p-3 border-[1px] border-gray-300 rounded-lg bg-gray-50">
+              <div className="flex items-center justify-between p-3 border-[1px] border-gray-300 rounded-lg bg-gray-50 gap-2">
                 <div className="flex items-center gap-2">
                   <Lock className="w-4 h-4 text-gray-600" />
                   <span className="text-sm font-medium text-gray-900">
