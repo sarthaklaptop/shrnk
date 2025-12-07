@@ -20,6 +20,9 @@ import validUrl from "valid-url";
 import { userStorage } from "@/store/link";
 import { PasswordDialog } from "./PasswordDialog";
 import { useCreateLink } from "@/hooks/useCreateLink";
+import { Badge } from "@/components/ui/badge"; // NEW: For tag chips
+import { Tag, X } from "lucide-react"; // NEW: Icons
+import { useTags, useCreateTag } from "@/hooks/useTags"; // NEW: Hooks for tags
 
 interface DialogCloseButtonProps {
   label?: string;
@@ -32,10 +35,14 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
   const [password, setPassword] = useState<string | null>(null);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]); // NEW: State for selected tags
+  const [newTagInput, setNewTagInput] = useState(""); // NEW: Temp input for new tags
   const user = userStorage.getState().user;
   const isPremium = user.userType === "PREMIUM";
   
   const { mutateAsync: createLink, isPending } = useCreateLink();
+  const { data: userTags = [] } = useTags(); // NEW: Fetch existing tags
+  const createTagMutation = useCreateTag(); // NEW: For creating new tags
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrlInput(e.target.value);  
@@ -47,6 +54,37 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
 
   const handleRemovePassword = () => {
     setPassword(null);
+  };
+  
+  const addTag = (tagName: string) => {
+    const trimmed = tagName.trim().toLowerCase();
+    if (trimmed && !selectedTags.includes(trimmed)) {
+      setSelectedTags([...selectedTags, trimmed]);
+      setNewTagInput("");
+    }
+  };
+
+  const removeTag = (tagNameToRemove: string) => {
+    setSelectedTags(selectedTags.filter(t => t !== tagNameToRemove));
+  };
+
+  const handleNewTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (newTagInput.trim()) {
+        // Check if exists, if not create
+        const trimmed = newTagInput.trim().toLowerCase();
+        const exists = userTags.some((t: any) => t.name === trimmed);
+        if (!exists) {
+          createTagMutation.mutate(trimmed, {
+            onSuccess: () => addTag(trimmed),
+            onError: () => toast.error("Failed to create tag"),
+          });
+        } else {
+          addTag(trimmed);
+        }
+      }
+    }
   };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -64,9 +102,12 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
       return;
     }
 
-    const payload: { longLink: string; password?: string } = { longLink: urlInput };
+    const payload: { longLink: string; password?: string; tags?: string[] } = { longLink: urlInput };
     if (password) {
       payload.password = password;
+    }
+    if (selectedTags.length > 0) {
+      payload.tags = selectedTags; 
     }
 
     toast.promise<{ shortLink: string }>(
@@ -86,6 +127,7 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
           setResponse(shortLink);
           setUrlInput("");
           setPassword(null);
+          setSelectedTags([]); 
           setDialogOpen(false);
           return { shortLink };
         } catch (error: any) {
@@ -178,6 +220,36 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
                 </button>
               )}
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Tags (optional, e.g., "campaign")</Label>
+            <div className="flex flex-wrap items-center gap-2">
+              {selectedTags.map((tag) => (
+                <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                  <Tag className="h-3 w-3" />
+                  {tag}
+                  <button
+                    type="button"
+                    onClick={() => removeTag(tag)}
+                    className="ml-1 text-gray-500 hover:text-gray-700"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ))}
+              <Input
+                placeholder="Add tag and press Enter"
+                value={newTagInput}
+                onChange={(e) => setNewTagInput(e.target.value)}
+                onKeyDown={handleNewTagKeyDown}
+                disabled={isPending}
+                className="flex-1 min-w-[200px] border-2 border-black rounded-lg"
+              />
+            </div>
+            <p className="text-xs text-gray-500">
+              Existing tags: {userTags.map((t: any) => t.name).join(", ") || "None"}
+            </p>
           </div>
 
           {/* Create Button */}

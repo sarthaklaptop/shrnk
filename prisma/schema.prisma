@@ -47,26 +47,40 @@ model User {
   userType      UserType  @default(FREE)
   accounts      Account[]
   links         Link[]
+  tags          Tag[]     // NEW: Relation to user's tags
   sessions      Session[]
 
   @@map("users")
 }
 
 model Link {
-  id            String   @id @default(uuid())
-  longLink      String
-  shortLink     String   @unique
-  fullShortLink String   @unique
-  createdAt     DateTime @default(now())
-  clickLimit    Int      @default(0)
-  expiresAt     DateTime
-  userId        String?
-  password      String?
-  clickCount    Int      @default(0)
-  clicks        Click[]
-  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String   @id @default(uuid())
+  longLink       String
+  shortLink      String   @unique
+  fullShortLink  String   @unique
+  createdAt      DateTime @default(now())
+  clickLimit     Int      @default(0)
+  expiresAt      DateTime
+  userId         String?
+  password       String?
+  clickCount     Int      @default(0)
+  clicks         Click[]
+  tags           Tag[]    @relation("LinkTags") // NEW: Many-to-many with tags
+  user           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("links")
+}
+
+model Tag {
+  id        String   @id @default(cuid())
+  name      String   @unique 
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  links     Link[]   @relation("LinkTags") 
+
+  @@unique([userId, name]) 
+  @@map("tags")
 }
 
 model Click {

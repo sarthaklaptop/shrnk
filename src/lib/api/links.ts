@@ -9,11 +9,17 @@ export type Link = {
   clickLimit: number;
   expiresAt: string;
   userId?: string | null;
+  tags?: {
+    id: string;
+    name: string;
+    createdAt: Date;
+  }[];
 };
 
 export type CreateLinkInput = {
   longLink: string;
   password?: string;
+  tags?: string[];
 };
 
 export async function fetchLinks(): Promise<Link[]> {
@@ -40,11 +46,12 @@ export async function createLink(input: CreateLinkInput): Promise<Link> {
   });
 
   if (!res.ok) {
-    const errorData = await res.json().catch(() => ({ error: "Failed to create link" }));
+    const errorData = await res
+      .json()
+      .catch(() => ({ error: "Failed to create link" }));
     throw new Error(errorData.error || "Failed to create link");
   }
 
   const data = await res.json();
   return data.data;
 }
-

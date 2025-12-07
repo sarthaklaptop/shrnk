@@ -25,6 +25,8 @@ import { DialogCloseButton } from "@/components/Dialog";
 import { Check } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { EditLinkDialog } from "./EditLinkDialog"; // Adjust path as needed
+import { Badge } from "@/components/ui/badge"; // NEW: For tag display
+import { Tag, X } from "lucide-react"; // NEW: Icons for tags
 
 export interface UserLink {
   id: string;
@@ -32,6 +34,11 @@ export interface UserLink {
   longLink: string;
   clickCount: number;
   password?: string | null;
+  tags?: {
+    id: string;
+    name: string;
+    createdAt: Date;
+  }[];
   [key: string]: any;
 }
 
@@ -193,8 +200,8 @@ export default function Links({ searchQuery = '', searchResults = [], isSearchin
     <div>
       <ScrollArea className="h-[calc(100vh-220px)] w-full mx-4 my-8">
         <div className="flex flex-col gap-2">
-          {displayLinks.map(({ id, shortLink, longLink, clickCount, password }: UserLink) => {
-            const linkData = { id, shortLink, longLink, clickCount, password };
+          {displayLinks.map(({ id, shortLink, longLink, clickCount, password, tags = [] }: UserLink) => {
+            const linkData = { id, shortLink, longLink, clickCount, password, tags };
             return (
               <div key={id} className="relative">
                 <div 
@@ -300,6 +307,19 @@ export default function Links({ searchQuery = '', searchResults = [], isSearchin
                         : longLink}
                     </a>
                   </div>
+                  {tags.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-1 mt-1">
+                      {tags.map((tag) => (
+                        <span
+                          key={tag.id}
+                          className="my-auto whitespace-nowrap rounded-md border text-sm flex items-center gap-x-1.5 p-1.5 sm:rounded-md sm:px-2 sm:py-0.5 border-yellow-300 bg-yellow-100 text-yellow-600"
+                        >
+                          <Tag className="h-3 w-3 shrink-0" />
+                          <span className="hidden sm:inline-block">{tag.name}</span>
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             );

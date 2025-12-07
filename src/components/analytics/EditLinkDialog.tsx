@@ -17,9 +17,12 @@ import { toast } from "sonner";
 import validUrl from "valid-url";
 import axios from "axios";
 import { userStorage } from "@/store/link";
-import { PasswordDialog } from "../../components/PasswordDialog"; // Adjust path as needed
-
-import { UserLink } from "@/components/analytics/Links"; // Adjust path to import UserLink type
+import { PasswordDialog } from "../../components/PasswordDialog";
+import { UserLink } from "@/components/analytics/Links";
+import { Badge } from "@/components/ui/badge";
+import { Tag, X } from "lucide-react";
+import { useTags, useCreateTag } from "@/hooks/useTags";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface EditLinkDialogProps {
   open: boolean;
@@ -28,21 +31,38 @@ interface EditLinkDialogProps {
   onSuccess?: () => void;
 }
 
-export function EditLinkDialog({ open, onOpenChange, link, onSuccess }: EditLinkDialogProps) {
-  const { id, longLink: initialLongLink, password: initialPassword } = link;
+export function EditLinkDialog({
+  open,
+  onOpenChange,
+  link,
+  onSuccess,
+}: EditLinkDialogProps) {
+  const {
+    id,
+    longLink: initialLongLink,
+    password: initialPassword,
+    tags = [],
+  } = link;
   const [editUrl, setEditUrl] = useState(initialLongLink);
   const [localPassword, setLocalPassword] = useState<string | null>(null);
   const [shouldRemovePassword, setShouldRemovePassword] = useState(false);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [isPending, setIsPending] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [newTagInput, setNewTagInput] = useState("");
   const user = userStorage.getState().user;
   const isPremium = user.userType === "PREMIUM";
   const initialHasPassword = !!initialPassword;
+  const queryClient = useQueryClient();
+
+  const { data: userTags = [] } = useTags();
+  const createTagMutation = useCreateTag();
 
   useEffect(() => {
     setEditUrl(link.longLink);
     setLocalPassword(null);
     setShouldRemovePassword(false);
+    setSelectedTags(link.tags?.map((t) => t.name) || []);
   }, [link]);
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,10 +88,42 @@ export function EditLinkDialog({ open, onOpenChange, link, onSuccess }: EditLink
 
   const handlePasswordAction = () => {
     if (!isPremium) {
-      toast.warning("Password protection is a premium feature. Upgrade to PRO to use this feature.");
+      toast.warning(
+        "Password protection is a premium feature. Upgrade to PRO to use this feature."
+      );
       return;
     }
     setPasswordDialogOpen(true);
+  };
+
+  const addTag = (tagName: string) => {
+    const trimmed = tagName.trim().toLowerCase();
+    if (trimmed && !selectedTags.includes(trimmed)) {
+      setSelectedTags([...selectedTags, trimmed]);
+      setNewTagInput("");
+    }
+  };
+
+  const removeTag = (tagNameToRemove: string) => {
+    setSelectedTags(selectedTags.filter((t) => t !== tagNameToRemove));
+  };
+
+  const handleNewTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (newTagInput.trim()) {
+        const trimmed = newTagInput.trim().toLowerCase();
+        const exists = userTags.some((t: any) => t.name === trimmed);
+        if (!exists) {
+          createTagMutation.mutate(trimmed, {
+            onSuccess: () => addTag(trimmed),
+            onError: () => toast.error("Failed to create tag"),
+          });
+        } else {
+          addTag(trimmed);
+        }
+      }
+    }
   };
 
   const getPasswordSection = () => {
@@ -153,7 +205,13 @@ export function EditLinkDialog({ open, onOpenChange, link, onSuccess }: EditLink
       return;
     }
 
-    const payload: { id: string; longLink: string; password?: string; removePassword?: boolean } = {
+    const payload: {
+      id: string;
+      longLink: string;
+      password?: string;
+      removePassword?: boolean;
+      tags?: string[];
+    } = {
       id,
       longLink: editUrl,
     };
@@ -166,21 +224,33 @@ export function EditLinkDialog({ open, onOpenChange, link, onSuccess }: EditLink
       payload.removePassword = true;
     }
 
+    payload.tags = selectedTags;
+
     toast.promise(
       async () => {
         setIsPending(true);
         try {
           const result = await axios.patch("/api/link", payload);
           console.log("Link updated: ", result.data);
+
+          queryClient.setQueryData<UserLink[]>(["links"], (old) => {
+            if (!old) return [];
+            return old.map((link) =>
+              link.id === id ? { ...link, ...result.data.data } : link
+            );
+          });
+
           onSuccess?.();
           onOpenChange(false);
           // Reset states
           setEditUrl(initialLongLink);
           setLocalPassword(null);
           setShouldRemovePassword(false);
+          setSelectedTags([]);
           return { message: "Link updated" };
         } catch (error: any) {
-          const errorMessage = error.response?.data?.error || "Unexpected error occurred.";
+          const errorMessage =
+            error.response?.data?.error || "Unexpected error occurred.";
           throw new Error(errorMessage);
         } finally {
           setIsPending(false);
@@ -240,10 +310,45 @@ export function EditLinkDialog({ open, onOpenChange, link, onSuccess }: EditLink
               </div>
             </div>
 
+            <div className="space-y-2">
+              <Label>Tags (optional, e.g., "campaign")</Label>
+              <div className="flex flex-wrap items-center gap-2">
+                {selectedTags.map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant="secondary"
+                    className="flex items-center gap-1"
+                  >
+                    <Tag className="h-3 w-3" />
+                    {tag}
+                    <button
+                      type="button"
+                      onClick={() => removeTag(tag)}
+                      className="ml-1 text-gray-500 hover:text-gray-700"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ))}
+                <Input
+                  placeholder="Add tag and press Enter"
+                  value={newTagInput}
+                  onChange={(e) => setNewTagInput(e.target.value)}
+                  onKeyDown={handleNewTagKeyDown}
+                  disabled={isPending}
+                  className="flex-1 min-w-[200px] border-2 border-black rounded-lg"
+                />
+              </div>
+              <p className="text-xs text-gray-500">
+                Existing tags:{" "}
+                {userTags.map((t: any) => t.name).join(", ") || "None"}
+              </p>
+            </div>
+
             {/* Update Button */}
             <DialogClose asChild>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isPending}
                 className="w-full border-2 border-black bg-black text-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >

@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     console.log(chalk.bgBlue("Inside POST route"));
 
     const session = await getServerSession(authOptions);
-    const { longLink, password } = await request.json();
+    const { longLink, password, tags = [] } = await request.json();
 
     if (!longLink) {
       return NextResponse.json({ error: "No URL provided" }, { status: 400 });
@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
 
     const shortLink = nanoid();
     let userId: string | null = null;
+    let tagConnectData: any = {};
 
     // ✅ Fetch user if logged in
     if (session?.user?.email) {
@@ -61,22 +62,56 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // ✅ Decrement credits
+      if (tags.length > 0) {
+        const existingTags = await prisma.tag.findMany({
+          where: { name: { in: tags.map((t: any) => t.toLowerCase().trim()) }, userId },
+          select: { id: true, name: true }
+        });
+
+        const newTagNames = tags.filter((tagName: any) => 
+          !existingTags.some((t: any) => t.name === tagName.toLowerCase().trim())
+        ).map((name: any) => name.toLowerCase().trim());
+
+        const userTagCount = await prisma.tag.count({ where: { userId } });
+        if (user.userType === 'FREE' && userTagCount + newTagNames.length > 5) {
+          return NextResponse.json(
+            { error: "Free users can only create up to 5 unique tags. Upgrade to PREMIUM for unlimited." },
+            { status: 403 }
+          );
+        }
+
+        if (newTagNames.length > 0) {
+          await prisma.tag.createMany({
+            data: newTagNames.map((name: any) => ({ name, userId })),
+            skipDuplicates: true
+          });
+        }
+
+        const allNewTags = await prisma.tag.findMany({
+          where: { name: { in: newTagNames }, userId },
+          select: { id: true }
+        });
+        const allTagIds = [...existingTags.map(t => t.id), ...allNewTags.map(t => t.id)];
+
+        tagConnectData = { tags: { connect: allTagIds.map(id => ({ id })) } };
+      }
+
+      // Decrement credits
       await prisma.user.update({
         where: { id: userId },
         data: { credits: { decrement: 1 } },
       });
     }
 
-    // ✅ Hash password if provided
+    // Hash password if provided
     const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
 
-    // ✅ Expiry times
+    // Expiry times
     const expiresAt = userId
       ? new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 1 year for logged-in
       : new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 day for guests
 
-    // ✅ Create link (schema-correct)
+    // Create link (schema-correct)
     const redirectUrl = await prisma.link.create({
       data: {
         longLink,
@@ -87,7 +122,9 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
         clickCount: 0,
         ...(userId ? { user: { connect: { id: userId } } } : {}),
+        ...tagConnectData,
       },
+      include: { tags: true }
     });
 
     console.log(chalk.bgGreen("URL Created Successfully"));
@@ -120,7 +157,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const { id, longLink, password, removePassword } = await request.json();
+    const { id, longLink, password, removePassword, tags = [] } = await request.json();
 
     if (!id) {
       return NextResponse.json({ error: "Link ID is required" }, { status: 400 });
@@ -139,6 +176,8 @@ export async function PATCH(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 401 });
     }
+
+    const userId = user.id;
 
     // Find the link and verify ownership
     const existingLink = await prisma.link.findUnique({
@@ -159,6 +198,7 @@ export async function PATCH(request: NextRequest) {
 
     // Prepare update data
     const updateData: any = { longLink };
+    let tagUpdateData: any = {};
 
     // Handle password changes
     if (password !== undefined) {
@@ -181,10 +221,79 @@ export async function PATCH(request: NextRequest) {
       updateData.password = null;
     }
 
+    
+    // NEW: Handle tags sync (connect new, disconnect old)
+    if (tags.length > 0 && userId) {
+      let tagUpdateData: any = {};
+      const existingTags = await prisma.tag.findMany({
+        where: { name: { in: tags.map((t: any) => t.toLowerCase().trim()) }, userId: user.id },
+        select: { id: true, name: true }
+      });
+
+      const newTagNames = tags.filter((tagName: any) => 
+        !existingTags.some((t: any) => t.name === tagName.toLowerCase().trim())
+      ).map((name: any) => name.toLowerCase().trim());
+
+      // Enforce tag limit
+      const userTagCount = await prisma.tag.count({ where: { userId: user.id } });
+      if (user.userType === 'FREE' && userTagCount + newTagNames.length > 5) {
+        return NextResponse.json(
+          { error: "Free users can only create up to 5 unique tags. Upgrade to PREMIUM for unlimited." },
+          { status: 403 }
+        );
+      }
+
+      // Create new tags
+      if (newTagNames.length > 0) {
+        await prisma.tag.createMany({
+          data: newTagNames.map((name: any) => ({ name, userId: user.id })),
+          skipDuplicates: true
+        });
+      }
+
+      // Get all tag IDs
+      const allNewTags = await prisma.tag.findMany({
+        where: { name: { in: newTagNames }, userId: user.id },
+        select: { id: true }
+      });
+      const allTagIds = [...existingTags.map(t => t.id), ...allNewTags.map(t => t.id)];
+
+      // Sync: Disconnect all current, connect new (Prisma way)
+      // Get current tags that are connected to this link
+      const currentTags = await prisma.tag.findMany({
+        where: { links: { some: { id } } },
+        select: { id: true },
+      });
+
+      const currentTagIds = currentTags.map(t => t.id);
+      const tagsToDisconnect = currentTagIds.filter(tagId => !allTagIds.includes(tagId));
+
+      // Now build the update
+      tagUpdateData = {
+        ...(tagsToDisconnect.length > 0
+          ? { tags: { disconnect: tagsToDisconnect.map(id => ({ id })) } }
+          : {}),
+        ...(allTagIds.length > 0
+          ? { tags: { connect: allTagIds.map(id => ({ id })) } }
+          : {}),
+      };
+    } else if (tags.length === 0) {
+      const currentTags = await prisma.tag.findMany({
+        where: { links: { some: { id } } },
+        select: { id: true },
+      });
+
+      tagUpdateData = {
+        tags: { disconnect: currentTags.map(t => ({ id: t.id })) },
+      };
+    }
+    
+
     // Update the link
     const updatedLink = await prisma.link.update({
       where: { id },
-      data: updateData,
+      data: { ...updateData, ...tagUpdateData },
+      include: { tags: true } // ← Important: return tags in response
     });
 
     console.log(chalk.bgGreen("Link Updated Successfully"));
@@ -263,6 +372,7 @@ export async function GET(request: NextRequest) {
     const shortLink = searchParams.get("id");
     const searchQuery = searchParams.get("search");
     const timeRange = searchParams.get("range");
+    const tagFilter = searchParams.get("tag");
 
     // Handle search query
     if (searchQuery) {
@@ -320,6 +430,7 @@ export async function GET(request: NextRequest) {
             },
           ],
         },
+        include: { tags: true }
       });
 
       return NextResponse.json({ data: searchResults }, { status: 200 });
@@ -340,6 +451,7 @@ export async function GET(request: NextRequest) {
 
     const data = await prisma.link.findUnique({
       where: { shortLink },
+      include: { tags: true }
     });
 
     if (!data) {
