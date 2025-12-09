@@ -303,7 +303,7 @@ export function EditLinkDialog({
                     Password Protection
                   </span>
                   <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-yellow-400 text-black border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0)]">
-                    PRO
+                    &quot;PRO&quot;
                   </span>
                 </div>
                 {getPasswordSection()}
@@ -311,7 +311,7 @@ export function EditLinkDialog({
             </div>
 
             <div className="space-y-2">
-              <Label>Tags (optional, e.g., "campaign")</Label>
+              <Label>Tags (optional, e.g., &quot;campaign&quot;)</Label>
               <div className="flex flex-wrap items-center gap-2">
                 {selectedTags.map((tag) => (
                   <Badge
