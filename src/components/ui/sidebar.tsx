@@ -89,7 +89,7 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          "h-full px-4 py-4 hidden  md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] flex-shrink-0",
+          "h-full px-4 py-4 hidden md:flex md:flex-col bg-gray-100 dark:bg-neutral-800 w-[300px] flex-shrink-0 border-r border-neutral-200",
           className
         )}
         animate={{
@@ -115,15 +115,20 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          "h-10 px-4 py-4 flex flex-row md:hidden  items-center justify-between bg-neutral-100 dark:bg-neutral-800 w-full"
+          "h-14 px-4 py-4 flex flex-row md:hidden items-center justify-between bg-gray-100 w-full border-b border-neutral-200"
         )}
         {...props}
       >
         <div className="flex justify-end z-20 w-full">
-          <IconMenu2
-            className="text-neutral-800 dark:text-neutral-200"
+          <button
             onClick={() => setOpen(!open)}
-          />
+            className="p-2 rounded-md hover:bg-gray-200 transition-colors"
+            aria-label="Toggle menu"
+          >
+            <IconMenu2
+              className="text-neutral-800 dark:text-neutral-200 h-6 w-6"
+            />
+          </button>
         </div>
         <AnimatePresence>
           {open && (
@@ -136,16 +141,17 @@ export const MobileSidebar = ({
                 ease: "easeInOut",
               }}
               className={cn(
-                "fixed h-full w-full inset-0 bg-white dark:bg-neutral-900 p-10 z-[100] flex flex-col justify-between",
+                "fixed h-full w-full inset-0 bg-gray-100 p-10 z-[100] flex flex-col justify-between",
                 className
               )}
             >
-              <div
-                className="absolute right-10 top-10 z-50 text-neutral-800 dark:text-neutral-200"
+              <button
+                className="absolute right-10 top-10 z-50 p-2 rounded-md hover:bg-gray-200 transition-colors text-neutral-800 dark:text-neutral-200"
                 onClick={() => setOpen(!open)}
+                aria-label="Close menu"
               >
-                <IconX />
-              </div>
+                <IconX className="h-6 w-6" />
+              </button>
               {children}
             </motion.div>
           )}
@@ -158,13 +164,22 @@ export const MobileSidebar = ({
 export const SidebarLink = ({
   link,
   className,
+  onClick,
   ...props
 }: {
   link: Links;
   className?: string;
+  onClick?: () => void;
   props?: LinkProps;
 }) => {
-  const { open, animate } = useSidebar();
+  const { open, animate, setOpen } = useSidebar();
+  
+  const handleClick = () => {
+    // Close the sidebar on mobile when clicking a link
+    setOpen(false);
+    onClick?.();
+  };
+  
   return (
     <Link
       href={link.href}
@@ -172,6 +187,7 @@ export const SidebarLink = ({
         "flex items-center justify-start gap-2 group/sidebar p-2",
         className
       )}
+      onClick={handleClick}
       {...props}
     >
       {link.icon}

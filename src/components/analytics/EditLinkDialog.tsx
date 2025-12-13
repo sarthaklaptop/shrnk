@@ -267,9 +267,9 @@ export function EditLinkDialog({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-[90%] rounded-xl sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-1">
+            <DialogTitle className="flex items-center gap-1 text-lg md:text-xl">
               <FaLink /> Edit link
             </DialogTitle>
             <DialogDescription className="flex items-center gap-1">
