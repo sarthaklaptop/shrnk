@@ -152,9 +152,9 @@ export function DialogCloseButton({ label = "Create", className = "" }: DialogCl
           {label}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="w-[90%] rounded-xl sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-1">
+          <DialogTitle className="flex items-center gap-1 text-lg md:text-xl">
             <FaLink /> New link
           </DialogTitle>
           <DialogDescription className="flex items-center gap-1">

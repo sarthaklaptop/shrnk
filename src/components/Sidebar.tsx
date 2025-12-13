@@ -117,7 +117,7 @@ export function SidebarDemo() {
   return (
     <div
       className={cn(
-        "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-red-500 w-full flex-1 mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden",
+        "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-red-500 w-full flex-1 mx-auto border border-neutral-200 dark:border-neutral-700",
         "h-screen" // for your use case, use `h-screen` instead of `h-[60vh]`
       )}
     >
@@ -203,7 +203,9 @@ export function SidebarDemo() {
           </div>
         </SidebarBody>
       </Sidebar>
-      <Dashboard />
+      <div className="flex-1 overflow-y-auto">
+        <Dashboard />
+      </div>
     </div>
   );
 }

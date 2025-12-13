@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { BASEURL } from "@/constants/constant";
-import { MdContentCopy, MdOutlineSubdirectoryArrowRight } from "react-icons/md";
+import { MdContentCopy, MdOutlineSubdirectoryArrowRight, MdQrCodeScanner } from "react-icons/md";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { HiCursorClick } from "react-icons/hi";
@@ -198,128 +198,137 @@ export default function Links({ searchQuery = '', searchResults = [], isSearchin
 
   return (
     <div>
-      <ScrollArea className="h-[calc(100vh-220px)] w-full mx-4 my-8">
-        <div className="flex flex-col gap-2">
+      <ScrollArea className="h-[calc(100vh-220px)] w-full pr-4">
+        <div className="flex flex-col gap-4 pb-4">
           {displayLinks.map(({ id, shortLink, longLink, clickCount, password, tags = [] }: UserLink) => {
             const linkData = { id, shortLink, longLink, clickCount, password, tags };
             return (
-              <div key={id} className="relative">
-                <div 
-                  className="flex flex-col border-red-50 border-2 rounded-lg cursor-pointer p-4 w-full gap-2"
-                  onClick={() => handleEdit(linkData)}
-                >
-                  <div className="flex justify-between">
-                    <div className="flex items-center gap-2">
+              <div 
+                key={id} 
+                className="group relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 md:p-5 hover:shadow-md transition-all duration-200"
+                onClick={() => handleEdit(linkData)}
+              >
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  
+                  {/* Left Side: Link Info */}
+                  <div className="flex flex-col gap-2 min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-nowrap w-full">
                       <a
                         href={`/${shortLink}`}
-                        className="font-bold"
+                        className="font-bold text-lg md:text-xl text-neutral-900 dark:text-neutral-100 hover:text-red-600 transition-colors truncate min-w-0 shrink"
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
                       >
                         {BASEURL}/{shortLink}
                       </a>
+                      
                       {password && (
-                        <span
-                          className="group relative border-2 border-yellow-300 p-1 rounded-full bg-yellow-100 hover:bg-yellow-200 cursor-help"
-                          title="Password Protected"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Lock className="w-3.5 h-3.5 text-yellow-700" />
-                          <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                            Password Protected
-                          </span>
-                        </span>
+                         <div className="flex items-center justify-center h-6 w-6 rounded-full bg-yellow-100 text-yellow-600 shrink-0" title="Password Protected">
+                            <Lock className="w-3.5 h-3.5" />
+                         </div>
                       )}
-                      <span
-                        className={`p-2 rounded-full cursor-pointer transition-all duration-200 ${
+                      
+                      {/* Copy Button (Mobile optimized placement next to link) */}
+                      <button
+                        className={`p-1.5 rounded-md transition-all duration-200 shrink-0 ${
                           copiedId === id 
-                            ? 'bg-green-100 hover:bg-green-200 border-green-300' 
-                            : 'bg-zinc-100 hover:bg-zinc-200'
+                            ? 'bg-green-100 text-green-700' 
+                            : 'bg-neutral-100 text-neutral-500 hover:bg-neutral-200'
                         }`}
                         onClick={(e) => copyToClipboard(shortLink, id, e)}
+                        title="Copy Link"
                       >
                         {copiedId === id ? (
-                          <Check className="w-4 h-4 text-green-600" />
+                          <Check className="w-4 h-4" />
                         ) : (
-                          <MdContentCopy />
+                          <MdContentCopy className="w-4 h-4" />
                         )}
-                      </span>
+                      </button>
                     </div>
-                    <div className="flex gap-1 z-10">
-                      <span
-                        className="flex border-2 p-[0.5px] cursor-pointer hover:bg-slate-200 hover:font-bold transition-all duration-75 rounded-sm items-center justify-between"
-                        onClick={(e) => handleNavigation(shortLink, e)}
+
+                    <div className="flex items-center text-neutral-500 text-sm gap-2 min-w-0">
+                      <MdOutlineSubdirectoryArrowRight className="shrink-0" />
+                      <a
+                        className="hover:underline truncate"
+                        target="_blank"
+                        href={longLink}
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        <a className="flex items-center gap-1 px-1">
-                          <HiCursorClick /> {clickCount} clicks
-                        </a>
-                      </span>
-                      <span 
-                        className="flex border-2 p-[0.5px] cursor-pointer hover:bg-slate-200  rounded-sm items-center justify-between"
-                        onClick={handleQRClick}
-                      >
-                        <QRCodeDialog QRUrl={`${BASEURL}/${shortLink}`} />
-                      </span>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <button 
-                            className="border-[1px] rounded-lg p-1 border-black flex items-center justify-center"
-                            onClick={handleDropdownTrigger}
+                        {longLink}
+                      </a>
+                    </div>
+
+                    {tags.length > 0 && (
+                      <div className="flex flex-wrap items-center gap-2 mt-1">
+                        {tags.map((tag) => (
+                          <span
+                            key={tag.id}
+                            className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-50 text-red-700 border border-red-100"
                           >
-                            <BsThreeDotsVertical className="cursor-pointer" />
-                          </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-fit">
-                          <DropdownMenuLabel
-                            className={`flex items-center justify-between rounded-sm transition-all duration-200 ${
+                            <Tag className="w-3 h-3 mr-1" />
+                            {tag.name}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right Side: Actions & Stats */}
+                  <div className="flex items-center gap-2 md:gap-3 border-t md:border-t-0 border-neutral-100 pt-3 md:pt-0 mt-2 md:mt-0 justify-end md:justify-start">
+                    
+                    <button
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-200 hover:bg-neutral-50 hover:border-neutral-300 transition-all text-sm font-medium text-neutral-700 bg-white"
+                      onClick={(e) => handleNavigation(shortLink, e)}
+                    >
+                      <HiCursorClick className="text-neutral-500" />
+                      <span>{clickCount}</span>
+                    </button>
+
+                    <div 
+                      className="flex items-center justify-center px-3 py-1.5 rounded-lg border border-neutral-200 hover:bg-neutral-50 hover:border-neutral-300 transition-all cursor-pointer bg-white text-neutral-600 gap-1.5 text-sm font-medium h-9"
+                      onClick={handleQRClick}
+                      title="Show QR Code"
+                    >
+                      <QRCodeDialog QRUrl={`${BASEURL}/${shortLink}`}>
+                         <span className="flex items-center gap-1.5">
+                            <MdQrCodeScanner className="text-neutral-500 w-4 h-4" />
+                            <span className="md:hidden">QR</span>
+                            <span className="hidden md:inline">QR Code</span>
+                         </span>
+                      </QRCodeDialog>
+                    </div>
+
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button 
+                          className="flex items-center justify-center h-9 w-9 rounded-lg border border-neutral-200 hover:bg-neutral-50 hover:border-neutral-300 transition-all bg-white text-neutral-600"
+                          onClick={handleDropdownTrigger}
+                        >
+                          <BsThreeDotsVertical />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-40">
+                         <DropdownMenuLabel
+                            className={`flex items-center gap-2 px-2 py-2 cursor-pointer rounded-sm text-sm ${
                               deletingId === id
-                                ? "bg-red-400 text-white cursor-not-allowed"
-                                : "hover:bg-red-500 hover:text-white text-red-400 cursor-pointer"
+                                ? "text-neutral-400 cursor-not-allowed"
+                                : "text-red-600 hover:bg-red-50"
                             }`}
                             onClick={() => !deletingId && deleteLink(id)}
-                            style={{ pointerEvents: deletingId === id ? "none" : "auto" }}
                           >
-                            {deletingId === id ? (
-                              <>deleting...</>
+                           {deletingId === id ? (
+                              <span className="flex items-center gap-2"><div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"/> Deleting...</span>
                             ) : (
                               <>
-                                Delete <FaDeleteLeft />
+                                <FaDeleteLeft /> Delete
                               </>
                             )}
                           </DropdownMenuLabel>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
-                  <div className="flex items-center text-zinc-500">
-                    <span>
-                      <MdOutlineSubdirectoryArrowRight />
-                    </span>
-                    <a
-                      className="hover:underline"
-                      target="_blank"
-                      href={longLink}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {longLink.length > 70
-                        ? `${longLink.slice(0, 70)}...`
-                        : longLink}
-                    </a>
-                  </div>
-                  {tags.length > 0 && (
-                    <div className="flex flex-wrap items-center gap-1 mt-1">
-                      {tags.map((tag) => (
-                        <span
-                          key={tag.id}
-                          className="my-auto whitespace-nowrap rounded-md border text-sm flex items-center gap-x-1.5 p-1.5 sm:rounded-md sm:px-2 sm:py-0.5 border-yellow-300 bg-yellow-100 text-yellow-600"
-                        >
-                          <Tag className="h-3 w-3 shrink-0" />
-                          <span className="hidden sm:inline-block">{tag.name}</span>
-                        </span>
-                      ))}
-                    </div>
-                  )}
+
                 </div>
               </div>
             );

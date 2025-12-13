@@ -145,51 +145,53 @@ export default function Page() {
   const isDisplayLoading = searchQuery.trim() ? searching : linksLoading;
 
   return (
-    <div className='bg-white w-full rounded-lg mt-2 border-[1px] border-gray-300 p-2 py-4'>
-      <div className='w-11/12 m-2 p-2 flex flex-col mx-auto'>
-        <h1 className='font-bold text-2xl'>Links</h1>
-        <div className='flex w-full gap-2 items-center justify-end'>
-          <div className='relative flex-1 max-w-md'>
-            <IoSearchOutline className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5' />
-            <Input
-              type='text'
-              placeholder='Search by short link OR URL'
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className='pl-10 pr-4'
-            />
-            {searching && (
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <div className="w-4 h-4 border-2 border-gray-300 rounded-full border-t-transparent animate-spin"></div>
-              </div>
-            )}
-          </div>
-          <DialogCloseButton />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button 
-                className='border-[1px] rounded-lg px-2 py-2 border-black flex items-center justify-center'
-                disabled={isLoading}
-              >
-              {isLoading ? (
-                  <span className="loader w-4 h-4 border-2 border-gray-300 rounded-full border-t-transparent animate-spin"></span>
-                ) : (
-                  <BsThreeDotsVertical className='cursor-pointer' />
-                )}
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className='w-56 cursor-pointer '>
-              <DropdownMenuLabel onClick={() => downloadCSV()}>
-              <a href="#_" className="relative inline-flex items-center justify-center p-1 px-2 py-2 overflow-hidden font-medium text-red-600 transition duration-300 ease-out border-2 border-red-500 rounded-full shadow-md group">
-                  <span className="absolute inset-0 flex items-center justify-center w-full h-full text-white duration-300 -translate-x-full bg-red-500 group-hover:translate-x-0 ease">
+    <div className='bg-white w-full rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm mt-4 overflow-hidden'>
+      <div className='flex flex-col space-y-4 p-4 md:p-6'>
+        <div className='flex flex-col md:flex-row md:items-center justify-between gap-4'>
+          <h1 className='font-bold text-2xl md:text-3xl text-neutral-900 dark:text-neutral-100'>Links</h1>
+          
+          <div className='flex w-full md:w-auto items-center gap-2'>
+            <div className='relative flex-1 md:w-80'>
+              <IoSearchOutline className='absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-5 h-5 pointer-events-none' />
+              <Input
+                type='text'
+                placeholder='Search links...'
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className='pl-10 pr-10 w-full bg-neutral-50 border-neutral-200 focus:ring-red-500 focus:border-red-500 transition-all'
+              />
+              {searching && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="w-4 h-4 border-2 border-red-500 rounded-full border-t-transparent animate-spin"></div>
+                </div>
+              )}
+            </div>
+            
+            <DialogCloseButton />
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button 
+                  className='h-10 w-10 border border-neutral-200 rounded-lg flex items-center justify-center hover:bg-neutral-50 transition-colors focus:ring-2 focus:ring-red-500/20 outline-none'
+                  disabled={isLoading}
+                >
+                {isLoading ? (
+                    <span className="loader w-4 h-4 border-2 border-neutral-400 rounded-full border-t-transparent animate-spin"></span>
+                  ) : (
+                    <BsThreeDotsVertical className='text-neutral-600' />
+                  )}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className='w-56' align="end">
+                <DropdownMenuLabel onClick={() => downloadCSV()} className="cursor-pointer">
+                  <div className="flex items-center gap-2 p-2 text-neutral-700 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors">
                       <PiFileCsvDuotone className='w-5 h-5'/>
-                  </span>
-                  <span className="absolute flex items-center justify-center w-full h-full text-red-500 transition-all duration-300 transform group-hover:translate-x-full ease">Download CSV</span>
-                  <span className="re1lative invisible">Download CSV</span>
-              </a>
-              </DropdownMenuLabel>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                      <span>Download CSV</span>
+                  </div>
+                </DropdownMenuLabel>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
         <Links 

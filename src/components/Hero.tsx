@@ -21,12 +21,12 @@ export function Hero() {
       transition={{
         duration: 0.95,
       }}
-      className="z-10 flex flex-col items-center justify-center min-h-[70vh] w-full px-4"
+      className="z-10 flex flex-col items-center justify-center min-h-[85vh] w-full px-4"
     >
-      <h1 className="text-3xl sm:text-5xl text-red-500 font-bold text-center">
+      <h1 className="text-2xl md:text-3xl lg:text-5xl text-red-500 font-bold text-center tracking-tighter md:tracking-normal">
         Short Links, Big Impact.
         <WordRotate
-          className="text-3xl sm:text-5xl font-bold text-black dark:text-white"
+          className="text-2xl md:text-3xl lg:text-5xl font-bold text-black dark:text-white"
           words={["Create", "Share", "Analyze"]}
         />
       </h1>

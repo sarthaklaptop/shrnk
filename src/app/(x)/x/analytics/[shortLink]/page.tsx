@@ -82,70 +82,59 @@ function Page() {
 
   if (loading) {
     return (
-      <div className="bg-white w-4/5 h-screen flex flex-col items-center justify-center rounded-lg mt-2 border-[1px] border-gray-300 gap-4">
+      <div className="bg-white w-full h-[60vh] flex flex-col items-center justify-center rounded-xl mt-4 border border-neutral-200 gap-4">
         <Spinner size="lg" />
       </div>
     );
   }
   return (
-    <div className="bg-white w-4/5 h-screen overflow-y-auto rounded-lg mt-2 border-[1px] border-gray-300 p-4">
-      <div className="flex flex-col justify-between items-left mb-4">
-        <p className="text-content-emphasis min-w-0 text-lg font-semibold leading-7 mb-2">
-          Analytics
-        </p>
+    <div className="bg-white w-full min-h-screen rounded-xl mt-4 border border-neutral-200 dark:border-neutral-800 p-4 md:p-6 mb-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <div className="flex flex-col gap-1 w-full md:w-auto">
+          <p className="text-content-emphasis text-xl md:text-2xl font-bold leading-tight">
+            Analytics
+          </p>
+          
+          <Breadcrumb className="mt-1">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link
+                    href="/x"
+                    className="
+                      relative
+                      text-sm md:text-base font-medium text-neutral-500 hover:text-red-500
+                      transition-colors
+                    "
+                  >
+                    Links
+                  </Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage className="text-sm md:text-base font-semibold text-neutral-900">
+                  {shortLink}
+                </BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
 
-        <hr className="mb-4" />
-
-        {/* Breadcrumb Navigation */}
-        <Breadcrumb className="mb-4">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link
-                  href="/x"
-                  className="
-                    relative
-                    text-base font-semibold leading-7 text-neutral-900
-                    cursor-pointer transition-all ease-in-out
-                    before:absolute before:bottom-0 before:left-[50%]
-                    before:h-[1px] before:w-0 before:bg-red-400 before:origin-center
-                    before:transition-[width] before:ease-in-out before:duration-700
-                    after:absolute after:bottom-0 after:right-[50%]
-                    after:h-[1px] after:w-0 after:bg-red-400 after:origin-center
-                    after:transition-[width] after:ease-in-out after:duration-700
-                    hover:before:w-[50%] hover:after:w-[50%]
-                    hover:text-red-400
-                  "
-                >
-                  Links
-                </Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage className="text-base font-semibold leading-7">
-                {shortLink}
-              </BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-
-        <hr className="mb-4" />
-
-        <div>
+        <div className="w-full md:w-auto">
           <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
             <DropdownMenuTrigger asChild>
               <button
-                className="group peer flex cursor-pointer appearance-none items-center gap-x-2 truncate rounded-md border px-3 h-10 outline-none text-sm bg-white border-neutral-200 text-neutral-900 placeholder-neutral-400 transition-all disabled:pointer-events-none disabled:bg-neutral-100 disabled:text-neutral-400 focus-visible:border-neutral-500 data-[state=open]:border-neutral-500 data-[state=open]:ring-4 data-[state=open]:ring-neutral-200 sm:inline-flex w-full sm:min-w-[160px] md:w-fit lg:min-w-[200px]"
+                className="group flex w-full md:w-auto cursor-pointer items-center justify-between gap-x-2 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-50 hover:border-neutral-300 transition-all focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                 type="button"
                 disabled={!isPremium && timeRange !== "30d"}
               >
-                <Calendar className="h-4 w-4 shrink-0 text-neutral-900" />
-                <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-left text-neutral-900">
-                  {getTimeRangeLabel(timeRange)}
-                </span>
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-neutral-500" />
+                  <span>{getTimeRangeLabel(timeRange)}</span>
+                </div>
                 <ChevronDown
-                  className={`h-4 w-4 flex-shrink-0 text-neutral-400 transition-transform duration-75 ${
+                  className={`h-4 w-4 text-neutral-400 transition-transform duration-200 ${
                     dropdownOpen ? "rotate-180" : ""
                   }`}
                 />
@@ -160,8 +149,8 @@ function Page() {
                       setTimeRange(range);
                       setDropdownOpen(false);
                     }}
-                    className={`cursor-pointer ${
-                      timeRange === range ? "bg-red-100" : ""
+                    className={`cursor-pointer font-medium ${
+                      timeRange === range ? "bg-red-50 text-red-600" : ""
                     }`}
                   >
                     {getTimeRangeLabel(range)}
@@ -171,18 +160,26 @@ function Page() {
             )}
           </DropdownMenu>
         </div>
-        {/* Time Range Filter */}
       </div>
 
-      <div className="flex flex-col gap-2">
-        <div className="p-2 border rounded-lg">
-          <p className="m-2 font-semibold">
-            Clicks {stats?.clickCount ? `(${stats.clickCount} total)` : ""}
-          </p>
-          {/* ✅ Pass chartData as prop */}
-          <BasicLineChart chartData={stats?.chartData || []} />
+      <div className="flex flex-col gap-6">
+        <div className="border border-neutral-200 rounded-xl overflow-hidden bg-white shadow-sm">
+          <div className="border-b border-neutral-200 bg-neutral-50/50 px-4 py-3 md:px-6 md:py-4">
+             <h3 className="font-semibold text-neutral-900 flex items-center gap-2 text-sm md:text-base">
+                Total Clicks
+                {stats?.clickCount !== undefined && (
+                   <span className="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full">
+                     {stats.clickCount}
+                   </span>
+                )}
+             </h3>
+          </div>
+          <div className="p-0">
+             <BasicLineChart chartData={stats?.chartData || []} />
+          </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-6">
           <DeviceStats stats={stats} />
           <LocationStats stats={stats} />
         </div>
