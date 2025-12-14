@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  ChevronRight,
+  ChevronDown,
   DollarSign,
   CheckCircle,
   XCircle,
@@ -12,8 +12,12 @@ import {
   AlertTriangle,
   CreditCard,
   RefreshCw,
+  FileText
 } from "lucide-react";
 import Link from "next/link";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import { cn } from "@/lib/utils";
 
 // === TYPES ===
 
@@ -36,6 +40,7 @@ type SubsectionWithItems = {
   icon: React.ReactNode;
   items: string[];
   highlight?: "green" | "red";
+  steps?: never;
 };
 
 type Step = {
@@ -47,6 +52,9 @@ type Step = {
 type SubsectionWithSteps = {
   title: string;
   steps: Step[];
+  icon?: React.ReactNode;
+  items?: never;
+  highlight?: never;
 };
 
 type Subsection = SubsectionWithItems | SubsectionWithSteps;
@@ -151,7 +159,7 @@ const RefundPolicyPage = () => {
         },
         {
           title: "Processing Time",
-          icon: "",
+          icon: <RefreshCw className="w-4 h-4 text-blue-600" />,
           items: [
             "Refund requests are reviewed within 3-5 business days",
             "Approved refunds are processed within 7-10 business days",
@@ -245,50 +253,48 @@ const RefundPolicyPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <div className="border-b-2 border-black bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
-          <Link href="/">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="mb-6 flex items-center gap-2 px-4 py-2 bg-white border-2 border-black rounded-lg hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition-all duration-200 font-medium"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Home
-            </motion.button>
-          </Link>
+    <div className="flex flex-col min-h-screen bg-white">
+      <Header />
+      
+      {/* Spacer for fixed header */}
+      <div className="h-24 w-full bg-white"></div>
 
-          <div className="flex items-start gap-4">
-            <div className="p-3 bg-red-300 border-2 border-black rounded-lg">
-              <DollarSign className="w-8 h-8" />
+      {/* Hero Section */}
+      <div className="w-full bg-gradient-to-b from-white to-red-50/50 py-12 md:py-16 border-b border-red-100/50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+            <div className="p-4 bg-red-100 text-red-600 rounded-2xl shadow-sm">
+              <DollarSign className="w-10 h-10" />
             </div>
             <div className="flex-1">
-              <h1 className="text-4xl sm:text-2xl font-black mb-2">
-                Refund Policy
-              </h1>
-              <p className="text-gray-600 text-sm font-medium">
-                Last Updated: November 2, 2025
-              </p>
+              <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">Refund Policy</h1>
+              <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-gray-500">
+                <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-gray-200 shadow-sm">
+                  <FileText className="w-3.5 h-3.5" />
+                  Legal
+                </span>
+                <span>Last Updated: November 2, 2025</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+      {/* Main Content */}
+      <main className="flex-grow max-w-4xl mx-auto px-4 sm:px-6 py-12 w-full">
         {/* Quick Contact Card */}
-        <div className="mb-8 p-4 bg-red-300 border-2 border-black rounded-lg">
-          <div className="flex items-start gap-3">
-            <Mail className="w-5 h-5 mt-1 flex-shrink-0" />
+        <div className="mb-10 p-6 bg-white border border-red-100 rounded-2xl shadow-[0_2px_10px_-4px_rgba(239,68,68,0.1)]">
+          <div className="flex gap-4">
+            <div className="p-2 bg-red-50 text-red-500 rounded-xl h-fit">
+              <Mail className="w-5 h-5" />
+            </div>
             <div>
-              <p className="font-semibold mb-1">Need a Refund?</p>
-              <p className="text-sm text-gray-700">
+              <p className="font-bold text-gray-900 mb-1">Need a Refund?</p>
+              <p className="text-sm text-gray-600">
                 Contact us at{" "}
                 <a
                   href="mailto:shrnk.contact@gmail.com"
-                  className="font-bold underline"
+                  className="font-semibold text-red-500 hover:text-red-600 hover:underline transition-colors"
                 >
                   shrnk.contact@gmail.com
                 </a>{" "}
@@ -306,172 +312,191 @@ const RefundPolicyPage = () => {
             return (
               <motion.div
                 key={section.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="border-2 border-black rounded-lg overflow-hidden bg-white"
+                className={cn(
+                  "border rounded-2xl overflow-hidden transition-all duration-300",
+                  isOpen 
+                    ? "bg-white border-red-100 shadow-md shadow-red-50/50" 
+                    : "bg-white border-gray-100 hover:border-red-100 hover:shadow-sm"
+                )}
               >
                 <button
                   onClick={() => toggleSection(section.id)}
-                  className="w-full p-4 sm:p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  className="w-full p-5 sm:p-6 flex items-center justify-between group"
                 >
-                  <div className="flex items-center gap-3 sm:gap-4">
-                    <div className="p-2 bg-red-300 border-2 border-black rounded-lg flex-shrink-0">
+                  <div className="flex items-center gap-4">
+                    <div className={cn(
+                      "p-2.5 rounded-xl transition-colors duration-300",
+                      isOpen ? "bg-red-100 text-red-600" : "bg-gray-50 text-gray-500 group-hover:bg-red-50 group-hover:text-red-500"
+                    )}>
                       {section.icon}
                     </div>
-                    <h2 className="text-lg sm:text-xl font-bold text-left">
+                    <h2 className={cn(
+                      "text-lg font-bold text-left transition-colors duration-300",
+                      isOpen ? "text-gray-900" : "text-gray-700 group-hover:text-gray-900"
+                    )}>
                       {section.title}
                     </h2>
                   </div>
                   <motion.div
-                    animate={{ rotate: isOpen ? 90 : 0 }}
-                    transition={{ duration: 0.2 }}
+                    animate={{ rotate: isOpen ? 180 : 0 }}
+                    transition={{ duration: 0.3, type: 'spring', stiffness: 200 }}
                   >
-                    <ChevronRight className="w-6 h-6 flex-shrink-0" />
+                    <ChevronDown className={cn(
+                      "w-5 h-5 transition-colors",
+                      isOpen ? "text-red-500" : "text-gray-400 group-hover:text-red-400"
+                    )} />
                   </motion.div>
                 </button>
 
-                {isOpen && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="border-t-2 border-black"
-                  >
-                    <div className="p-4 sm:p-6 bg-gray-50">
-                      {"content" in section && section.content && (
-                        <p className="text-gray-700 leading-relaxed mb-4">
-                          {section.content}
-                        </p>
-                      )}
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    >
+                      <div className="px-6 pb-8 pt-2">
+                        <div className="pl-[3.25rem]">
+                          {"content" in section && section.content && (
+                            <p className="text-gray-600 leading-relaxed mb-6">
+                              {section.content}
+                            </p>
+                          )}
 
-                      {"intro" in section && section.intro && (
-                        <p className="font-semibold text-gray-900 mb-3">
-                          {section.intro}
-                        </p>
-                      )}
+                          {"intro" in section && section.intro && (
+                            <p className="font-semibold text-gray-900 mb-4">
+                              {section.intro}
+                            </p>
+                          )}
 
-                      {"items" in section && section.items && (
-                        <ul className="space-y-2 mb-4">
-                          {section.items.map((item, idx) => (
-                            <li key={idx} className="flex items-center gap-3">
-                              <span className="text-red-500 font-bold text-lg flex-shrink-0">
-                                •
-                              </span>
-                              <span className="text-gray-700">{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                          {"items" in section && section.items && (
+                            <ul className="space-y-3 mb-6">
+                              {section.items.map((item, idx) => (
+                                <li key={idx} className="flex items-start gap-3 text-sm md:text-base">
+                                  <span className="text-red-500 font-bold text-lg flex-shrink-0 leading-tight">
+                                    •
+                                  </span>
+                                  <span className="text-gray-600">{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
 
-                      {"outro" in section && section.outro && (
-                        <p className="font-semibold text-gray-900 mb-3 mt-4">
-                          {section.outro}
-                        </p>
-                      )}
+                          {"outro" in section && section.outro && (
+                            <p className="font-semibold text-gray-900 mb-3 mt-4">
+                              {section.outro}
+                            </p>
+                          )}
 
-                      {"additionalItems" in section && section.additionalItems && (
-                        <ul className="space-y-2">
-                          {section.additionalItems.map((item, idx) => (
-                            <li key={idx} className="flex items-center gap-3">
-                              <span className="text-red-500 font-bold text-lg flex-shrink-0">
-                                •
-                              </span>
-                              <span className="text-gray-700">{item}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                          {"additionalItems" in section && section.additionalItems && (
+                            <ul className="space-y-3">
+                              {section.additionalItems.map((item, idx) => (
+                                <li key={idx} className="flex items-start gap-3 text-sm md:text-base">
+                                  <span className="text-red-500 font-bold text-lg flex-shrink-0 leading-tight">
+                                    •
+                                  </span>
+                                  <span className="text-gray-600">{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
 
-                      {hasSubsections(section) && (
-                        <div className="space-y-4">
-                          {section.subsections.map((subsection, idx) => (
-                            <div
-                              key={idx}
-                              className={`border-2 border-black rounded-lg p-4 bg-white ${
-                                hasItems(subsection) && subsection.highlight === "green"
-                                  ? "border-l-4 border-l-green-500"
-                                  : hasItems(subsection) && subsection.highlight === "red"
-                                  ? "border-l-4 border-l-red-500"
-                                  : ""
-                              }`}
-                            >
-                              <div className="flex items-center gap-2 mb-3">
-                                {hasItems(subsection) && subsection.icon}
-                                <h3 className="font-bold text-gray-900">
-                                  {subsection.title}
-                                </h3>
-                              </div>
+                          {hasSubsections(section) && (
+                            <div className="space-y-6">
+                              {section.subsections.map((subsection, idx) => (
+                                <div
+                                  key={idx}
+                                  className={cn(
+                                    "rounded-xl p-5 border bg-white",
+                                    hasItems(subsection) && subsection.highlight === "green"
+                                      ? "border-green-200 bg-green-50/30"
+                                      : hasItems(subsection) && subsection.highlight === "red"
+                                      ? "border-red-200 bg-red-50/30"
+                                      : "border-gray-200 bg-gray-50/50"
+                                  )}
+                                >
+                                  <div className="flex items-center gap-2 mb-4">
+                                    {hasItems(subsection) && subsection.icon}
+                                    <h3 className="font-bold text-gray-900">
+                                      {subsection.title}
+                                    </h3>
+                                  </div>
 
-                              {hasSteps(subsection) && (
-                                <ol className="space-y-3">
-                                  {subsection.steps.map((step, stepIdx: number) => (
-                                    <li key={stepIdx}>
-                                      <div className="flex items-start gap-3">
-                                        <span className="flex-shrink-0 w-6 h-6 bg-red-100 border-2 border-black rounded-full flex items-center justify-center text-sm font-bold">
-                                          {stepIdx + 1}
-                                        </span>
-                                        <div className="flex-1">
-                                          <span className="font-semibold text-gray-900">
-                                            {step.label}:{" "}
-                                          </span>
-                                          <span className="text-gray-700">
-                                            {step.detail}
-                                          </span>
-                                          {step.subItems && (
-                                            <ul className="mt-2 ml-4 space-y-1">
-                                              {step.subItems.map((subItem, subIdx) => (
-                                                <li
-                                                  key={subIdx}
-                                                  className="flex items-start gap-2"
-                                                >
-                                                  <span className="text-red-500 text-sm">
-                                                    →
-                                                  </span>
-                                                  <span className="text-sm text-gray-600">
-                                                    {subItem}
-                                                  </span>
-                                                </li>
-                                              ))}
-                                            </ul>
+                                  {hasSteps(subsection) && (
+                                    <ol className="space-y-4">
+                                      {subsection.steps.map((step, stepIdx: number) => (
+                                        <li key={stepIdx} className="relative pl-6">
+                                          {stepIdx !== subsection.steps.length - 1 && (
+                                            <div className="absolute left-[11px] top-6 bottom-[-16px] w-[2px] bg-gray-200"></div>
                                           )}
-                                        </div>
-                                      </div>
-                                    </li>
-                                  ))}
-                                </ol>
-                              )}
+                                          <div className="absolute left-0 top-1 w-6 h-6 bg-white border-2 border-red-500 rounded-full flex items-center justify-center text-xs font-bold text-red-500">
+                                            {stepIdx + 1}
+                                          </div>
+                                          <div className="ml-4">
+                                            <span className="font-bold text-gray-900 block mb-1">
+                                              {step.label}
+                                            </span>
+                                            <span className="text-gray-600 text-sm block">
+                                              {step.detail}
+                                            </span>
+                                            {step.subItems && (
+                                              <ul className="mt-2 space-y-1.5 p-3 bg-gray-50 rounded-lg">
+                                                {step.subItems.map((subItem, subIdx) => (
+                                                  <li
+                                                    key={subIdx}
+                                                    className="flex items-start gap-2 text-xs text-gray-600"
+                                                  >
+                                                    <span className="text-red-400 mt-0.5">
+                                                      →
+                                                    </span>
+                                                    <span>
+                                                      {subItem}
+                                                    </span>
+                                                  </li>
+                                                ))}
+                                              </ul>
+                                            )}
+                                          </div>
+                                        </li>
+                                      ))}
+                                    </ol>
+                                  )}
 
-                              {hasItems(subsection) && (
-                                <ul className="space-y-2">
-                                  {subsection.items.map((item, itemIdx) => (
-                                    <li
-                                      key={itemIdx}
-                                      className="flex items-center gap-3"
-                                    >
-                                      <span
-                                        className={`font-bold text-lg flex-shrink-0 ${
-                                          subsection.highlight === "green"
-                                            ? "text-green-500"
-                                            : subsection.highlight === "red"
-                                            ? "text-red-500"
-                                            : "text-gray-500"
-                                        }`}
-                                      >
-                                        •
-                                      </span>
-                                      <span className="text-gray-700">{item}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              )}
+                                  {hasItems(subsection) && (
+                                    <ul className="space-y-2.5">
+                                      {subsection.items.map((item, itemIdx) => (
+                                        <li
+                                          key={itemIdx}
+                                          className="flex items-start gap-3 text-sm"
+                                        >
+                                          <span
+                                            className={cn("font-bold text-lg flex-shrink-0 mt-[-4px]", 
+                                              subsection.highlight === "green"
+                                                ? "text-green-500"
+                                                : subsection.highlight === "red"
+                                                ? "text-red-500"
+                                                : "text-gray-400"
+                                            )}
+                                          >
+                                            •
+                                          </span>
+                                          <span className="text-gray-600">{item}</span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  )}
+                                </div>
+                              ))}
                             </div>
-                          ))}
+                          )}
                         </div>
-                      )}
-                    </div>
-                  </motion.div>
-                )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             );
           })}
@@ -479,48 +504,47 @@ const RefundPolicyPage = () => {
 
         {/* Contact Section */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-8 p-6 bg-red-300 text-black border-2 border-black rounded-lg"
+           initial={{ opacity: 0, y: 20 }}
+           animate={{ opacity: 1, y: 0 }}
+           className="mt-12 p-8 bg-gradient-to-br from-gray-900 to-black text-white border border-gray-800 rounded-3xl text-center"
         >
-          <div className="flex items-center gap-3 mb-4">
+          <div className="inline-flex items-center justify-center p-3 bg-gray-800 text-white rounded-2xl mb-4">
             <Mail className="w-6 h-6" />
-            <h3 className="font-bold text-xl">Contact for Refunds</h3>
           </div>
-          <div className="space-y-3">
-            <div>
-              <p className="mb-2">
-                Email:{" "}
-                <a
-                  href="mailto:shrnk.contact@gmail.com"
-                  className="font-bold underline"
-                >
-                  shrnk.contact@gmail.com
-                </a>
-              </p>
-              <p className="mb-2">Response Time: Within 24-48 hours</p>
-              <p>Processing Time: 7-10 business days after approval</p>
-            </div>
+          <h3 className="font-bold text-xl text-white mb-2">Refund Inquiries</h3>
+          <p className="text-gray-400 mb-6">
+            If you have any questions about refunds, please contact us.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+              <a 
+                href="mailto:shrnk.contact@gmail.com" 
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-black rounded-full font-medium hover:bg-gray-200 transition-colors"
+              >
+                <Mail className="w-4 h-4" />
+                shrnk.contact@gmail.com
+              </a>
+              <div className="text-gray-400 text-sm">
+                Processing Time: 7-10 business days
+              </div>
           </div>
         </motion.div>
 
         {/* Compliance Notice */}
-        <div className="mt-4 p-4 bg-yellow-50 border-2 border-black rounded-lg">
-          <p className="text-sm font-medium">
-            <span className="font-bold">Note:</span> This refund policy complies
-            with Indian consumer protection laws and Reserve Bank of India
-            guidelines.
+        <div className="mt-8 p-6 bg-gray-50 border border-gray-100 rounded-2xl text-center">
+          <p className="text-sm font-medium text-gray-900 mb-1">
+            Note: This refund policy complies with Indian consumer protection laws.
           </p>
-          <p className="text-sm text-gray-700 mt-2">
-            For any questions or concerns, please contact us at{" "}
-            <a href="mailto:shrnk.contact@gmail.com" className="font-bold underline">
-              shrnk.contact@gmail.com
-            </a>
+          <p className="text-xs text-gray-500">
+            For any questions or concerns, please contact support.
           </p>
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 };
 
 export default RefundPolicyPage;
+

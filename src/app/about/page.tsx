@@ -2,8 +2,11 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Zap, Shield, Heart, TrendingUp, Users, Target, CheckCircle, Mail, ArrowLeft, Sparkles } from 'lucide-react';
+import { Zap, Shield, Heart, TrendingUp, Users, Target, CheckCircle, Mail, Sparkles, MapPin } from 'lucide-react';
 import Link from 'next/link';
+import { signIn } from "next-auth/react";
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 const AboutUsPage = () => {
   const values = [
@@ -71,120 +74,84 @@ const AboutUsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <div className="border-b-2 border-black bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
-          <Link href="/">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="mb-6 flex items-center gap-2 px-4 py-2 bg-white border-2 border-black rounded-lg hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition-all duration-200 font-medium"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Home
-            </motion.button>
-          </Link>
+    <div className="min-h-screen bg-white text-gray-900">
+      <Header />
+      
+      {/* Spacer for fixed header */}
+      <div className="h-24 w-full bg-white"></div>
 
-          <div className="flex items-start gap-4">
-            <div className="p-3 bg-purple-50 border-2 border-black rounded-lg">
-              <Sparkles className="w-8 h-8" />
+      {/* Hero Section */}
+      <div className="w-full bg-gradient-to-b from-white to-red-50/50 py-12 md:py-16 text-center md:text-left">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="p-5 bg-red-100 text-red-500 rounded-3xl shadow-sm rotate-3 hover:rotate-6 transition-transform">
+              <Sparkles className="w-12 h-12" />
             </div>
-            <div className="flex-1">
-              <h1 className="text-4xl sm:text-5xl font-black mb-2">About Shrnk</h1>
-              <p className="text-gray-600 font-medium text-lg">Making link sharing simple, secure, and powerful</p>
+            <div>
+              <h1 className="text-3xl md:text-5xl font-black mb-4 tracking-tight text-gray-900">About Shrnk</h1>
+              <p className="text-xl text-gray-600 font-medium max-w-2xl">Making link sharing simple, secure, and powerful for everyone.</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-8">
-        {/* Our Story */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="border-2 border-black rounded-lg p-6 bg-gradient-to-br from-purple-50 to-pink-50"
-        >
-          <h2 className="text-2xl font-black mb-4 flex items-center gap-2">
-            <Target className="w-6 h-6" />
-            Our Story
-          </h2>
-          <p className="text-gray-700 leading-relaxed mb-4">
-            Shrnk was founded in 2025 with a simple mission: to make link sharing simple, secure, and powerful. In an era of lengthy URLs and complex link management, we saw an opportunity to create a service that prioritizes user experience, security, and reliability.
-          </p>
-          <p className="text-gray-700 leading-relaxed">
-            Were a dedicated team of developers, designers, and support specialists passionate about creating tools that make the internet more accessible and manageable.
-          </p>
-        </motion.div>
-
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 md:py-12 space-y-10 md:space-y-16">
         {/* What We Do */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="border-2 border-black rounded-lg p-6 bg-white"
         >
-          <h2 className="text-2xl font-black mb-4">What We Do</h2>
-          <p className="text-gray-700 leading-relaxed mb-4">
-            Shrnk is a modern URL shortening service that transforms long, unwieldy links into short, manageable URLs. We provide individuals, businesses, and developers with tools to:
-          </p>
-          <ul className="grid sm:grid-cols-2 gap-3">
-            <li className="flex items-start gap-3">
-              <span className="text-purple-500 font-bold text-lg mt-0.5">✓</span>
-              <span className="text-gray-700"><strong>Shorten URLs:</strong> Convert long links into clean, short URLs</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-purple-500 font-bold text-lg mt-0.5">✓</span>
-              <span className="text-gray-700"><strong>Track Analytics:</strong> Monitor clicks, locations, and device types</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-purple-500 font-bold text-lg mt-0.5">✓</span>
-              <span className="text-gray-700"><strong>Secure Links:</strong> Protect sensitive links with passwords</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-purple-500 font-bold text-lg mt-0.5">✓</span>
-              <span className="text-gray-700"><strong>Manage Links:</strong> Organize all your URLs from one dashboard</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-purple-500 font-bold text-lg mt-0.5">✓</span>
-              <span className="text-gray-700"><strong>Generate QR Codes:</strong> Create scannable codes for your links</span>
-            </li>
-          </ul>
-        </motion.div>
-
-        {/* Our Mission */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="border-2 border-black rounded-lg p-6 bg-yellow-50"
-        >
-          <h2 className="text-2xl font-black mb-4">Our Mission</h2>
-          <p className="text-gray-700 leading-relaxed text-lg font-medium">
-            To provide the most reliable, secure, and user-friendly URL shortening service while respecting user privacy and maintaining the highest standards of data protection.
-          </p>
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">What We Do</h2>
+            <p className="text-gray-600 text-lg max-w-3xl">
+              Shrnk is a modern URL shortening service that transforms long, unwieldy links into short, manageable URLs. We provide individuals, businesses, and developers with tools to:
+            </p>
+          </div>
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { text: 'Shorten URLs', sub: 'Convert long links into clean, short URLs' },
+              { text: 'Track Analytics', sub: 'Monitor clicks, locations, and device types' },
+              { text: 'Secure Links', sub: 'Protect sensitive links with passwords' },
+              { text: 'Manage Links', sub: 'Organize all your URLs from one dashboard' },
+              { text: 'Generate QR Codes', sub: 'Create scannable codes for your links' }
+            ].map((item, idx) => (
+              <div key={idx} className="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-shadow">
+                <div className="flex items-start gap-3">
+                  <span className="text-red-500 font-bold text-xl leading-none">✓</span>
+                  <div>
+                    <strong className="block text-gray-900 mb-1">{item.text}</strong>
+                    <span className="text-sm text-gray-500">{item.sub}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </motion.div>
 
         {/* Our Values */}
         <div>
-          <h2 className="text-2xl font-black mb-6">Our Values</h2>
-          <div className="grid sm:grid-cols-2 gap-4">
+          <h2 className="text-3xl font-bold mb-8 text-gray-900">Our Values</h2>
+          <div className="grid sm:grid-cols-2 gap-6">
             {values.map((value, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 + index * 0.1 }}
-                className="border-2 border-black rounded-lg p-6 bg-white hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition-all"
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="border border-gray-100 rounded-2xl p-6 md:p-8 bg-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
               >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2 bg-purple-100 border-2 border-black rounded-lg">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="p-3 bg-red-50 text-red-500 rounded-xl">
                     {value.icon}
                   </div>
-                  <h3 className="text-xl font-bold">{value.title}</h3>
+                  <h3 className="text-xl font-bold text-gray-900">{value.title}</h3>
                 </div>
-                <p className="text-gray-600">{value.description}</p>
+                <p className="text-gray-600 leading-relaxed">{value.description}</p>
               </motion.div>
             ))}
           </div>
@@ -192,22 +159,23 @@ const AboutUsPage = () => {
 
         {/* Our Features */}
         <div>
-          <h2 className="text-2xl font-black mb-6">Our Features</h2>
-          <div className="grid md:grid-cols-3 gap-4">
+          <h2 className="text-3xl font-bold mb-8 text-gray-900">Our Features</h2>
+          <div className="grid md:grid-cols-3 gap-6">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 + index * 0.1 }}
-                className="border-2 border-black rounded-lg p-6 bg-white"
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="border border-gray-100 rounded-2xl p-6 md:p-8 bg-white shadow-sm hover:shadow-md transition-shadow"
               >
-                <h3 className="text-lg font-bold mb-4 pb-2 border-b-2 border-black">{feature.title}</h3>
-                <ul className="space-y-2">
+                <h3 className="text-lg font-bold mb-6 pb-4 border-b border-gray-100 text-gray-900">{feature.title}</h3>
+                <ul className="space-y-3">
                   {feature.items.map((item, idx) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <span className="text-purple-500 text-sm mt-1">→</span>
-                      <span className="text-sm text-gray-700">{item}</span>
+                    <li key={idx} className="flex items-start gap-3">
+                      <span className="text-red-400 text-sm mt-1">→</span>
+                      <span className="text-sm text-gray-600 font-medium">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -219,15 +187,15 @@ const AboutUsPage = () => {
         {/* Why Choose Shrnk */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="border-2 border-black rounded-lg p-6 bg-gradient-to-br from-green-50 to-blue-50"
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+           className="border border-gray-100 rounded-3xl p-6 md:p-8 bg-gradient-to-br from-green-50/50 to-blue-50/50"
         >
-          <h2 className="text-2xl font-black mb-6">Why Choose Shrnk?</h2>
+          <h2 className="text-2xl font-bold mb-8 text-gray-900 text-center md:text-left">Why Choose Shrnk?</h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {reasons.map((reason, index) => (
-              <div key={index} className="flex items-center gap-3 p-3 bg-white border-2 border-black rounded-lg">
-                <div className="p-2 bg-green-100 border-2 border-black rounded-lg flex-shrink-0">
+              <div key={index} className="flex items-center gap-4 p-4 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                <div className="p-2 bg-green-50 text-green-600 rounded-lg flex-shrink-0">
                   {reason.icon}
                 </div>
                 <span className="font-medium text-gray-700">{reason.text}</span>
@@ -236,87 +204,65 @@ const AboutUsPage = () => {
           </div>
         </motion.div>
 
-        {/* Technology Stack */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="border-2 border-black rounded-lg p-6 bg-white"
-        >
-          <h2 className="text-2xl font-black mb-4">Our Technology</h2>
-          <p className="text-gray-700 mb-4">Built with modern technologies:</p>
-          <div className="grid sm:grid-cols-2 gap-3">
-            <div className="flex items-center gap-3 p-3 bg-gray-50 border-2 border-black rounded-lg">
-              <span className="font-bold text-purple-600">Next.js</span>
-              <span className="text-gray-600">Lightning-fast performance</span>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-gray-50 border-2 border-black rounded-lg">
-              <span className="font-bold text-purple-600">PostgreSQL</span>
-              <span className="text-gray-600">Reliable data storage</span>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-gray-50 border-2 border-black rounded-lg">
-              <span className="font-bold text-purple-600">Vercel</span>
-              <span className="text-gray-600">Global edge network</span>
-            </div>
-            <div className="flex items-center gap-3 p-3 bg-gray-50 border-2 border-black rounded-lg">
-              <span className="font-bold text-purple-600">Encryption</span>
-              <span className="text-gray-600">Industry-standard security</span>
-            </div>
-          </div>
-        </motion.div>
-
         {/* Location */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9 }}
-          className="border-2 border-black rounded-lg p-6 bg-white"
+           initial={{ opacity: 0, y: 20 }}
+           whileInView={{ opacity: 1, y: 0 }}
+           viewport={{ once: true }}
+           className="bg-white border border-gray-100 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col md:flex-row items-center gap-8"
         >
-          <h2 className="text-2xl font-black mb-4">Location</h2>
-          <p className="text-gray-700 mb-4">
-            Based in <strong>Pune, Maharashtra, India</strong>, we serve users globally with our cloud-based infrastructure ensuring fast access from anywhere in the world.
-          </p>
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 border-2 border-black rounded-lg">
-            <span className="text-2xl">📍</span>
-            <span className="font-bold">Pune, Maharashtra, India</span>
+          <div className="bg-red-50 p-6 rounded-full flex-shrink-0">
+             <MapPin className="w-8 h-8 text-red-500" />
+          </div>
+          <div className="text-center md:text-left">
+            <h2 className="text-2xl font-bold mb-2 text-gray-900">Based in India, Serving the World</h2>
+            <p className="text-gray-600 mb-4 max-w-xl">
+              Headquartered in <strong>Pune, Maharashtra</strong>, we serve users globally with our cloud-based infrastructure ensuring fast access from anywhere.
+            </p>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg text-gray-700 text-sm font-medium">
+              <span>📍</span> Pune, Maharashtra, India
+            </div>
           </div>
         </motion.div>
 
         {/* Contact CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.0 }}
-          className="border-2 border-black rounded-lg p-8 bg-black text-white text-center"
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="rounded-3xl p-6 md:p-10 bg-gradient-to-r from-red-500 to-pink-600 text-white text-center shadow-lg transform hover:scale-[1.01] transition-transform duration-300"
         >
-          <h2 className="text-3xl font-black mb-4">Join Thousands of Users</h2>
-          <p className="text-gray-300 mb-6 text-lg">
+          <h2 className="text-2xl md:text-3xl font-black mb-4">Join Our Growing Community</h2>
+          <p className="text-red-100 mb-8 text-lg max-w-2xl mx-auto">
             Start shortening links today and experience the difference!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-3 bg-white text-black font-bold rounded-lg border-2 border-white hover:bg-gray-100 transition-colors"
-              >
-                Get Started
-              </motion.button>
-            </Link>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => signIn("google", { callbackUrl: "/x" })}
+              className="px-8 py-3 bg-white text-red-600 font-bold rounded-full shadow-lg hover:shadow-xl transition-all"
+            >
+              Get Started
+            </motion.button>
             <Link href="/contact">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-3 bg-transparent text-white font-bold rounded-lg border-2 border-white hover:bg-white hover:text-black transition-colors"
+                className="px-8 py-3 bg-transparent text-white font-bold rounded-full border-2 border-white/30 hover:bg-white/10 transition-colors"
               >
                 Contact Us
               </motion.button>
             </Link>
           </div>
         </motion.div>
-      </div>
+
+      </main>
+
+      <Footer />
     </div>
   );
 };
 
+// Need access to MapPin, so update imports
 export default AboutUsPage;

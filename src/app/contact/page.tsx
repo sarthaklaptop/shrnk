@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Mail, MessageCircle, DollarSign, Shield, AlertTriangle, Bug, Lightbulb, Newspaper, Clock, MapPin } from 'lucide-react';
+import { Mail, MessageCircle, DollarSign, Shield, AlertTriangle, Bug, Lightbulb, Newspaper, Clock, MapPin, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -13,8 +14,8 @@ const ContactUsPage = () => {
       title: 'General Inquiries',
       email: 'shrnk.contact@gmail.com',
       response: 'Within 24 hours',
-      color: 'text-blue-500',
-      bg: 'bg-blue-50'
+      color: 'text-red-500',
+      bg: 'bg-red-50'
     },
     {
       icon: <MessageCircle className="w-6 h-6" />,
@@ -22,16 +23,16 @@ const ContactUsPage = () => {
       email: 'shrnk.contact@gmail.com',
       response: 'Within 12-24 hours',
       description: 'Priority support for premium users',
-      color: 'text-green-500',
-      bg: 'bg-green-50'
+      color: 'text-red-500',
+      bg: 'bg-red-50'
     },
     {
       icon: <DollarSign className="w-6 h-6" />,
       title: 'Refunds & Billing',
       email: 'shrnk.contact@gmail.com',
       response: 'Within 24-48 hours',
-      color: 'text-yellow-500',
-      bg: 'bg-yellow-50'
+      color: 'text-red-500',
+      bg: 'bg-red-50'
     },
     {
       icon: <AlertTriangle className="w-6 h-6" />,
@@ -46,24 +47,24 @@ const ContactUsPage = () => {
       title: 'Report a Bug',
       email: 'shrnk.contact@gmail.com',
       description: 'Include screenshots and steps to reproduce',
-      color: 'text-orange-500',
-      bg: 'bg-orange-50'
+      color: 'text-red-500',
+      bg: 'bg-red-50'
     },
     {
       icon: <Lightbulb className="w-6 h-6" />,
       title: 'Feature Requests',
       email: 'shrnk.contact@gmail.com',
       description: 'Share your ideas to improve Shrnk',
-      color: 'text-purple-500',
-      bg: 'bg-purple-50'
+      color: 'text-red-500',
+      bg: 'bg-red-50'
     },
     {
       icon: <Newspaper className="w-6 h-6" />,
       title: 'Press & Media',
       email: 'shrnk.contact@gmail.com',
       description: 'For press inquiries and media kits',
-      color: 'text-indigo-500',
-      bg: 'bg-indigo-50'
+      color: 'text-red-500',
+      bg: 'bg-red-50'
     }
   ];
 
@@ -83,7 +84,7 @@ const ContactUsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans">
+    <div className="min-h-screen bg-white text-gray-900">
       <Header />
       
       {/* Spacer for fixed header */}
@@ -98,7 +99,7 @@ const ContactUsPage = () => {
             </div>
             <div className="text-center md:text-left">
               <h1 className="text-4xl md:text-5xl font-black mb-3 tracking-tight text-gray-900">Contact Us</h1>
-              <p className="text-lg text-gray-600 font-medium">We're here to help! Get in touch with us.</p>
+              <p className="text-lg text-gray-600 font-medium">Were here to help! Get in touch with us.</p>
             </div>
           </div>
         </div>
@@ -106,15 +107,6 @@ const ContactUsPage = () => {
 
       {/* Content */}
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
-        
-        {/* Quick Note */}
-        <div className="mb-12 p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-          <p className="font-semibold text-gray-700 flex items-center gap-2">
-            <span className="text-2xl">💬</span> 
-            We value your feedback and are committed to providing excellent customer service!
-          </p>
-        </div>
-
         {/* Contact Methods Grid */}
         <div className="mb-16">
           <h2 className="text-2xl font-bold mb-6 text-gray-900">Get In Touch</h2>
@@ -134,7 +126,7 @@ const ContactUsPage = () => {
                   {method.icon}
                 </div>
                 <h3 className="font-bold text-lg mb-2 text-gray-900">{method.title}</h3>
-                <p className="text-sm font-medium text-blue-600 hover:text-blue-700 break-all mb-2">
+                <p className="text-sm font-medium text-red-500 hover:text-red-700 break-all mb-2">
                   {method.email}
                 </p>
                 {method.response && (
@@ -157,9 +149,9 @@ const ContactUsPage = () => {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="border border-gray-100 rounded-2xl p-8 bg-gradient-to-br from-gray-50 to-white shadow-sm"
+            className="border border-gray-100 rounded-2xl p-6 md:p-8 bg-gradient-to-br from-gray-50 to-white shadow-sm"
           >
-            <h2 className="text-2xl font-bold mb-6 text-gray-900">Quick Support</h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-6 text-gray-900">Quick Support</h2>
             <div className="grid gap-4">
               <a
                 href="mailto:shrnk.contact@gmail.com"
@@ -192,13 +184,13 @@ const ContactUsPage = () => {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="border border-gray-100 rounded-2xl p-8 bg-white shadow-sm"
+            className="border border-gray-100 rounded-2xl p-6 md:p-8 bg-white shadow-sm"
           >
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-gray-100 rounded-lg">
                 <MapPin className="w-5 h-5 text-gray-700" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">Location</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900">Location</h2>
             </div>
             
             <div className="space-y-4">
@@ -219,8 +211,8 @@ const ContactUsPage = () => {
         {/* Info Grid 2 */}
         <div className="grid lg:grid-cols-2 gap-8 mb-16">
           {/* Expected Response Times */}
-          <div className="border border-gray-100 rounded-2xl p-8 bg-white shadow-sm overflow-hidden">
-            <h2 className="text-2xl font-bold mb-6 text-gray-900">Response Times</h2>
+          <div className="border border-gray-100 rounded-2xl p-6 md:p-8 bg-white shadow-sm overflow-hidden">
+            <h2 className="text-xl md:text-2xl font-bold mb-6 text-gray-900">Response Times</h2>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
@@ -242,12 +234,12 @@ const ContactUsPage = () => {
           </div>
 
           {/* Support Hours */}
-          <div className="border border-gray-100 rounded-2xl p-8 bg-yellow-50/50 shadow-sm">
+          <div className="border border-gray-100 rounded-2xl p-6 md:p-8 bg-yellow-50/50 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-yellow-100 text-yellow-700 rounded-lg">
                 <Clock className="w-5 h-5" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">Support Hours</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900">Support Hours</h2>
             </div>
             <div className="space-y-4">
               {supportHours.map((hour, idx) => (
@@ -268,7 +260,7 @@ const ContactUsPage = () => {
         {/* Bottom Section */}
         <div className="grid md:grid-cols-2 gap-8 mb-16">
           {/* Before You Contact */}
-          <div className="border border-gray-100 rounded-2xl p-8 bg-purple-50/30">
+          <div className="border border-gray-100 rounded-2xl p-6 md:p-8 bg-purple-50/30">
             <h3 className="font-bold text-lg mb-4 text-gray-900">Before You Contact Us</h3>
             <p className="text-sm text-gray-600 mb-4">To help us serve you better, please have ready:</p>
             <ul className="space-y-3">
@@ -287,7 +279,7 @@ const ContactUsPage = () => {
           </div>
 
           {/* Language Support */}
-          <div className="border border-gray-100 rounded-2xl p-8 bg-white h-full">
+          <div className="border border-gray-100 rounded-2xl p-6 md:p-8 bg-white h-full">
             <h3 className="font-bold text-lg mb-4 text-gray-900">Language Support</h3>
             <p className="text-sm text-gray-600 mb-6">Currently, we provide support in:</p>
             <div className="flex flex-wrap gap-3">
@@ -302,18 +294,27 @@ const ContactUsPage = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center p-10 border border-gray-100 rounded-3xl bg-gradient-to-r from-gray-50 via-white to-gray-50 shadow-sm"
+          className="text-center p-6 md:p-10 border border-gray-100 rounded-2xl bg-gradient-to-r from-gray-50 via-white to-gray-50 shadow-sm"
         >
-          <h3 className="text-2xl font-bold mb-3 text-gray-900">Thank You for Choosing Shrnk!</h3>
+          <h3 className="text-xl md:text-2xl font-bold mb-3 text-gray-900">Thank You for Choosing Shrnk!</h3>
           <p className="text-gray-600 mb-8 max-w-lg mx-auto">
-            We appreciate your interest and look forward to assisting you with any questions or feedback.
+            We appreciate your interest and look forward to assisting you.
           </p>
-          <a
-            href="mailto:shrnk.contact@gmail.com"
-            className="inline-flex items-center justify-center px-8 py-3 bg-red-500 text-white font-bold rounded-full hover:bg-red-600 hover:shadow-lg transition-all duration-300"
-          >
-            Email Support
-          </a>
+          <div className="flex flex-wrap justify-center gap-4">
+            <a
+              href="mailto:shrnk.contact@gmail.com"
+              className="px-8 py-3 bg-red-500 text-white font-bold rounded-full hover:bg-red-600 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+            >
+              Email Support
+            </a>
+            <Link
+              href="/"
+              className="flex items-center px-8 py-3 bg-white text-gray-700 font-bold rounded-full border border-gray-200 hover:border-gray-300 hover:bg-gray-50 shadow-sm hover:shadow-md transition-all duration-300"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Home
+            </Link>
+          </div>
         </motion.div>
 
       </main>

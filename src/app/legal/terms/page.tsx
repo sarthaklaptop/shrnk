@@ -1,7 +1,9 @@
-"use client"
+'use client';
 
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Scale, Shield, Users, AlertCircle, FileText, Lock, Mail } from 'lucide-react';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 const TermsPage = () => {
   const [openSection, setOpenSection] = useState<string | null>(null);
@@ -125,33 +127,30 @@ const TermsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-yellow-50">
-      {/* Header */}
-      <div className="bg-white border-b-4 border-black">
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 bg-yellow-300 border-2 border-black rounded-lg shadow-[4px_4px_0px_0px_rgba(0,0,0)]">
-              <Scale className="w-8 h-8" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-black tracking-tight">Terms & Conditions</h1>
-              <p className="text-gray-600 mt-1">Last Updated: November 2, 2025</p>
-            </div>
+    <div className="min-h-screen bg-white text-gray-900 font-sans">
+      <Header />
+      
+      {/* Spacer for fixed header */}
+      <div className="h-24 w-full bg-white"></div>
+
+      {/* Hero Section */}
+      <div className="w-full bg-gradient-to-b from-white to-red-50/50 py-12 md:py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <div className="inline-flex items-center justify-center p-4 bg-red-100 text-red-500 rounded-3xl mb-6 shadow-sm">
+            <Scale className="w-10 h-10" />
           </div>
-          
-          <div className="bg-yellow-100 border-2 border-black rounded-lg p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0)]">
-            <p className="text-sm font-medium">
-              📋 By using Shrnk, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.
-            </p>
-          </div>
+          <h1 className="text-3xl md:text-5xl font-black tracking-tight mb-4 text-gray-900">
+            Terms & Conditions
+          </h1>
         </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Quick Links */}
-        <div className="bg-white border-2 border-black rounded-lg p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0)] mb-8">
-          <h2 className="text-xl font-bold mb-4">Quick Navigation</h2>
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-8">
+        
+        {/* Quick Navigation */}
+        <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm">
+          <h2 className="text-lg font-bold mb-4 text-gray-900">Quick Navigation</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {sections.map((section) => (
               <button
@@ -160,9 +159,10 @@ const TermsPage = () => {
                   toggleSection(section.id);
                   document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }}
-                className="text-left p-3 bg-gray-50 hover:bg-gray-100 border-2 border-black rounded-lg transition-all hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] flex items-center gap-2 text-sm font-medium"
+                className="text-left p-3 hover:bg-gray-50 border border-gray-100 rounded-xl transition-all hover:shadow-md flex items-center gap-2 text-sm font-medium text-gray-700"
               >
-                {section.icon}
+                {/* Clone icon with distinct class if needed, or just render */}
+                <span className="text-red-500">{section.icon}</span>
                 <span className="line-clamp-1">{section.title.split('. ')[1]}</span>
               </button>
             ))}
@@ -170,61 +170,63 @@ const TermsPage = () => {
         </div>
 
         {/* Sections */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           {sections.map((section) => (
             <div
               key={section.id}
               id={section.id}
-              className="bg-white border-2 border-black rounded-lg shadow-[4px_4px_0px_0px_rgba(0,0,0)] overflow-hidden"
+              className={`bg-white border border-gray-100 rounded-3xl overflow-hidden transition-all duration-300 ${openSection === section.id ? 'shadow-md ring-1 ring-red-100' : 'shadow-sm hover:shadow-md'}`}
             >
               <button
                 onClick={() => toggleSection(section.id)}
-                className="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                className="w-full p-6 flex items-center justify-between hover:bg-gray-50/50 transition-colors"
               >
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-red-100 border-2 border-black rounded-lg">
+                  <div className={`p-3 rounded-xl transition-colors ${openSection === section.id ? 'bg-red-500 text-white' : 'bg-red-50 text-red-500'}`}>
                     {section.icon}
                   </div>
-                  <h2 className="text-xl font-bold text-left">{section.title}</h2>
+                  <h2 className="text-xl font-bold text-left text-gray-900">{section.title}</h2>
                 </div>
                 {openSection === section.id ? (
-                  <ChevronUp className="w-6 h-6 flex-shrink-0" />
+                  <ChevronUp className="w-6 h-6 flex-shrink-0 text-gray-400" />
                 ) : (
-                  <ChevronDown className="w-6 h-6 flex-shrink-0" />
+                  <ChevronDown className="w-6 h-6 flex-shrink-0 text-gray-400" />
                 )}
               </button>
 
               {openSection === section.id && (
-                <div className="px-6 pb-6 pt-2 border-t-2 border-black bg-gray-50">
+                <div className="px-6 pb-8 pt-2">
+                  <div className="h-px w-full bg-gray-100 mb-6"></div>
+                  
                   {section.content && (
-                    <p className="text-gray-700 leading-relaxed mb-4">{section.content}</p>
+                    <p className="text-gray-600 leading-relaxed mb-6 text-lg">{section.content}</p>
                   )}
                   
                   {section.intro && (
-                    <p className="font-semibold text-gray-900 mb-3">{section.intro}</p>
+                    <p className="font-bold text-gray-900 mb-4">{section.intro}</p>
                   )}
 
                   {section.items && (
-                    <ul className="space-y-2 ml-4">
+                    <ul className="space-y-3 ml-2 mb-6">
                       {section.items.map((item, idx) => (
                         <li key={idx} className="flex items-start gap-3">
-                          <span className="text-red-500 font-bold mt-1">•</span>
-                          <span className="text-gray-700 flex-1">{item}</span>
+                          <span className="text-red-500 font-bold mt-1.5">•</span>
+                          <span className="text-gray-600 flex-1 leading-relaxed">{item}</span>
                         </li>
                       ))}
                     </ul>
                   )}
 
                   {section.subsections && (
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                       {section.subsections.map((subsection, idx) => (
-                        <div key={idx} className="bg-white border-2 border-gray-300 rounded-lg p-4">
-                          <h3 className="font-bold text-gray-900 mb-3">{subsection.title}</h3>
-                          <ul className="space-y-2">
+                        <div key={idx} className="bg-gray-50/50 border border-gray-100 rounded-2xl p-6">
+                          <h3 className="font-bold text-gray-900 mb-4 text-lg">{subsection.title}</h3>
+                          <ul className="space-y-3">
                             {subsection.items.map((item, itemIdx) => (
                               <li key={itemIdx} className="flex items-start gap-3">
-                                <span className="text-red-500 font-bold mt-1">•</span>
-                                <span className="text-gray-700 flex-1">{item}</span>
+                                <span className="text-red-400 font-bold mt-1.5">•</span>
+                                <span className="text-gray-600 flex-1 leading-relaxed">{item}</span>
                               </li>
                             ))}
                           </ul>
@@ -238,64 +240,60 @@ const TermsPage = () => {
           ))}
         </div>
 
-        {/* Additional Important Sections */}
-        <div className="grid md:grid-cols-2 gap-4 mt-8">
-          <div className="bg-white border-2 border-black rounded-lg p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0)]">
-            <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
-              <Shield className="w-5 h-5" />
-              Limitation of Liability
-            </h3>
-            <ul className="space-y-2 text-sm text-gray-700">
-              <li>• The Service is provided &quot;AS IS&quot; without warranties</li>
-              <li>• We are not liable for indirect or consequential damages</li>
-              <li>• Our total liability shall not exceed amount paid in last 12 months</li>
+        {/* Additional Sections */}
+        <div className="grid md:grid-cols-2 gap-6 mt-12">
+          {/* Limitation of Liability */}
+          <div className="bg-white border border-gray-100 rounded-3xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-3 mb-4 text-red-500">
+               <Shield className="w-6 h-6" />
+               <h3 className="font-bold text-xl text-gray-900">Limitation of Liability</h3>
+            </div>
+            <ul className="space-y-3 text-gray-600">
+              <li className="flex gap-2"><span className="text-red-300">•</span> Service provided &quot;AS IS&quot;</li>
+              <li className="flex gap-2"><span className="text-red-300">•</span> Not liable for indirect damages</li>
+              <li className="flex gap-2"><span className="text-red-300">•</span> Liability capped at 12 months fees</li>
             </ul>
           </div>
 
-          <div className="bg-white border-2 border-black rounded-lg p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0)]">
-            <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
-              <AlertCircle className="w-5 h-5" />
-              Changes to Terms
-            </h3>
-            <ul className="space-y-2 text-sm text-gray-700">
-              <li>• We may update these terms at any time</li>
-              <li>• Continued use after changes constitutes acceptance</li>
-              <li>• Significant changes will be notified via email</li>
+          {/* Changes to Terms */}
+          <div className="bg-white border border-gray-100 rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-3 mb-4 text-red-500">
+               <AlertCircle className="w-6 h-6" />
+               <h3 className="font-bold text-xl text-gray-900">Changes to Terms</h3>
+            </div>
+            <ul className="space-y-3 text-gray-600">
+              <li className="flex gap-2"><span className="text-red-300">•</span> Updates may occur anytime</li>
+              <li className="flex gap-2"><span className="text-red-300">•</span> Continued use = acceptance</li>
+              <li className="flex gap-2"><span className="text-red-300">•</span> Major changes notified via email</li>
             </ul>
           </div>
         </div>
 
         {/* Contact Footer */}
-        <div className="bg-black text-white border-2 border-black rounded-lg p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0)] mt-8">
+        <div className="mt-8 bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-3xl p-6 md:p-8 shadow-lg">
           <div className="flex items-center gap-3 mb-4">
-            <Mail className="w-6 h-6" />
+            <Mail className="w-6 h-6 text-red-400" />
             <h3 className="font-bold text-xl">Questions About These Terms?</h3>
           </div>
-          <p className="text-gray-300 mb-4">
+          <p className="text-gray-300 mb-6 font-medium">
             If you have any questions or concerns about these Terms and Conditions, please contact us:
           </p>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-4">
             <a
               href="mailto:shrnk.contact@gmail.com"
-              className="px-4 py-2 bg-white text-black font-semibold rounded-lg border-2 border-white hover:bg-gray-100 transition-colors inline-flex items-center gap-2"
+              className="px-6 py-3 bg-white text-gray-900 font-bold rounded-xl hover:bg-gray-100 transition-colors inline-flex items-center gap-2"
             >
               <Mail className="w-4 h-4" />
               shrnk.contact@gmail.com
             </a>
-            <div className="px-4 py-2 bg-gray-800 text-white rounded-lg border-2 border-gray-700">
-              📍 Pune, Maharashtra, India
+            <div className="px-6 py-3 bg-gray-800/50 text-white rounded-xl border border-gray-700 flex items-center gap-2">
+              <span>📍</span> Pune, Maharashtra, India
             </div>
           </div>
         </div>
+      </main>
 
-        {/* Governing Law */}
-        <div className="bg-gradient-to-r from-yellow-100 to-red-100 border-2 border-black rounded-lg p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0)] mt-4">
-          <h3 className="font-bold text-lg mb-2">⚖️ Governing Law</h3>
-          <p className="text-gray-700">
-            These terms are governed by the laws of India. Disputes will be resolved in the courts of Pune, Maharashtra.
-          </p>
-        </div>
-      </div>
+      <Footer />
     </div>
   );
 };
