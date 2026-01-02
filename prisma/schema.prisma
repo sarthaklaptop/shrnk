@@ -67,6 +67,8 @@ model Link {
   clicks         Click[]
   tags           Tag[]    @relation("LinkTags") // NEW: Many-to-many with tags
   user           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isActive       Boolean  @default(true)
+  metadata       Json?    // FWD integration: { source, batchId, userId, emailId }
 
   @@map("links")
 }
@@ -111,4 +113,18 @@ model VerificationToken {
 enum UserType {
   FREE
   PREMIUM
+}
+
+// FWD Integration: API keys for external apps
+model ApiKey {
+  id            String    @id @default(cuid())
+  key           String    @unique
+  name          String    // e.g., "FWD Production"
+  webhookUrl    String?   // e.g., "https://fwd.app/api/webhooks/shrnk"
+  webhookSecret String?   // For signing webhooks
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  lastUsedAt    DateTime?
+
+  @@map("api_keys")
 }
