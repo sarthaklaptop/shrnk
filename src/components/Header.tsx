@@ -84,7 +84,7 @@ export default function Header() {
           "w-11/12 fixed z-50 p-3 py-6 flex justify-between items-center transition-all duration-300 ease-in-out left-1/2 -translate-x-1/2",
           isScrolled
             ? "top-4 rounded-xl bg-white/60 backdrop-blur-md border border-neutral-200/50 shadow-sm py-3"
-            : "top-0 bg-transparent text-white"
+            : "top-0 bg-transparent text-white",
         )}
       >
         <Link href="/">
@@ -122,15 +122,18 @@ export default function Header() {
         </div>
 
         {/* Desktop auth area */}
-        <div className="hidden md:block">
+        <div className="hidden md:block min-w-[120px]">
           {status === "loading" ? (
-            <Button disabled>
+            <Button disabled className="w-full min-w-[120px]">
               <FiLoader className="mr-2 animate-spin" />
               Verifying...
             </Button>
           ) : !session ? (
             <div className="__menu">
-              <Button onClick={() => signIn("google", { callbackUrl: "/x" })}>
+              <Button
+                onClick={() => signIn("google", { callbackUrl: "/x" })}
+                className="min-w-[120px]"
+              >
                 Login
               </Button>
             </div>
@@ -193,7 +196,10 @@ export default function Header() {
 
               {/* Navigation Links */}
               <nav className="flex flex-col gap-2">
-                <MobileLink href="#features-section" onClick={() => setOpen(false)}>
+                <MobileLink
+                  href="#features-section"
+                  onClick={() => setOpen(false)}
+                >
                   <span className="font-medium text-base">Features</span>
                 </MobileLink>
                 <MobileLink href="/pricing" onClick={() => setOpen(false)}>
@@ -204,7 +210,10 @@ export default function Header() {
               {/* Auth Section at bottom or after nav */}
               <div className="mt-8 border-t border-neutral-200 dark:border-neutral-700 pt-6 flex flex-col gap-4">
                 {status === "loading" ? (
-                  <Button disabled className="w-full justify-center relative overflow-hidden bg-red-500/10 text-red-500">
+                  <Button
+                    disabled
+                    className="w-full justify-center relative overflow-hidden bg-red-500/10 text-red-500"
+                  >
                     <div className="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite] border-t border-white/10" />
                     <FiLoader className="mr-2 animate-spin" />
                     Verifying...
@@ -221,8 +230,12 @@ export default function Header() {
                     Login to start
                   </Button>
                 ) : (
-                  <Link href="/x" onClick={() => setOpen(false)} className="w-full">
-                    <Button 
+                  <Link
+                    href="/x"
+                    onClick={() => setOpen(false)}
+                    className="w-full"
+                  >
+                    <Button
                       className="w-full justify-center text-base font-bold bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30 transition-all active:scale-[0.98]"
                       size="lg"
                     >
