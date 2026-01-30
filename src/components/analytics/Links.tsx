@@ -3,7 +3,6 @@
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { BASEURL } from "@/constants/constant";
 import {
   MdContentCopy,
@@ -312,7 +311,7 @@ export default function Links({
     <div className="flex-1 min-h-0 border border-neutral-100 rounded-lg relative">
       <div
         ref={scrollContainerRef}
-        className="h-full w-full overflow-y-auto pr-4 scroll-smooth"
+        className="h-full w-full overflow-y-auto pr-4"
       >
         <div className="flex flex-col gap-4 p-4">
           {displayLinks.map(
