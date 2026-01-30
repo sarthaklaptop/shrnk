@@ -35,11 +35,7 @@ const LogoutButton = () => {
         className={`
           w-full flex items-center rounded-md text-left transition-all duration-200 group relative
           text-red-600 hover:bg-red-50 hover:text-red-700
-          ${
-            !open && animate
-              ? "justify-center p-2.5"
-              : "space-x-2.5 py-2.5"
-          }
+          ${!open && animate ? "justify-center p-2.5" : "space-x-2.5 py-2.5"}
         `}
         title={!open && animate ? "Logout" : undefined}
       >
@@ -118,7 +114,7 @@ export function SidebarDemo() {
     <div
       className={cn(
         "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-red-500 w-full flex-1 mx-auto border border-neutral-200 dark:border-neutral-700",
-        "h-screen" // for your use case, use `h-screen` instead of `h-[60vh]`
+        "h-screen", // for your use case, use `h-screen` instead of `h-[60vh]`
       )}
     >
       <Sidebar open={open} setOpen={setOpen} animate={false}>
@@ -127,14 +123,14 @@ export function SidebarDemo() {
             <Logo />
             <div className="mt-8 flex flex-col gap-2 ">
               {links.map((link, idx) => {
-                const isActive = pathname === link.href; 
+                const isActive = pathname === link.href;
                 return (
                   <SidebarLink
                     key={idx}
                     link={link}
                     className={cn(
                       "rounded-lg p-2 hover:bg-gray-200",
-                      isActive && "bg-red-300 font-medium text-red-700 "
+                      isActive && "bg-red-300 font-medium text-red-700 ",
                     )}
                   />
                 );
@@ -253,7 +249,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="flex flex-1 gap-0">
+    <div className="flex flex-1 gap-0 h-full">
       <TabsDemo />
     </div>
   );
