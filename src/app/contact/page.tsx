@@ -1,327 +1,190 @@
-'use client';
+import type { Metadata } from "next";
+import Link from "next/link";
+import {
+  MdArrowForward,
+  MdBugReport,
+  MdFlag,
+  MdLightbulbOutline,
+  MdLinkOff,
+  MdLocationOn,
+  MdMail,
+  MdPrivacyTip,
+  MdReceiptLong,
+  MdSchedule,
+} from "react-icons/md";
+import Footer from "@/components/Footer";
+import Header from "@/components/Header";
+import ComposeDemo from "@/components/contact/ComposeDemo";
+import { CopyEmail } from "@/components/contact/CopyEmail";
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Mail, MessageCircle, DollarSign, Shield, AlertTriangle, Bug, Lightbulb, Newspaper, Clock, MapPin, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+export const metadata: Metadata = {
+  title: "Contact - Shrnk",
+  description:
+    "Questions, bugs, billing or abuse reports: write to shrnk.contact@gmail.com. We aim to reply within 24 hours.",
+};
 
-const ContactUsPage = () => {
-  const contactMethods = [
-    {
-      icon: <Mail className="w-6 h-6" />,
-      title: 'General Inquiries',
-      email: 'shrnk.contact@gmail.com',
-      response: 'Within 24 hours',
-      color: 'text-red-500',
-      bg: 'bg-red-50'
-    },
-    {
-      icon: <MessageCircle className="w-6 h-6" />,
-      title: 'Customer Support',
-      email: 'shrnk.contact@gmail.com',
-      response: 'Within 12-24 hours',
-      description: 'Priority support for premium users',
-      color: 'text-red-500',
-      bg: 'bg-red-50'
-    },
-    {
-      icon: <DollarSign className="w-6 h-6" />,
-      title: 'Refunds & Billing',
-      email: 'shrnk.contact@gmail.com',
-      response: 'Within 24-48 hours',
-      color: 'text-red-500',
-      bg: 'bg-red-50'
-    },
-    {
-      icon: <AlertTriangle className="w-6 h-6" />,
-      title: 'Report Abuse',
-      email: 'shrnk.contact@gmail.com',
-      description: 'Report malicious links or ToS violations',
-      color: 'text-red-500',
-      bg: 'bg-red-50'
-    },
-    {
-      icon: <Bug className="w-6 h-6" />,
-      title: 'Report a Bug',
-      email: 'shrnk.contact@gmail.com',
-      description: 'Include screenshots and steps to reproduce',
-      color: 'text-red-500',
-      bg: 'bg-red-50'
-    },
-    {
-      icon: <Lightbulb className="w-6 h-6" />,
-      title: 'Feature Requests',
-      email: 'shrnk.contact@gmail.com',
-      description: 'Share your ideas to improve Shrnk',
-      color: 'text-red-500',
-      bg: 'bg-red-50'
-    },
-    {
-      icon: <Newspaper className="w-6 h-6" />,
-      title: 'Press & Media',
-      email: 'shrnk.contact@gmail.com',
-      description: 'For press inquiries and media kits',
-      color: 'text-red-500',
-      bg: 'bg-red-50'
-    }
-  ];
+const EMAIL = "shrnk.contact@gmail.com";
+const mailto = (subject: string) => `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}`;
 
-  const supportHours = [
-    { type: 'Email Support', hours: '24/7', response: 'Responses within 24 hours' },
-    { type: 'Priority Support (Premium)', hours: '24/7', response: 'Responses within 6 hours' },
-    { type: 'Business Hours', hours: 'Mon-Fri, 9:00 AM - 6:00 PM IST', response: '' }
-  ];
+// Every topic goes to the same inbox; each link starts the email with the
+// right subject, and the line under it says what helps us answer fastest.
+const TOPICS = [
+  {
+    icon: MdLinkOff,
+    title: "A link isn't working",
+    body: "Send the short link and what you see when you open it.",
+    subject: "Short link not working",
+  },
+  {
+    icon: MdReceiptLong,
+    title: "Billing and refunds",
+    body: "Include the email on your account and your PayPal receipt.",
+    subject: "Billing question",
+    extra: { label: "Refund policy", href: "/legal/refund" },
+  },
+  {
+    icon: MdFlag,
+    title: "Report abuse",
+    body: "Send the short link that points to phishing, malware or spam. We review every report.",
+    subject: "Abuse report",
+  },
+  {
+    icon: MdBugReport,
+    title: "Something's broken",
+    body: "Steps to reproduce, your browser, and a screenshot help most.",
+    subject: "Bug report",
+  },
+  {
+    icon: MdLightbulbOutline,
+    title: "An idea for Shrnk",
+    body: "Tell us what you'd use it for, not only what it is.",
+    subject: "Feature idea",
+  },
+  {
+    icon: MdPrivacyTip,
+    title: "Your data",
+    body: "Ask for a copy of your data or for your account to be deleted.",
+    subject: "Privacy request",
+    extra: { label: "Privacy policy", href: "/legal/privacy" },
+  },
+];
 
-  const responseTable = [
-    { inquiry: 'General Support', time: '24 hours' },
-    { inquiry: 'Premium Support', time: '6 hours' },
-    { inquiry: 'Security Issues', time: '48 hours' },
-    { inquiry: 'Billing/Refunds', time: '24-48 hours' },
-    { inquiry: 'Privacy Requests', time: '30 days (as per law)' },
-    { inquiry: 'Press Inquiries', time: '48 hours' }
-  ];
-
+export default function ContactPage() {
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className="mx-auto w-11/12">
       <Header />
-      
-      {/* Spacer for fixed header */}
-      <div className="h-24 w-full bg-white"></div>
 
-      {/* Hero Section */}
-      <div className="w-full bg-gradient-to-b from-white to-red-50/50 py-12 md:py-16">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="p-4 bg-red-100 text-red-500 rounded-2xl shadow-sm">
-              <Mail className="w-10 h-10" />
-            </div>
-            <div className="text-center md:text-left">
-              <h1 className="text-4xl md:text-5xl font-black mb-3 tracking-tight text-gray-900">Contact Us</h1>
-              <p className="text-lg text-gray-600 font-medium">Were here to help! Get in touch with us.</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div className="overflow-hidden bg-gray-50">
+        {/* Intro, the address, and what a good message looks like */}
+        <section className="px-4 pb-20 pt-32 md:pt-40">
+          <div className="mx-auto grid max-w-[1100px] items-center gap-12 lg:grid-cols-[minmax(0,1fr)_560px] lg:gap-14">
+            <div className="max-w-lg">
+              <p className="text-sm font-semibold uppercase tracking-wider text-red-500">Contact</p>
+              <h1 className="mt-3 text-balance text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl">
+                Questions, bugs, ideas: write to us.
+              </h1>
+              <p className="mt-5 text-pretty text-base leading-7 text-neutral-600 sm:text-lg">
+                Everything comes to one inbox and we read every message. Tell us the short link and
+                what happened, and we can usually sort it in one reply.
+              </p>
 
-      {/* Content */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
-        {/* Contact Methods Grid */}
-        <div className="mb-16">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Get In Touch</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {contactMethods.map((method, idx) => (
-              <motion.a
-                key={idx}
-                href={`mailto:${method.email}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.05 }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="block bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 group"
-              >
-                <div className={`p-3 ${method.bg} ${method.color} rounded-xl w-fit mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                  {method.icon}
+              <div className="mt-8 rounded-2xl border border-neutral-200 bg-white p-5">
+                <div className="flex items-center gap-3">
+                  <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-red-50 text-red-500">
+                    <MdMail size={20} />
+                  </span>
+                  <a href={`mailto:${EMAIL}`} className="min-w-0 truncate text-base font-semibold text-neutral-900 hover:text-red-600 sm:text-lg">
+                    {EMAIL}
+                  </a>
                 </div>
-                <h3 className="font-bold text-lg mb-2 text-gray-900">{method.title}</h3>
-                <p className="text-sm font-medium text-red-500 hover:text-red-700 break-all mb-2">
-                  {method.email}
-                </p>
-                {method.response && (
-                  <p className="text-xs text-gray-500 flex items-center gap-1">
-                    <Clock className="w-3 h-3" /> {method.response}
-                  </p>
-                )}
-                {method.description && (
-                  <p className="text-sm text-gray-600 mt-3 leading-relaxed">{method.description}</p>
-                )}
-              </motion.a>
-            ))}
-          </div>
-        </div>
-
-        {/* Quick Contact & Info Grid */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-16">
-          
-          {/* Quick Contact Options */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="border border-gray-100 rounded-2xl p-6 md:p-8 bg-gradient-to-br from-gray-50 to-white shadow-sm"
-          >
-            <h2 className="text-xl md:text-2xl font-bold mb-6 text-gray-900">Quick Support</h2>
-            <div className="grid gap-4">
-              <a
-                href="mailto:shrnk.contact@gmail.com"
-                className="flex items-center gap-4 bg-white border border-gray-100 rounded-xl p-4 hover:shadow-md transition-all duration-200 group"
-              >
-                <div className="p-3 bg-red-50 text-red-500 rounded-xl group-hover:bg-red-100 transition-colors">
-                  <Mail className="w-6 h-6" />
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <a
+                    href={`mailto:${EMAIL}`}
+                    className="inline-flex h-11 items-center gap-1.5 rounded-lg bg-red-500 px-5 text-sm font-semibold text-white shadow-sm shadow-red-500/25 transition hover:bg-red-600 active:scale-[0.98]"
+                  >
+                    Write an email
+                    <MdArrowForward size={15} />
+                  </a>
+                  <CopyEmail email={EMAIL} />
                 </div>
-                <div>
-                  <p className="font-bold text-gray-900">Email Support</p>
-                  <p className="text-sm text-gray-500">shrnk.contact@gmail.com</p>
-                </div>
-              </a>
-              <a
-                href="mailto:shrnk.contact@gmail.com"
-                className="flex items-center gap-4 bg-white border border-gray-100 rounded-xl p-4 hover:shadow-md transition-all duration-200 group"
-              >
-                <div className="p-3 bg-green-50 text-green-500 rounded-xl group-hover:bg-green-100 transition-colors">
-                  <MessageCircle className="w-6 h-6" />
-                </div>
-                <div>
-                  <p className="font-bold text-gray-900">General Inquiries</p>
-                  <p className="text-sm text-gray-500">shrnk.contact@gmail.com</p>
-                </div>
-              </a>
-            </div>
-          </motion.div>
-
-          {/* Office Location */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="border border-gray-100 rounded-2xl p-6 md:p-8 bg-white shadow-sm"
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-gray-100 rounded-lg">
-                <MapPin className="w-5 h-5 text-gray-700" />
-              </div>
-              <h2 className="text-xl md:text-2xl font-bold text-gray-900">Location</h2>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <p className="font-bold text-xl text-gray-900">Shrnk</p>
-                <p className="text-gray-600">Pune, Maharashtra</p>
-                <p className="text-gray-600">India</p>
-              </div>
-              <div className="pt-4 border-t border-gray-100">
-                <p className="text-sm text-gray-500 leading-relaxed italic">
-                  Note: We operate remotely with team members across multiple time zones to provide better support coverage.
+                <p className="mt-4 flex items-center gap-2 text-sm text-neutral-500">
+                  <MdSchedule size={16} className="flex-none" />
+                  We aim to reply within 24 hours, in English or Hindi.
                 </p>
               </div>
             </div>
-          </motion.div>
-        </div>
-
-        {/* Info Grid 2 */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-16">
-          {/* Expected Response Times */}
-          <div className="border border-gray-100 rounded-2xl p-6 md:p-8 bg-white shadow-sm overflow-hidden">
-            <h2 className="text-xl md:text-2xl font-bold mb-6 text-gray-900">Response Times</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-100">
-                    <th className="text-left py-3 px-2 font-semibold text-gray-900">Inquiry Type</th>
-                    <th className="text-right py-3 px-2 font-semibold text-gray-900">Time</th>
-                  </tr>
-                </thead>
-                <tbody className="text-sm">
-                  {responseTable.map((row, idx) => (
-                    <tr key={idx} className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
-                      <td className="py-3 px-2 text-gray-600">{row.inquiry}</td>
-                      <td className="py-3 px-2 text-gray-900 font-medium text-right">{row.time}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div id="compose-demo" className="mx-auto w-full max-w-[560px]">
+              <ComposeDemo />
             </div>
           </div>
+        </section>
 
-          {/* Support Hours */}
-          <div className="border border-gray-100 rounded-2xl p-6 md:p-8 bg-yellow-50/50 shadow-sm">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-yellow-100 text-yellow-700 rounded-lg">
-                <Clock className="w-5 h-5" />
-              </div>
-              <h2 className="text-xl md:text-2xl font-bold text-gray-900">Support Hours</h2>
-            </div>
-            <div className="space-y-4">
-              {supportHours.map((hour, idx) => (
-                <div key={idx} className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-                  <div className="flex justify-between items-start flex-wrap gap-2">
-                    <div>
-                      <p className="font-bold text-gray-900">{hour.type}</p>
-                      {hour.response && <p className="text-xs text-gray-500 mt-1">{hour.response}</p>}
-                    </div>
-                    <span className="px-3 py-1 bg-gray-50 rounded-full text-xs font-medium text-gray-700">{hour.hours}</span>
+        {/* Topics */}
+        <section className="px-4 py-16 md:py-20">
+          <div className="mx-auto max-w-[1100px]">
+            <h2 className="max-w-xl text-balance text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
+              What&apos;s it about?
+            </h2>
+            <p className="mt-3 max-w-xl text-base text-neutral-600">
+              Pick a topic and your email opens with the subject filled in.
+            </p>
+            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {TOPICS.map(({ icon: Icon, title, body, subject, extra }) => (
+                <div key={title} className="group relative flex flex-col rounded-3xl border border-neutral-200 bg-white p-7 transition hover:border-neutral-300 hover:shadow-sm">
+                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-red-50 text-red-500">
+                    <Icon size={20} />
+                  </span>
+                  <a href={mailto(subject)} className="mt-5 font-semibold text-neutral-900 after:absolute after:inset-0 after:rounded-3xl">
+                    {title}
+                  </a>
+                  <p className="mt-2 text-sm leading-6 text-neutral-600">{body}</p>
+                  <div className="mt-auto flex items-center justify-between gap-4 pt-6">
+                    <span className="inline-flex items-center gap-1 text-sm font-medium text-red-500">
+                      Email us
+                      <MdArrowForward size={14} className="transition-transform group-hover:translate-x-0.5" />
+                    </span>
+                    {extra && (
+                      <Link href={extra.href} className="relative z-10 text-sm text-neutral-500 underline-offset-4 hover:text-neutral-900 hover:underline">
+                        {extra.label}
+                      </Link>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Bottom Section */}
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
-          {/* Before You Contact */}
-          <div className="border border-gray-100 rounded-2xl p-6 md:p-8 bg-purple-50/30">
-            <h3 className="font-bold text-lg mb-4 text-gray-900">Before You Contact Us</h3>
-            <p className="text-sm text-gray-600 mb-4">To help us serve you better, please have ready:</p>
-            <ul className="space-y-3">
-              {[
-                'Your account email address',
-                'Description of your issue',
-                'Relevant screenshots or error messages',
-                'Browser and device information'
-              ].map((item, idx) => (
-                <li key={idx} className="flex items-start gap-3">
-                  <span className="text-purple-400 font-bold text-lg flex-shrink-0 leading-none mt-0.5">•</span>
-                  <span className="text-sm text-gray-700 font-medium">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Language Support */}
-          <div className="border border-gray-100 rounded-2xl p-6 md:p-8 bg-white h-full">
-            <h3 className="font-bold text-lg mb-4 text-gray-900">Language Support</h3>
-            <p className="text-sm text-gray-600 mb-6">Currently, we provide support in:</p>
-            <div className="flex flex-wrap gap-3">
-              <span className="px-5 py-2.5 bg-blue-50 text-blue-700 rounded-xl font-semibold text-sm">English</span>
-              <span className="px-5 py-2.5 bg-orange-50 text-orange-700 rounded-xl font-semibold text-sm">Hindi (हिंदी)</span>
+        {/* Where and when */}
+        <section className="px-4 pb-24 md:pb-32">
+          <div className="mx-auto grid max-w-[1100px] gap-4 md:grid-cols-2">
+            <div className="flex items-start gap-4 rounded-3xl border border-neutral-200 bg-white p-7">
+              <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-red-50 text-red-500">
+                <MdLocationOn size={20} />
+              </span>
+              <div>
+                <p className="font-semibold text-neutral-900">Pune, Maharashtra, India</p>
+                <p className="mt-1 text-sm leading-6 text-neutral-600">
+                  Shrnk is built and run from Pune. Email is the fastest way to reach us.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 rounded-3xl border border-neutral-200 bg-white p-7">
+              <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-red-50 text-red-500">
+                <MdSchedule size={20} />
+              </span>
+              <div>
+                <p className="font-semibold text-neutral-900">Mon to Fri, 9:00 to 18:00 IST</p>
+                <p className="mt-1 text-sm leading-6 text-neutral-600">
+                  Our working hours. Email any time; we read everything that comes in.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Thank You Message */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center p-6 md:p-10 border border-gray-100 rounded-2xl bg-gradient-to-r from-gray-50 via-white to-gray-50 shadow-sm"
-        >
-          <h3 className="text-xl md:text-2xl font-bold mb-3 text-gray-900">Thank You for Choosing Shrnk!</h3>
-          <p className="text-gray-600 mb-8 max-w-lg mx-auto">
-            We appreciate your interest and look forward to assisting you.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <a
-              href="mailto:shrnk.contact@gmail.com"
-              className="px-8 py-3 bg-red-500 text-white font-bold rounded-full hover:bg-red-600 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-            >
-              Email Support
-            </a>
-            <Link
-              href="/"
-              className="flex items-center px-8 py-3 bg-white text-gray-700 font-bold rounded-full border border-gray-200 hover:border-gray-300 hover:bg-gray-50 shadow-sm hover:shadow-md transition-all duration-300"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Home
-            </Link>
-          </div>
-        </motion.div>
-
-      </main>
-
-      <Footer />
+        <Footer />
+      </div>
     </div>
   );
-};
-
-export default ContactUsPage;
+}

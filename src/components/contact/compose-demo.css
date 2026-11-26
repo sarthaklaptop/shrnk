@@ -1,0 +1,189 @@
+/* A message to Shrnk, written in front of the reader. Scoped under .cm. */
+.cm {
+  /* A quiet well; the compose window is inset a gutter top and left and
+     runs off the right and the bottom (a corner bleed) */
+  & .ss-stage {
+    --gutter: 40px;
+    overflow: hidden;
+    border-radius: 24px;
+    background: var(--ss-well);
+  }
+
+  .cm-window {
+    position: absolute;
+    top: var(--gutter);
+    left: var(--gutter);
+    width: 600px;
+    height: 460px;
+    box-shadow: var(--ss-shadow-hero);
+  }
+
+  .cm-window .ss-window__body {
+    background: var(--ss-surface);
+  }
+
+  .cm-mail {
+    display: flex;
+    flex-direction: column;
+    padding: 0 22px;
+  }
+
+  .cm-line {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 44px;
+    border-bottom: 1px solid var(--ss-line-faint);
+  }
+
+  .cm-key {
+    flex: none;
+    width: 56px;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--ss-text-faint);
+  }
+
+  .cm-to {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: var(--ss-radius-pill);
+    background: var(--ss-accent-soft);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 18px;
+    color: var(--ss-accent-text);
+  }
+
+  .cm-subject {
+    display: inline-flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    color: var(--ss-text-strong);
+    white-space: pre;
+  }
+
+  /* The body holds its finished height from the first keystroke, so the
+     attachment and the button below never move while it types */
+  .cm-body {
+    min-height: 92px;
+    padding: 16px 0 8px;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--ss-text-strong);
+    white-space: pre-wrap;
+  }
+
+  /* The caret keeps its width when it moves on, so the line never jumps */
+  .cm-caret {
+    display: inline-block;
+    opacity: 0;
+    width: 1.5px;
+    height: 17px;
+    margin-left: 1px;
+    vertical-align: -3px;
+    background: var(--ss-accent);
+  }
+
+  .cm-caret[data-on] {
+    opacity: 1;
+    animation: cm-blink 1s steps(1) infinite;
+  }
+
+  .cm-subject[data-typing] .cm-caret,
+  .cm-body[data-typing] .cm-caret {
+    animation: none;
+  }
+
+  /* The attachment: the kit chip dressed as a file, icon and name */
+  .cm-file .ss-chip {
+    background: var(--ss-accent-soft);
+    color: var(--ss-accent-text);
+  }
+
+  .cm-file .ss-chip__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .cm-foot {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-top: 1px solid var(--ss-line-faint);
+  }
+
+  .cm-send {
+    min-width: 92px;
+  }
+
+  /* 5px keeps "Sent" with its tick at an even width, so the tick sits on
+     whole pixels as the label crossfades */
+  .cm-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .cm-inline--send {
+    gap: 6px;
+  }
+
+  .cm-tool {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--ss-radius-md);
+    color: var(--ss-icon);
+    transition: background 0.15s ease;
+  }
+
+  .cm-tool[data-hover] {
+    background: var(--ss-ink-1);
+  }
+
+  /* Compact: the same window at the phone column's width, still bled */
+  & .ss-stage[data-layout="compact"] {
+    --gutter: 24px;
+  }
+
+  & .ss-stage[data-layout="compact"] .cm-window {
+    width: 340px;
+    height: 360px;
+  }
+
+  & .ss-stage[data-layout="compact"] .cm-line {
+    height: 40px;
+  }
+
+  & .ss-stage[data-layout="compact"] .cm-send {
+    min-width: 84px;
+  }
+
+  & .ss-stage[data-layout="compact"] .cm-mail {
+    padding: 0 16px;
+  }
+
+  & .ss-stage[data-layout="compact"] .cm-key {
+    width: 50px;
+  }
+
+  & .ss-stage[data-layout="compact"] .cm-body {
+    min-height: 90px;
+    padding-top: 12px;
+  }
+}
+
+@keyframes cm-blink {
+  50% {
+    opacity: 0;
+  }
+}
