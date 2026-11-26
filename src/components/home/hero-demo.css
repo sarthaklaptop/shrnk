@@ -1,0 +1,432 @@
+/* The homepage hero demo. Every rule is scoped under .sh-hero. */
+.sh-hero {
+  /* The page is the ground: no plate. The stage masks its contents. */
+  & .ss-stage {
+    --gutter: 24px;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  /* Fade crop: the mask lives on a wrapper with room for the window's shadow
+     on the top and sides; only the foot fades, over filler rows. */
+  .sh-mask {
+    position: absolute;
+    inset: 0;
+    mask-image: linear-gradient(to bottom, #000 60%, transparent 97%);
+  }
+
+  .sh-window {
+    position: absolute;
+    top: var(--gutter);
+    /* The analytics card straddles the left edge: gutter + half its width */
+    left: 152px;
+    width: 864px;
+    height: 600px;
+    box-shadow: var(--ss-shadow-hero);
+  }
+
+  .sh-window .ss-window__body {
+    background: var(--ss-surface);
+  }
+
+  .sh-app {
+    display: flex;
+    height: 100%;
+  }
+
+  /* The app's sidebar: the chrome the analytics card covers */
+  .sh-side {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    gap: 4px;
+    width: 172px;
+    padding: 16px 12px;
+    background: var(--ss-canvas);
+    border-right: 1px solid var(--ss-line);
+  }
+
+  .sh-wordmark {
+    padding: 2px 8px 14px;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 22px;
+    color: var(--ss-accent);
+  }
+
+  .sh-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 30px;
+    padding: 0 8px;
+    border-radius: var(--ss-radius-md);
+    color: var(--ss-icon-faint);
+  }
+
+  .sh-nav[data-on] {
+    background: var(--ss-surface);
+    box-shadow: 0 0 0 1px var(--ss-line);
+    color: var(--ss-accent);
+  }
+
+  .sh-nav-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 16px;
+    color: var(--ss-text-strong);
+  }
+
+  .sh-main {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    padding: 20px 20px 0;
+  }
+
+  .sh-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: 32px;
+    margin-bottom: 16px;
+  }
+
+  .sh-heading {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 24px;
+    color: var(--ss-text-strong);
+  }
+
+  .sh-tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sh-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 196px;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: var(--ss-radius-md);
+    background: var(--ss-canvas);
+    box-shadow: inset 0 0 0 1px var(--ss-line);
+    color: var(--ss-icon-faint);
+  }
+
+  .sh-new[data-open] {
+    filter: brightness(0.92);
+  }
+
+  /* The link list: bordered cards, as the real dashboard draws them */
+  .sh-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sh-card {
+    margin-bottom: 8px;
+    padding: 11px 14px;
+    border-radius: var(--ss-radius-lg);
+    background: var(--ss-surface);
+    box-shadow: inset 0 0 0 1px var(--ss-line);
+    transition: background 0.6s ease, box-shadow 0.6s ease;
+  }
+
+  .sh-card[data-fresh] {
+    background: #fffafa;
+    box-shadow: inset 0 0 0 1px #fecaca;
+  }
+
+  .sh-row {
+    --ss-row-title: 14px;
+    --ss-row-subtitle: 12.5px;
+    --ss-row-line: 24px;
+    --ss-row-line-2: 18px;
+    --ss-row-gap: 4px;
+  }
+
+  .sh-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .sh-short {
+    overflow: hidden;
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 20px;
+    letter-spacing: -0.005em;
+    color: var(--ss-text-strong);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sh-icon-btn {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--ss-radius-md);
+    color: var(--ss-icon-faint);
+  }
+
+  .sh-copy {
+    flex: none;
+    color: var(--ss-text);
+  }
+
+  .sh-dest {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    color: var(--ss-icon-faint);
+  }
+
+  .sh-dest-text {
+    overflow: hidden;
+    font-size: 12.5px;
+    line-height: 18px;
+    color: var(--ss-text-faint);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sh-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .sh-side-group {
+    display: flex;
+    align-items: center;
+    height: 30px;
+    margin-top: 14px;
+    padding: 0 8px;
+  }
+
+  .sh-tag-dot {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    margin: 0 4px;
+    border-radius: 50%;
+    background: #fca5a5;
+  }
+
+  .sh-tag-dot[data-tone="1"] { background: #fcd34d; }
+  .sh-tag-dot[data-tone="2"] { background: #93c5fd; }
+  .sh-tag-dot[data-tone="3"] { background: #86efac; }
+
+  .sh-pill {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 6px;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 8px;
+    background: var(--ss-surface);
+    box-shadow: inset 0 0 0 1px var(--ss-line);
+    color: var(--ss-icon-faint);
+  }
+
+  .sh-pill--icon {
+    width: 24px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .sh-count {
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 16px;
+    color: var(--ss-text-strong);
+  }
+
+  /* The shortener: anchored under New link, right edges aligned */
+  .sh-pop {
+    top: 60px;
+    right: 20px;
+    width: 340px;
+    --ss-popover-origin: top right;
+  }
+
+  .sh-pop-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 12px;
+  }
+
+  .sh-field {
+    --ss-control: 36px;
+  }
+
+  .sh-field .ss-field__box {
+    color: var(--ss-text-strong);
+  }
+
+  .sh-pop-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .sh-shorten {
+    min-width: 96px;
+  }
+
+  .sh-done {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* The satellite: the analytics card over the app's sidebar */
+  .sh-stats {
+    position: absolute;
+    top: 236px;
+    left: var(--gutter);
+    z-index: 5;
+    width: 256px;
+    padding: 16px;
+    border-radius: 14px;
+    background: var(--ss-surface);
+    box-shadow: var(--ss-shadow-satellite);
+  }
+
+  .sh-stats-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .sh-stats-label {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--ss-text);
+  }
+
+  .sh-stats-slug {
+    font-family: var(--ss-mono);
+    font-size: 11.5px;
+    line-height: 16px;
+    color: var(--ss-accent-text);
+  }
+
+  .sh-stats-value {
+    margin: 6px 0 10px;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 36px;
+    color: var(--ss-text-strong);
+  }
+
+  .sh-chart {
+    display: block;
+  }
+
+  .sh-stats-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--ss-line-faint);
+  }
+
+  .sh-stats-range {
+    font-size: 11.5px;
+    line-height: 16px;
+    color: var(--ss-text-faint);
+  }
+
+  .sh-watch {
+    position: absolute;
+    left: 700px;
+    top: 176px;
+    width: 1px;
+    height: 1px;
+  }
+
+  /* Compact: the phone column. The list alone, no sidebar or satellite; the
+     click count on the new row is the payoff. */
+  & .ss-stage[data-layout="compact"] {
+    --gutter: 16px;
+  }
+
+  & .ss-stage[data-layout="compact"] .sh-window {
+    left: var(--gutter);
+    width: 326px;
+    height: 520px;
+  }
+
+  & .ss-stage[data-layout="compact"] .sh-main {
+    padding: 16px 14px 0;
+  }
+
+  & .ss-stage[data-layout="compact"] .sh-heading {
+    font-size: 17px;
+  }
+
+  & .ss-stage[data-layout="compact"] .sh-card {
+    padding: 10px 12px;
+  }
+
+  & .ss-stage[data-layout="compact"] .sh-pop {
+    top: 56px;
+    right: 14px;
+    width: 284px;
+  }
+
+  & .ss-stage[data-layout="compact"] .sh-pop-foot .ss-bar {
+    display: none;
+  }
+
+  & .ss-stage[data-layout="compact"] .sh-pop-foot {
+    justify-content: flex-end;
+  }
+
+  & .ss-stage[data-layout="compact"] .sh-watch {
+    left: 200px;
+    top: 64px;
+  }
+}
+
+/* Filler rows keep the real rows' line boxes, so the list keeps its pitch */
+.sh-hero .sh-line {
+  display: flex;
+  align-items: center;
+}
+
+.sh-hero .sh-line--title {
+  height: 24px;
+}
+
+.sh-hero .sh-line--sub {
+  height: 18px;
+}
+
+/* Compact: a shorter stage keeps the visible window about square; the fade
+   starts lower so the new row and the one under it stay clear of it */
+.sh-hero .ss-stage[data-layout="compact"] .sh-mask {
+  mask-image: linear-gradient(to bottom, #000 72%, transparent 99%);
+}

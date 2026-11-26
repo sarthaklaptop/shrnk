@@ -1,0 +1,25 @@
+/* Shrnk's look for every stageshow stage on the homepage: its red accent,
+   Geist, shadcn's neutral grays and radii (src/app/globals.css,
+   tailwind.config.ts). Used as a class on each Stage. */
+.shrnk-look .ss-stage {
+  --ss-accent: #ef4444;
+  --ss-accent-2: #f87171;
+  --ss-accent-soft: rgba(239, 68, 68, 0.1);
+  --ss-accent-text: #dc2626;
+  --ss-font: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  --ss-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Consolas, monospace;
+  --ss-canvas: #fafafa;
+  --ss-surface: #ffffff;
+  --ss-well: #f4f4f5;
+  --ss-text-strong: #171717;
+  --ss-text: #525252;
+  --ss-text-faint: #8a8a8a;
+  --ss-icon: #525252;
+  --ss-icon-faint: #a3a3a3;
+  --ss-line: #e5e5e5;
+  --ss-line-faint: #f0f0f0;
+  --ss-radius-sm: 4px;
+  --ss-radius-md: 6px;
+  --ss-radius-lg: 12px;
+  --ss-radius-window: 12px;
+}

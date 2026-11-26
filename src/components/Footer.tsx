@@ -1,54 +1,79 @@
-import Link from 'next/link';
+import Link from "next/link";
+import { FaXTwitter } from "react-icons/fa6";
 
-export default function Footer () {
-    return (
-        <footer className="mx-auto w-full max-w-container px-4 sm:px-6 lg:px-8">
-            <div className="border-t border-slate-900/5 py-10">
-                <p className="flex items-center justify-center font-bold text-2xl text-red-500">Shrnk</p>
-                
-                {/* Navigation Links */}
-                <div className="mt-6 flex items-center justify-center gap-6 flex-wrap">
-                    <Link href="/about" className="text-sm text-slate-600 hover:text-red-500 transition-colors duration-200">
-                        About
+const COLUMNS = [
+  {
+    title: "Product",
+    links: [
+      { label: "Features", href: "/#features-section" },
+      { label: "Pricing", href: "/pricing" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About", href: "/about" },
+      { label: "Contact", href: "/contact" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { label: "Terms", href: "/legal/terms" },
+      { label: "Privacy", href: "/legal/privacy" },
+      { label: "Refunds", href: "/legal/refund" },
+    ],
+  },
+];
+
+export default function Footer() {
+  return (
+    <footer className="mx-auto w-full max-w-[1100px] px-4">
+      <div className="flex flex-col gap-10 border-t border-neutral-200 py-12 md:flex-row md:justify-between">
+        <div className="max-w-xs">
+          <Link href="/" className="text-2xl font-bold tracking-tight text-red-500">
+            Shrnk
+          </Link>
+          <p className="mt-3 text-sm leading-6 text-neutral-500">
+            Short links, big impact. Shorten, share and see every click.
+          </p>
+        </div>
+
+        <nav aria-label="Footer" className="grid grid-cols-3 gap-8 sm:gap-16">
+          {COLUMNS.map((col) => (
+            <div key={col.title}>
+              <p className="text-sm font-semibold text-neutral-900">{col.title}</p>
+              <ul className="mt-3 space-y-2.5">
+                {col.links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-neutral-500 transition-colors hover:text-red-500"
+                    >
+                      {link.label}
                     </Link>
-                    <Link href="/contact" className="text-sm text-slate-600 hover:text-red-500 transition-colors duration-200">
-                        Contact
-                    </Link>
-                    <Link href="/legal/terms" className="text-sm text-slate-600 hover:text-red-500 transition-colors duration-200">
-                        Legal
-                    </Link>
-                </div>
-                
-                <p className="mt-5 text-center text-sm leading-6 text-slate-500">© 2022 <span>Shrnk</span>. All rights reserved.</p>
-                <div className="flex items-center justify-center my-2">
-                    <button className="bg-slate-800 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6  text-white inline-block">
-                        <span className="absolute inset-0 overflow-hidden rounded-full">
-                            <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(56,189,248,0.6)_0%,rgba(56,189,248,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                        </span>
-                        <div className="relative flex space-x-2 items-center z-10 rounded-full bg-zinc-950 py-0.5 px-4 ring-1 ring-white/10 ">
-                            <span>
-                                <a target="_" href="https://x.com/Sarthak10007">@sarthak`s twitter</a>                                
-                            </span>
-                            <svg
-                            fill="none"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            width="16"
-                            xmlns="http://www.w3.org/2000/svg"
-                            >
-                            <path
-                                d="M10.75 8.75L14.25 12L10.75 15.25"
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="1.5"
-                            />
-                            </svg>
-                        </div>
-                        <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-emerald-400/0 via-emerald-400/90 to-emerald-400/0 transition-opacity duration-500 group-hover:opacity-40" />
-                    </button>
-                </div>
+                  </li>
+                ))}
+              </ul>
             </div>
-        </footer>
-    )
+          ))}
+        </nav>
+      </div>
+
+      <div className="flex flex-col-reverse items-center gap-4 border-t border-neutral-200 py-6 sm:flex-row sm:justify-between">
+        <p className="text-sm text-neutral-500">
+          © {new Date().getFullYear()} Shrnk. All rights reserved.
+        </p>
+        <a
+          href="https://x.com/Sarthak10007"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 transition hover:border-neutral-300 hover:text-neutral-900"
+        >
+          <FaXTwitter size={14} aria-hidden />
+          Built by Sarthak
+        </a>
+      </div>
+    </footer>
+  );
 }

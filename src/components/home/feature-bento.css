@@ -1,0 +1,484 @@
+/* The features grid. Everything nests under .shrnk-bento. The grid is the
+   page's (container queries on the section); each picture is its own Stage
+   at 1:1, pinned to its tile's bottom and cropped by the tile. */
+.shrnk-bento {
+  --pad: 28px;
+  --gap: 16px;
+  --ink: #171717;
+  --ink-2: #737373;
+  container-type: inline-size;
+
+  & .fb-grid {
+    display: grid;
+    gap: var(--gap);
+    max-width: 1100px;
+    margin: 0 auto;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 420px 260px 340px 340px 320px;
+    grid-template-areas: "hero" "stat" "lock" "qr" "tags";
+  }
+
+  /* A tablet: the hero across the top, then pairs */
+  @container (min-width: 640px) {
+    & .fb-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: 400px 340px 320px;
+      grid-template-areas: "hero hero" "stat lock" "qr tags";
+    }
+  }
+
+  /* A homepage: hero and strip */
+  @container (min-width: 960px) {
+    & .fb-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: 400px 340px;
+      grid-template-areas: "hero hero stat" "lock qr tags";
+    }
+  }
+
+  @container (max-width: 639px) {
+    & .fb-grid {
+      --pad: 24px;
+    }
+  }
+
+  /* ---- The tile: one frame for all five ---- */
+
+  & .fb-tile {
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: inset 0 0 0 1px #e8e8e8;
+  }
+
+  & .fb-tile[data-dark] {
+    background: #171717;
+    box-shadow: none;
+  }
+
+  & .fb-tile--hero { grid-area: hero; }
+  & .fb-tile--stat { grid-area: stat; }
+  & .fb-tile--lock { grid-area: lock; }
+  & .fb-tile--qr { grid-area: qr; }
+  & .fb-tile--tags { grid-area: tags; }
+
+  /* Run-in copy: the bold lead and its gray continuation at one size */
+  & .fb-copy {
+    position: relative;
+    z-index: 1;
+    max-width: 380px;
+    margin: 0;
+    padding: 26px var(--pad) 0;
+    font-size: 17px;
+    line-height: 24px;
+    letter-spacing: -0.012em;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+
+  & .fb-copy b {
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  & .fb-tile--hero .fb-copy {
+    max-width: 470px;
+  }
+
+  /* ---- Pictures: pinned to the tile's bottom ---- */
+
+  & .fb-picture {
+    position: absolute;
+    bottom: 0;
+  }
+
+  & .fb-picture--fill {
+    left: 0;
+    width: 100%;
+  }
+
+  /* Centered compositions, wider than the narrowest tile so the tile's
+     sides crop only empty ground */
+  & .fb-picture--center {
+    left: 50%;
+    width: 360px;
+    margin-left: -180px;
+  }
+
+  & .fb-stage .ss-stage {
+    overflow: hidden;
+    background: transparent;
+  }
+
+  & .fb-label {
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--ss-text);
+  }
+
+  & .fb-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ---- Analytics (hero): a panel hung from the copy gutter, off the
+     right and bottom edges ---- */
+
+  & .fb-panel {
+    position: absolute;
+    top: 24px;
+    left: var(--pad);
+    display: flex;
+    width: max(740px, calc(100% + var(--pad)));
+    height: 360px;
+    border-radius: 16px;
+    background: var(--ss-surface);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 12px 32px -12px rgba(20, 20, 40, 0.18), 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+
+  & .fb-panel:not([data-wide]) {
+    width: calc(100% + var(--pad));
+  }
+
+  & .fb-clicks {
+    padding: 20px 24px;
+  }
+
+  & .fb-clicks-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  & .fb-total {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0 18px;
+  }
+
+  & .fb-total-value {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 38px;
+    color: var(--ss-text-strong);
+  }
+
+  & .fb-chart {
+    display: block;
+  }
+
+  & .fb-countries {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    gap: 16px;
+    width: 236px;
+    padding: 20px 24px;
+    border-left: 1px solid var(--ss-line-faint);
+  }
+
+  & .fb-country {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  & .fb-country-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  & .fb-flag {
+    flex: none;
+    display: block;
+  }
+
+  & .fb-country-name {
+    flex: 1;
+    font-size: 12.5px;
+    line-height: 16px;
+    color: var(--ss-text-strong);
+  }
+
+  & .fb-country-share {
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 16px;
+    color: var(--ss-text-strong);
+    font-variant-numeric: tabular-nums;
+  }
+
+  & .fb-meter[data-i="1"] .ss-meter__fill { transition-delay: 0.08s; }
+  & .fb-meter[data-i="2"] .ss-meter__fill { transition-delay: 0.16s; }
+
+  /* ---- Free plan (stat) ---- */
+
+  & .fb-stat {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding: 0 var(--pad);
+    color: #fff;
+  }
+
+  & .fb-stat-lead {
+    font-size: 17px;
+    line-height: 24px;
+    color: #a3a3a3;
+  }
+
+  & .fb-stat-number {
+    margin: 4px 0 10px;
+    font-size: 64px;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  & .fb-stat-unit {
+    font-size: 40px;
+    letter-spacing: -0.02em;
+    color: #f87171;
+  }
+
+  & .fb-stat-label {
+    max-width: 260px;
+    font-size: 15px;
+    line-height: 22px;
+    color: #a3a3a3;
+    text-wrap: pretty;
+  }
+
+  /* ---- Password (component) ---- */
+
+  & .fb-gate {
+    position: absolute;
+    top: 24px;
+    left: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 300px;
+    padding: 20px;
+    border-radius: 16px;
+    background: var(--ss-surface);
+    box-shadow: var(--ss-shadow-ground);
+  }
+
+  & .fb-gate-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  & .fb-gate-icon {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #fef2f2;
+    box-shadow: inset 0 0 0 1px #fee2e2;
+    color: #ef4444;
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  & .fb-gate-icon[data-open] {
+    background: #f0fdf4;
+    box-shadow: inset 0 0 0 1px #dcfce7;
+    color: #16a34a;
+  }
+
+  & .fb-gate-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  & .fb-gate-title {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 18px;
+    color: var(--ss-text-strong);
+  }
+
+  & .fb-gate-sub {
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--ss-text-faint);
+  }
+
+  & .fb-gate-field {
+    --ss-control: 36px;
+  }
+
+  /* The real page's button is black; it turns green once unlocked */
+  & .fb-gate-btn {
+    width: 100%;
+    --ss-accent: #171717;
+    transition: background-color 0.2s ease;
+  }
+
+  & .fb-gate-btn[data-open] {
+    --ss-accent: #16a34a;
+  }
+
+  /* ---- QR (object) ---- */
+
+  & .fb-qr {
+    position: absolute;
+    top: 24px;
+    left: 76px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 208px;
+    padding: 18px 18px 48px;
+    border-radius: 16px;
+    background: var(--ss-surface);
+    box-shadow: var(--ss-shadow-ground);
+    transform: translateY(36px);
+    /* A lasting layer, so its caption doesn't hop as the rise lands */
+    will-change: transform;
+    transition: transform 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  & .fb-qr[data-on] {
+    transform: none;
+  }
+
+  & .fb-qr-code {
+    position: relative;
+    width: 144px;
+    height: 144px;
+  }
+
+  & .fb-qr-code svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    fill: #171717;
+  }
+
+  & .fb-qr-code [data-part="overlay"] {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  & .fb-qr-logo {
+    display: block;
+    border-radius: 50%;
+    background: #fff;
+    padding: 3px;
+  }
+
+  & .fb-qr-caption {
+    font-family: var(--ss-mono);
+    font-size: 10.5px;
+    line-height: 14px;
+    color: var(--ss-text);
+  }
+
+  /* ---- Tags (component): one link card off the right edge ---- */
+
+  & .fb-link {
+    position: absolute;
+    top: 24px;
+    left: var(--pad);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: max(340px, calc(100% + var(--pad)));
+    padding: 18px 20px 20px;
+    border-radius: 16px;
+    background: var(--ss-surface);
+    box-shadow: var(--ss-shadow-ground);
+  }
+
+  & .fb-link-short {
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 20px;
+    color: var(--ss-text-strong);
+  }
+
+  & .fb-link-dest {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ss-icon-faint);
+  }
+
+  & .fb-link-dest-text {
+    font-size: 12.5px;
+    line-height: 18px;
+    color: var(--ss-text-faint);
+  }
+
+  & .fb-tags {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  /* The product's tag: red-50 with a red-700 label, a hairline in red-100 */
+  & .fb-tag {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 6px;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: 6px;
+    background: #fef2f2;
+    box-shadow: inset 0 0 0 1px #fee2e2;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: #b91c1c;
+    white-space: nowrap;
+  }
+
+  /* The kit chip, dressed as the product's tag (color and corner only) */
+  & .fb-tag-slot {
+    border-radius: 6px;
+  }
+
+  & .fb-tag-slot .ss-chip__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  & .fb-tag-slot .ss-chip {
+    border-radius: 6px;
+    background: #fef2f2;
+    box-shadow: inset 0 0 0 1px #fee2e2;
+    color: #b91c1c;
+  }
+
+  & .fb-link-foot {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--ss-line-faint);
+  }
+}

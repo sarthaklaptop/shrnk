@@ -28,11 +28,10 @@ import { signIn } from "next-auth/react";
 
 export function PlaceholdersAndVanishInputDemo() {
   const placeholders = [
-    "Enter a long URL to shorten",
-    "How to create a custom short link?",
-    "What's the benefit of using a URL shortener?",
-    "Track clicks on your shortened URLs",
-    "How to share your shortened link on social media?",
+    "Paste a long URL to shorten",
+    "https://your-site.com/blog/a-very-long-post-title",
+    "https://docs.google.com/document/d/…",
+    "https://youtube.com/watch?v=…",
   ];
 
   const [urlInput, setUrlInput] = useState(""); 
