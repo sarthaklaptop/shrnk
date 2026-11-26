@@ -1,252 +1,260 @@
 "use client";
 
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { FiLoader } from "react-icons/fi";
-import { Button } from "./ui/button";
+import { AnimatePresence, motion } from "framer-motion";
 import { IconMenu2, IconX } from "@tabler/icons-react";
+import { MdArrowForward, MdLogout, MdSpaceDashboard } from "react-icons/md";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
-import { DropdownMenu, DropdownMenuContent } from "./ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import { userStorage } from "@/store/link";
 import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "framer-motion";
+
+const LINKS = [
+  { label: "Features", href: "/#features-section" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+];
 
 export default function Header() {
-  const [initialLoading, setInitialLoading] = useState<boolean>(true);
   const { data: session, status } = useSession();
-  const setUser = userStorage((state: any) => state.setUser);
-
-  const [active, setActive] = useState<string | null>(null);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
+  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
+  // Keep the signed-in user's image and email in the store, merged into
+  // what's already there so the plan (userType, credits) isn't overwritten
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    if (status !== "authenticated" || !session?.user) return;
+    const { image, email, id } = session.user;
+    userStorage.setState((s) => ({
+      user: { ...s.user, image: image ?? null, email: email ?? null, id: id ?? s.user.id },
+    }));
+  }, [status, session?.user]);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Lock the page behind the mobile menu, and close it on navigation
   useEffect(() => {
-    if (status !== "loading") {
-      setInitialLoading(false);
-    }
-  }, [status, session]);
-
-  useEffect(() => {
-    if (session && !initialLoading) {
-      // Store user data in Zustand
-      setUser(session.user?.image || null, session.user?.email || null);
-    }
-  }, [session, initialLoading, setUser]);
-
-  // Prevent scrolling when mobile menu is open
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    document.body.style.overflow = open ? "hidden" : "";
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
     };
   }, [open]);
+  useEffect(() => setOpen(false), [pathname]);
 
-  const MobileLink = ({
-    href,
-    children,
-    onClick,
-  }: {
-    href: string;
-    children: React.ReactNode;
-    onClick?: () => void;
-  }) => (
-    <Link
-      href={href}
-      onClick={onClick}
-      className="flex items-center gap-2 p-3 rounded-lg text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200"
-    >
-      {children}
-    </Link>
-  );
+  const isActive = (href: string) => !href.includes("#") && pathname === href;
+  const login = () => signIn("google", { callbackUrl: "/x" });
 
   return (
     <>
-      <div
-        className={cn(
-          "w-11/12 fixed z-50 p-3 py-6 flex justify-between items-center transition-all duration-300 ease-in-out left-1/2 -translate-x-1/2",
-          isScrolled
-            ? "top-4 rounded-xl bg-white/60 backdrop-blur-md border border-neutral-200/50 shadow-sm py-3"
-            : "top-0 bg-transparent text-white",
-        )}
-      >
-        <Link href="/">
-          <h2 className="font-bold text-xl md:text-2xl text-red-500">Shrnk</h2>
-        </Link>
-
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center justify-center gap-x-4 p-2 px-10 w-fit rounded-full shadow-[rgba(0,_0,_0,_0.4)_0px_30px_90px]">
-          <div className=" flex items-center justify-center">
-            {/* <a href="id="features-section"></a> */}
-            <div className="relative text-black hover:text-red-400 font-semibold cursor-pointer transition-all ease-in-out before:transition-[width] before:ease-in-out before:duration-700 before:absolute before:bg-red-400 before:origin-center before:h-[1px] before:w-0 hover:before:w-[50%] before:bottom-0 before:left-[50%] after:transition-[width] after:ease-in-out after:duration-700 after:absolute after:bg-red-400 after:origin-center after:h-[1px] after:w-0 hover:after:w-[50%] after:bottom-0 after:right-[50%]">
-              <Link href="#features-section">Features</Link>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-center">
-            <a href="/pricing">
-              <div className="relative text-black hover:text-red-400 font-semibold cursor-pointer transition-all ease-in-out before:transition-[width] before:ease-in-out before:duration-700 before:absolute before:bg-red-400 before:origin-center before:h-[1px] before:w-0 hover:before:w-[50%] before:bottom-0 before:left-[50%] after:transition-[width] after:ease-in-out after:duration-700 after:absolute after:bg-red-400 after:origin-center after:h-[1px] after:w-0 hover:after:w-[50%] after:bottom-0 after:right-[50%]">
-                <span>Pricing</span>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        {/* Mobile menu trigger */}
-        <div className="md:hidden">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-black"
-            onClick={() => setOpen(true)}
-          >
-            <IconMenu2 className="h-6 w-6 text-neutral-800 dark:text-neutral-200" />
-          </Button>
-        </div>
-
-        {/* Desktop auth area */}
-        <div className="hidden md:block min-w-[120px]">
-          {status === "loading" ? (
-            <Button disabled className="w-full min-w-[120px]">
-              <FiLoader className="mr-2 animate-spin" />
-              Verifying...
-            </Button>
-          ) : !session ? (
-            <div className="__menu">
-              <Button
-                onClick={() => signIn("google", { callbackUrl: "/x" })}
-                className="min-w-[120px]"
-              >
-                Login
-              </Button>
-            </div>
-          ) : (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Avatar className="cursor-pointer">
-                  <AvatarImage src={session.user?.image || ""} />
-                  <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56 cursor-pointer">
-                <DropdownMenuLabel className="p-2 rounded-lg hover:bg-red-300 hover:text-red-700 transition-all duration-200">
-                  <a href="/x">My Account</a>
-                </DropdownMenuLabel>
-                <DropdownMenuItem className="border-none outline-none focus:outline-none">
-                  <DropdownMenuLabel
-                    className="p-2 rounded-lg hover:bg-red-300 hover:text-red-700 transition-all duration-200 border-none"
-                    onClick={() => signOut()}
-                  >
-                    <span>Log out</span>
-                  </DropdownMenuLabel>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+      <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-4">
+        <div
+          className={cn(
+            "mx-auto flex h-14 max-w-[1100px] items-center justify-between gap-4 rounded-2xl border px-3 transition-all duration-300 sm:px-4 md:grid md:grid-cols-[1fr_auto_1fr]",
+            scrolled
+              ? "border-neutral-200/80 bg-white/[0.92] shadow-sm shadow-neutral-900/5 backdrop-blur-md"
+              : "border-transparent bg-transparent"
           )}
-        </div>
-      </div>
+        >
+          <Link href="/" className="justify-self-start px-1 text-xl font-bold tracking-tight text-red-500">
+            Shrnk
+          </Link>
 
-      {/* Mobile Sidebar Overlay */}
+          <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
+            {LINKS.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={isActive(link.href) ? "page" : undefined}
+                className={cn(
+                  "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  isActive(link.href)
+                    ? "text-neutral-900"
+                    : "text-neutral-500 hover:bg-neutral-100/80 hover:text-neutral-900"
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="hidden items-center justify-self-end gap-2 md:flex">
+            {status === "loading" ? (
+              <span className="h-9 w-36 animate-pulse rounded-lg bg-neutral-200/70" aria-label="Loading" />
+            ) : status === "authenticated" ? (
+              <>
+                <Link
+                  href="/x"
+                  className="inline-flex h-9 items-center rounded-lg px-3 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
+                >
+                  Dashboard
+                </Link>
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    aria-label="Account menu"
+                    className="rounded-full outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-red-500"
+                  >
+                    <Avatar className="h-9 w-9 border border-neutral-200">
+                      <AvatarImage src={session?.user?.image || ""} alt="" />
+                      <AvatarFallback>{session?.user?.name?.[0] ?? "U"}</AvatarFallback>
+                    </Avatar>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel className="font-normal">
+                      <p className="truncate text-sm font-medium text-neutral-900">{session?.user?.name}</p>
+                      <p className="truncate text-xs text-neutral-500">{session?.user?.email}</p>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild className="cursor-pointer">
+                      <Link href="/x">
+                        <MdSpaceDashboard className="mr-2" size={16} />
+                        My links
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer" onSelect={() => signOut()}>
+                      <MdLogout className="mr-2" size={16} />
+                      Log out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={login}
+                  className="inline-flex h-9 items-center rounded-lg px-3 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
+                >
+                  Log in
+                </button>
+                <button
+                  type="button"
+                  onClick={login}
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-red-500 px-3.5 text-sm font-semibold text-white shadow-sm shadow-red-500/25 transition hover:bg-red-600 active:scale-[0.98]"
+                >
+                  Start for free
+                  <MdArrowForward size={15} />
+                </button>
+              </>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-label="Open menu"
+            aria-expanded={open}
+            className="grid h-9 w-9 place-items-center rounded-lg text-neutral-800 transition-colors hover:bg-neutral-100 md:hidden"
+          >
+            <IconMenu2 size={20} />
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile menu */}
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ x: "-100%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: "-100%", opacity: 0 }}
-            transition={{
-              duration: 0.3,
-              ease: "easeInOut",
-            }}
-            className="fixed inset-0 z-[100] h-full w-full bg-white dark:bg-neutral-900 p-6 flex flex-col justify-between"
+            key="mobile-menu"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[100] bg-neutral-900/20 backdrop-blur-sm md:hidden"
+            onClick={() => setOpen(false)}
           >
-            <div className="flex flex-col h-full">
-              {/* Header */}
-              <div className="flex justify-between items-center mb-8">
-                <Link
-                  href="/"
-                  className="font-bold text-xl md:text-2xl text-red-500"
-                  onClick={() => setOpen(false)}
-                >
+            <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Menu"
+              initial={{ y: -12, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -12, opacity: 0 }}
+              transition={{ duration: 0.25, ease: [0.25, 0.8, 0.25, 1] }}
+              onClick={(e) => e.stopPropagation()}
+              className="mx-3 mt-3 rounded-2xl border border-neutral-200 bg-white p-3 shadow-xl shadow-neutral-900/10"
+            >
+              <div className="flex h-10 items-center justify-between pl-2">
+                <Link href="/" onClick={() => setOpen(false)} className="text-xl font-bold tracking-tight text-red-500">
                   Shrnk
                 </Link>
-                <div
-                  className="text-neutral-800 dark:text-neutral-200 cursor-pointer p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                <button
+                  type="button"
                   onClick={() => setOpen(false)}
+                  aria-label="Close menu"
+                  className="grid h-9 w-9 place-items-center rounded-lg text-neutral-800 hover:bg-neutral-100"
                 >
-                  <IconX className="h-6 w-6" />
-                </div>
+                  <IconX size={20} />
+                </button>
               </div>
 
-              {/* Navigation Links */}
-              <nav className="flex flex-col gap-2">
-                <MobileLink
-                  href="#features-section"
-                  onClick={() => setOpen(false)}
-                >
-                  <span className="font-medium text-base">Features</span>
-                </MobileLink>
-                <MobileLink href="/pricing" onClick={() => setOpen(false)}>
-                  <span className="font-medium text-base">Pricing</span>
-                </MobileLink>
+              <nav aria-label="Mobile" className="mt-2 flex flex-col">
+                {LINKS.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    aria-current={isActive(link.href) ? "page" : undefined}
+                    className={cn(
+                      "rounded-lg px-3 py-3 text-base font-medium",
+                      isActive(link.href) ? "bg-neutral-100 text-neutral-900" : "text-neutral-700 hover:bg-neutral-50"
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
               </nav>
 
-              {/* Auth Section at bottom or after nav */}
-              <div className="mt-8 border-t border-neutral-200 dark:border-neutral-700 pt-6 flex flex-col gap-4">
-                {status === "loading" ? (
-                  <Button
-                    disabled
-                    className="w-full justify-center relative overflow-hidden bg-red-500/10 text-red-500"
-                  >
-                    <div className="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite] border-t border-white/10" />
-                    <FiLoader className="mr-2 animate-spin" />
-                    Verifying...
-                  </Button>
-                ) : !session ? (
-                  <Button
-                    className="w-full justify-center text-base font-bold bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30 transition-all active:scale-[0.98]"
-                    size="lg"
-                    onClick={() => {
-                      signIn("google", { callbackUrl: "/x" });
-                      setOpen(false);
-                    }}
-                  >
-                    Login to start
-                  </Button>
-                ) : (
-                  <Link
-                    href="/x"
-                    onClick={() => setOpen(false)}
-                    className="w-full"
-                  >
-                    <Button
-                      className="w-full justify-center text-base font-bold bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30 transition-all active:scale-[0.98]"
-                      size="lg"
+              <div className="mt-3 border-t border-neutral-100 pt-3">
+                {status === "authenticated" ? (
+                  <div className="flex flex-col gap-2">
+                    <Link
+                      href="/x"
+                      onClick={() => setOpen(false)}
+                      className="inline-flex h-11 items-center justify-center rounded-lg bg-red-500 text-sm font-semibold text-white"
                     >
-                      My Dashboard
-                    </Button>
-                  </Link>
+                      Go to dashboard
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => signOut()}
+                      className="inline-flex h-11 items-center justify-center rounded-lg border border-neutral-200 text-sm font-medium text-neutral-700"
+                    >
+                      Log out
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={status === "loading"}
+                    onClick={() => {
+                      setOpen(false);
+                      login();
+                    }}
+                    className="inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-lg bg-red-500 text-sm font-semibold text-white shadow-sm shadow-red-500/25 disabled:opacity-60"
+                  >
+                    Start for free
+                    <MdArrowForward size={15} />
+                  </button>
                 )}
               </div>
-            </div>
-            {/* Optional filler for bottom spacing */}
-            <div className="h-10" />
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
