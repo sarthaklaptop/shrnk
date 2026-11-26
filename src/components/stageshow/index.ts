@@ -20,6 +20,7 @@ export { Connector } from "./kit/motion/Connector";
 export { Row } from "./kit/parts/Row";
 export { Spinner } from "./kit/parts/Spinner";
 export { Meter } from "./kit/parts/Meter";
+export { Check } from "./kit/parts/Check";
 export { Chip } from "./kit/parts/Chip";
 
 export { Badge } from "./kit/controls/Badge";

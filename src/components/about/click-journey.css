@@ -1,0 +1,253 @@
+/* What happens when someone clicks. Every rule is scoped under .cj. */
+.cj {
+  /* The stage is the shot: a quiet well, one 40px gutter on top and both
+     sides; the browser and the analytics card run off the bottom */
+  & .ss-stage {
+    --gutter: 40px;
+    overflow: hidden;
+    border-radius: 24px;
+    background: var(--ss-well);
+  }
+
+  .cj-browser {
+    position: absolute;
+    top: var(--gutter);
+    left: var(--gutter);
+    width: 320px;
+    height: 260px;
+    box-shadow: var(--ss-shadow-hero);
+  }
+
+  .cj-browser .ss-window__body {
+    background: var(--ss-surface);
+  }
+
+  .cj-page {
+    position: relative;
+    height: 100%;
+  }
+
+  /* Before the redirect: a blank page, waiting */
+  .cj-loading {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--ss-icon-faint);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .cj-loading[data-on] {
+    opacity: 1;
+  }
+
+  /* After: the destination, fading in over the same body */
+  .cj-site {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 24px 22px;
+    opacity: 0;
+    transform: translateY(6px);
+    will-change: transform;
+    transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .cj-site[data-on] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .cj-site-title {
+    margin-bottom: 4px;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 24px;
+    color: var(--ss-text-strong);
+  }
+
+  .cj-site-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .cj-site-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 76px;
+    padding: 14px;
+    border-radius: var(--ss-radius-lg);
+    box-shadow: inset 0 0 0 1px var(--ss-line);
+  }
+
+  /* The two cards share one frame */
+  .cj-card {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    border-radius: 14px;
+    background: var(--ss-surface);
+    box-shadow: var(--ss-shadow-card);
+  }
+
+  .cj-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  /* Shrnk's redirect, between the browser and the analytics */
+  .cj-shrnk {
+    top: 100px;
+    left: 460px;
+    gap: 12px;
+    width: 200px;
+    padding: 16px 18px 18px;
+  }
+
+  .cj-wordmark {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 20px;
+    color: var(--ss-accent);
+  }
+
+  .cj-path {
+    font-family: var(--ss-mono);
+    font-size: 11.5px;
+    line-height: 16px;
+    color: var(--ss-text-faint);
+  }
+
+  .cj-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .cj-check-label {
+    font-size: 12.5px;
+    line-height: 16px;
+    color: var(--ss-text-faint);
+    transition: color 0.25s ease;
+  }
+
+  .cj-check[data-on] .cj-check-label {
+    color: var(--ss-text-strong);
+  }
+
+  /* The analytics the click lands in */
+  .cj-stats {
+    top: var(--gutter);
+    left: 720px;
+    width: 200px;
+    padding: 16px 6px 6px;
+    gap: 6px;
+  }
+
+  .cj-stats .cj-card-head {
+    padding: 0 10px;
+  }
+
+  .cj-label {
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--ss-text);
+  }
+
+  .cj-count {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 26px;
+    color: var(--ss-text-strong);
+  }
+
+  .cj-list {
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+  }
+
+  .cj-row {
+    --ss-row-title: 12.5px;
+    --ss-row-subtitle: 11.5px;
+    --ss-row-line: 16px;
+    --ss-row-line-2: 16px;
+    /* Square rows, so the hairline between them runs straight to the ends */
+    border-radius: 0;
+    border-top: 1px solid var(--ss-line-faint);
+  }
+
+  .cj-flag {
+    display: block;
+  }
+
+  .cj-row-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 16px;
+    color: var(--ss-text-strong);
+  }
+
+  .cj-row-sub,
+  .cj-row-time {
+    font-size: 11.5px;
+    line-height: 16px;
+    color: var(--ss-text-faint);
+  }
+
+  .cj-row-time {
+    color: var(--ss-accent-text);
+  }
+
+  /* Filler rows keep the real row's line boxes */
+  .cj-line {
+    display: flex;
+    align-items: center;
+    height: 16px;
+  }
+
+  /* The background log is quieter than the request and the redirect */
+  .cj-line-log {
+    opacity: 0.7;
+  }
+
+  /* Compact: one column, top to bottom, the lines running down and up */
+  & .ss-stage[data-layout="compact"] {
+    --gutter: 24px;
+  }
+
+  & .ss-stage[data-layout="compact"] .cj-browser {
+    width: 278px;
+    height: 200px;
+  }
+
+  & .ss-stage[data-layout="compact"] .cj-loading {
+    padding-bottom: 20px;
+  }
+
+  & .ss-stage[data-layout="compact"] .cj-site-cards {
+    display: none;
+  }
+
+  & .ss-stage[data-layout="compact"] .cj-shrnk {
+    top: 284px;
+    left: var(--gutter);
+    width: 278px;
+  }
+
+  & .ss-stage[data-layout="compact"] .cj-stats {
+    top: 480px;
+    left: var(--gutter);
+    width: 278px;
+  }
+}
