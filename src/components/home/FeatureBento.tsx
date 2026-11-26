@@ -28,7 +28,7 @@ import "./feature-bento.css";
 //
 //   Tile       Span   Kind        The one thing                       Moves
 //   Analytics  2 x 1  Hero UI     the clicks chart and top countries  the line draws, the bars fill
-//   Free       1 x 1  Stat        "25 links", on the one dark tile    counts up from 0
+//   Free       1 x 1  Stat        "10 links", on the one dark tile    counts up from 0
 //   Password   1 x 1  Component   the password gate, Unlock           the field fills, the button unlocks
 //   QR         1 x 1  Object      a real QR code for a short link     rises out of the crop
 //   Tags       1 x 1  Component   one link card and its tags          a third tag opens in
@@ -197,10 +197,10 @@ function FreePlan() {
       <div ref={ref} className="fb-stat">
         <span className="fb-stat-lead">Start free with</span>
         <span className="fb-stat-number">
-          <Count value={seen || reduced ? 25 : 0} duration={900} />
+          <Count value={seen || reduced ? 10 : 0} duration={900} />
           <span className="fb-stat-unit"> links</span>
         </span>
-        <span className="fb-stat-label">every month, no card needed. Pro is $4.99 a month when you need more.</span>
+        <span className="fb-stat-label">to start, no card needed. Pro adds 1,000 more for $4.99 a month.</span>
       </div>
     </Tile>
   );
@@ -225,7 +225,7 @@ function Password() {
   return (
     <Tile
       area="lock"
-      title="Lock any link."
+      title="Lock any link with Pro."
       picture={
         <div className="fb-picture fb-picture--center">
           <Stage<Gate> width={360} height={236} initial={gateStart} poster={gateEnd} play="once" script={unlock} className="shrnk-look fb-stage">

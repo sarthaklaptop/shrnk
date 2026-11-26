@@ -1,0 +1,177 @@
+/* What Pro unlocks. Every rule is scoped under .up-demo. */
+.up-demo {
+  /* The stage is the shot: a quiet well with rounded corners */
+  & .ss-stage {
+    overflow: hidden;
+    border-radius: 24px;
+    background: var(--ss-well);
+  }
+
+  /* One column, centered, the second card off the bottom */
+  /* One gutter on the top and both sides; the lower card bleeds */
+  .up-stack {
+    --gutter: 48px;
+    position: absolute;
+    top: var(--gutter);
+    left: var(--gutter);
+    right: var(--gutter);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .up-card {
+    display: grid;
+    gap: 10px;
+    padding: 18px 20px;
+    border-radius: 14px;
+    background: var(--ss-surface);
+    box-shadow: var(--ss-shadow-card);
+  }
+
+  .up-plan {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  .up-mark {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: var(--ss-ink-1);
+    color: var(--ss-icon-faint);
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  .up-mark[data-pro] {
+    background: var(--ss-accent-soft);
+    color: var(--ss-accent);
+  }
+
+  .up-who {
+    display: grid;
+    flex: 1;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .up-name {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 18px;
+    color: var(--ss-text-strong);
+  }
+
+  .up-sub,
+  .up-label {
+    font-size: 12.5px;
+    line-height: 16px;
+    color: var(--ss-text);
+  }
+
+  .up-btn {
+    min-width: 92px;
+  }
+
+  .up-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .up-usage {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .up-value {
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 16px;
+    color: var(--ss-text-strong);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The analytics card runs on past the stage's bottom edge, under the chart */
+  .up-card--chart {
+    gap: 14px;
+    padding-bottom: 72px;
+  }
+
+  .up-chart-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .up-total {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 26px;
+    color: var(--ss-text-strong);
+  }
+
+  .up-seg {
+    --ss-row: 28px;
+  }
+
+  /* A locked range: its label faint and a lock beside it. Unlocking closes
+     the lock's width as it fades, so the label slides back to center */
+  .up-range {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    transition: color 0.3s ease;
+  }
+
+  .up-range[data-locked] {
+    color: var(--ss-text-faint);
+  }
+
+  .up-lock {
+    display: inline-flex;
+    overflow: hidden;
+    width: 0;
+    margin-right: 0;
+    opacity: 0;
+    transition: width 0.35s cubic-bezier(0.45, 0, 0.1, 1), margin 0.35s cubic-bezier(0.45, 0, 0.1, 1), opacity 0.2s ease;
+  }
+
+  .up-range[data-locked] .up-lock {
+    width: 11px;
+    margin-right: 6px;
+    opacity: 1;
+  }
+
+  .up-chart {
+    display: block;
+  }
+
+  /* Narrow: the column fills the stage less a 16px gutter each side */
+  & .ss-stage[data-layout="compact"] .up-stack {
+    --gutter: 24px;
+  }
+
+  & .ss-stage[data-layout="compact"] .up-card {
+    padding: 16px 18px;
+  }
+
+  & .ss-stage[data-layout="compact"] .up-plan {
+    gap: 10px;
+  }
+
+  & .ss-stage[data-layout="compact"] .up-btn {
+    min-width: 84px;
+  }
+
+  & .ss-stage[data-layout="compact"] .up-card--chart {
+    padding-bottom: 72px;
+  }
+}

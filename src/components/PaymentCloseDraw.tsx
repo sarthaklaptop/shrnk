@@ -75,12 +75,13 @@ export const DragCloseDrawerExample = () => {
   };
 
   return (
-    <div className="grid place-content-center ">
+    <div className="w-full">
       <button
+        type="button"
         onClick={handleButtonClick}
-        className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600 hover:scale-105 hover:font-medium duration-75 transition-all"
+        className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-red-500 px-5 text-sm font-semibold text-white shadow-lg shadow-red-500/25 transition hover:bg-red-600 active:scale-[0.98]"
       >
-        Get Started with Pro
+        Upgrade to Pro
       </button>
 
       <DragCloseDrawer open={open} setOpen={setOpen}>
@@ -102,26 +103,17 @@ export const DragCloseDrawerExample = () => {
               <div className="flex w-full flex-col p-10 rounded-lg bg-zinc-800 text-gray-200">
                 <p className="text-xl font-semibold">Pro Membership Benefits</p>
                 <div className="p-4 flex flex-col gap-2 rounded-lg ">
-                  <p className="text-base flex gap-2 items-center justify-start text-body-color dark:text-dark-6">
-                    <FaCheckCircle color="green" />
-                    1,000 new links/mo
-                  </p>
-                  <p className="text-base flex gap-2 items-center justify-start text-body-color dark:text-dark-66">
-                    <FaCheckCircle color="green" />
-                    50K tracked clicks/mo
-                  </p>
-                  <p className="text-base flex gap-2 items-center justify-start text-body-color dark:text-dark-6">
-                    <FaCheckCircle color="green" />
-                    1-year analytics retention
-                  </p>
-                  <p className="text-base flex gap-2 items-center justify-start text-body-color dark:text-dark-6">
-                    <FaCheckCircle color="green" />
-                    10 custom domains
-                  </p>
-                  <p className="text-base flex gap-2 items-center justify-start text-body-color dark:text-dark-6">
-                    <FaCheckCircle color="green" />
-                    Priority support
-                  </p>
+                  {[
+                    "1,000 more short links",
+                    "Password-protected links",
+                    "Analytics history up to all time",
+                    "Unlimited tags",
+                  ].map((benefit) => (
+                    <p key={benefit} className="text-base flex gap-2 items-center justify-start">
+                      <FaCheckCircle color="green" />
+                      {benefit}
+                    </p>
+                  ))}
                 </div>
               </div>
 
@@ -186,7 +178,7 @@ export const DragCloseDrawerExample = () => {
                     $4.99/month
                   </p>
                   <p className="text-green-600 text-sm">
-                    67% discount for users
+                    50% off
                   </p>
                 </div>
               </div>

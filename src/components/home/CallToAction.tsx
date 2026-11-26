@@ -16,8 +16,8 @@ export function CallToAction() {
           Your next link is one paste away.
         </h2>
         <p className="relative mx-auto mt-4 max-w-lg text-pretty text-base text-neutral-400 sm:text-lg">
-          Sign in with Google to keep your links, see their clicks and lock
-          the ones that matter.
+          Sign in with Google to keep your links for a year and see every
+          click they get.
         </p>
         <div className="relative mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <button

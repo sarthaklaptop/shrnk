@@ -19,7 +19,7 @@ export function HomeHero() {
       >
         <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-red-100 bg-white px-3 py-1 text-xs font-medium text-neutral-600 shadow-sm">
           <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
-          Free plan: 25 links a month, no card
+          Free plan: 10 links, no card needed
         </span>
         <h1 className="text-balance text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl md:text-6xl">
           Short links, <span className="text-red-500">big impact.</span>

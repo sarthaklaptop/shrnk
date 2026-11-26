@@ -25,6 +25,7 @@ export { Chip } from "./kit/parts/Chip";
 export { Badge } from "./kit/controls/Badge";
 export { Button } from "./kit/controls/Button";
 export { Field } from "./kit/controls/Field";
+export { Segmented } from "./kit/controls/Segmented";
 
 export { Chart, chartPoints } from "./kit/chart";
 export { Code } from "./kit/code";
